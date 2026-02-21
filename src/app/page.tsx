@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import SectionHeader from "@/shared/presentation/SectionHeader";
 import StatCard from "@/shared/presentation/StatCard";
