@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import ContactCard from "@/components/ContactCard";
+import CopyEmailButton from "@/components/CopyEmailButton";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -177,60 +179,58 @@ export default function ContactoPage() {
             {/* Contact info */}
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
               {/* Teléfono */}
-              <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[#1A3A8F]/30 hover:shadow-md">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                    <span className="material-symbols-outlined text-2xl">phone_in_talk</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">Llámanos</h3>
-                    <p className="mt-1 text-sm text-slate-500">Atención inmediata para proyectos.</p>
-                    <a
-                      href="tel:+56912345678"
-                      className="mt-3 inline-block text-xl font-bold text-[#1A3A8F] hover:text-[#00C8E0] transition-colors"
-                    >
-                      +56 9 1234 5678
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <ContactCard
+                title="Llámanos"
+                subtitle="Atención inmediata para proyectos."
+                iconGradient="from-[#1A3A8F] to-[#00C8E0]"
+                hoverBorderColor="hover:border-[#1A3A8F]/30"
+                icon={<span className="material-symbols-outlined text-2xl">phone_in_talk</span>}
+                action={
+                  <a
+                    href="tel:+56912345678"
+                    className="mt-3 inline-block text-xl font-bold text-[#1A3A8F] hover:text-[#00C8E0] transition-colors"
+                  >
+                    +56 9 1234 5678
+                  </a>
+                }
+              />
+
               {/* WhatsApp */}
-              <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[#25D366]/30 hover:shadow-md">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#25D366] to-[#128C7E] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                    <span className="material-symbols-outlined text-2xl">chat</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">WhatsApp</h3>
-                    <p className="mt-1 text-sm text-slate-500">Chatea con un especialista ahora.</p>
-                    <a
-                      href="#"
-                      className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-[#1eb853]"
-                    >
-                      <span>Iniciar chat</span>
-                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <ContactCard
+                title="WhatsApp"
+                subtitle="Chatea con un especialista ahora."
+                iconGradient="from-[#25D366] to-[#128C7E]"
+                hoverBorderColor="hover:border-[#25D366]/30"
+                icon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="w-6 h-6 fill-white"
+                    aria-label="WhatsApp"
+                  >
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
+                  </svg>
+                }
+                action={
+                  <a
+                    href="#"
+                    className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-[#1eb853]"
+                  >
+                    <span>Iniciar chat</span>
+                    <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  </a>
+                }
+              />
+
               {/* Email */}
-              <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[#1A3A8F]/30 hover:shadow-md">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                    <span className="material-symbols-outlined text-2xl">mail</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">Email</h3>
-                    <p className="mt-1 text-sm text-slate-500">Envíanos tus planos o consultas.</p>
-                    <a
-                      href="mailto:contacto@synova.cl"
-                      className="mt-3 block text-base font-medium text-slate-700 hover:text-[#00C8E0] transition-colors"
-                    >
-                      contacto@synova.cl
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <ContactCard
+                title="Email"
+                subtitle="Envíanos tus planos o consultas."
+                iconGradient="from-[#1A3A8F] to-[#00C8E0]"
+                hoverBorderColor="hover:border-[#1A3A8F]/30"
+                icon={<span className="material-symbols-outlined text-2xl">mail</span>}
+                action={<CopyEmailButton email="contacto@synova.cl" />}
+              />
               {/* Horarios */}
               <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
@@ -258,42 +258,6 @@ export default function ContactoPage() {
           </div>
         </section>
 
-        {/* ── Mapa ── */}
-        <section className="relative w-full h-[400px] lg:h-[500px] border-y border-slate-200 overflow-hidden bg-white">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d53239.52494883163!2d-70.64835697621427!3d-33.43572887373323!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5410425af2f%3A0x8475d53c400f0931!2sSantiago%2C%20Santiago%20Metropolitan%20Region%2C%20Chile!5e0!3m2!1sen!2sus!4v1716390000000!5m2!1sen!2sus"
-            width="100%"
-            height="100%"
-            className="w-full h-full grayscale opacity-80"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Mapa de ubicación SYNOVA"
-          />
-          {/* Card overlay */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 md:left-12 md:translate-x-0 bg-white/95 backdrop-blur-md border border-slate-200 p-5 rounded-xl shadow-xl max-w-xs w-full z-20">
-            <div className="flex items-start gap-4">
-              <div className="bg-linear-to-br from-[#1A3A8F]/10 to-[#00C8E0]/10 p-2 rounded-lg">
-                <span className="material-symbols-outlined text-[#1A3A8F] text-2xl">business</span>
-              </div>
-              <div>
-                <p className="text-slate-900 font-bold text-sm uppercase tracking-wide">Oficina Central</p>
-                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
-                  Av. Providencia 1234, Oficina 605
-                  <br />
-                  Santiago, Chile
-                </p>
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="flex w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[10px] text-green-600 font-medium uppercase tracking-wider">
-                    Abierto ahora
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );
