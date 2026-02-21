@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SYNOVA - Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00cae0",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#0f2123",
+                        "navy": "#0F1A2E",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    backgroundImage: {
+                        'cyan-gradient': 'linear-gradient(to right, #1A3A8F, #00C8E0)',
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col">
+<!-- Top Navbar -->
+<nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-24">
+<div class="flex-shrink-0 flex items-center gap-3">
+<a href="../synova_electrical_services_home_1/code.html">
+<img alt="SYNOVA" class="h-12 w-auto" src="../logo.png"/>
+</a>
+</div>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-sm font-medium text-navy hover:text-primary transition-colors tracking-wide" href="../synova_electrical_services_home_1/code.html">Inicio</a>
+<a class="text-sm font-medium text-navy hover:text-primary transition-colors tracking-wide" href="../synova_nuestros_servicios_page/code.html">Servicios</a>
+<a class="text-sm font-medium text-navy hover:text-primary transition-colors tracking-wide" href="../synova_nuestros_proyectos_page/code.html">Proyectos</a>
+<a class="text-sm font-medium text-navy hover:text-primary transition-colors tracking-wide" href="../synova_electrical_services_home_2/code.html">Nosotros</a>
+<a class="text-sm font-medium text-navy hover:text-primary transition-colors tracking-wide" href="../synova_admin_private_login/code.html">Admin Login</a>
+<a class="text-sm font-medium text-navy hover:text-primary transition-colors tracking-wide" href="../synova_admin_dashboard_proyectos/code.html">Admin Panel</a>
+<a class="px-6 py-2.5 rounded bg-cyan-gradient text-white font-semibold text-sm hover:brightness-110 transition-all duration-300 shadow-lg flex items-center gap-2" href="../synova_contacto_professional_page/code.html">
+<span class="material-symbols-outlined text-lg">call</span>
+Contacto
+</a>
+</div>
+<div class="flex items-center gap-4">
+<a class="hidden md:flex cursor-pointer items-center justify-center gap-2 rounded-lg h-9 px-4 text-slate-600 hover:bg-slate-100 transition-colors text-sm font-semibold" href="../synova_admin_private_login/code.html">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span>Cerrar sesión</span>
+</a>
+<div class="md:hidden flex items-center">
+<button class="text-navy hover:text-primary" type="button">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col p-6 pt-28 max-w-7xl mx-auto w-full">
+<!-- Action Bar -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+<div class="flex items-center gap-3">
+<h2 class="text-navy dark:text-white text-2xl font-bold">Gestionar Proyectos</h2>
+<span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary border border-primary/20">
+                    12 proyectos
+                </span>
+</div>
+<button class="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary to-[#00b5c9] hover:from-[#00b5c9] hover:to-[#00a1b3] text-white px-5 py-2.5 text-sm font-bold shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Agregar proyecto
+            </button>
+</div>
+<!-- Projects Table Container -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex-1 flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+<th class="w-12 px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center"></th>
+<th class="w-16 px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Imagen</th>
+<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Proyecto</th>
+<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Ubicación</th>
+<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Visibilidad</th>
+<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<!-- Row 1 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors bg-white dark:bg-slate-900">
+<td class="px-4 py-4 text-center">
+<span class="material-symbols-outlined text-slate-400 cursor-grab hover:text-slate-600 active:cursor-grabbing">drag_indicator</span>
+</td>
+<td class="px-4 py-4">
+<div class="relative size-12 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+<img alt="Electrical panel installation in residential home" class="object-cover size-full" data-alt="Electrical panel installation in residential home" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALKkgNvzsuGM9dcjUOTrBK_7-SbTzAVoSjugLh-qH802bD3mScQr0GN6LUhb8UZK_UzxHvq_a1iI5Yjq38VhmjpXo9mphwIStU91SJmlybzs2CCKx9JiganVpnsCOqNByYNjXncIuvM5G-jnQETla2-T4bV6Z-GHMfnEx04Av49uQT8fXfHWDOytIOhy_he_vbPuyNvLcyHTRTd1wWrrEGu9v1Mx3tcyonjMH1ItWZRraXFjzpjIeqng3tMxIHw-sHmMAMUtCYHuMa"/>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-navy dark:text-slate-100 text-sm">Instalación Tablero Central</span>
+<span class="inline-flex w-fit items-center rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-cyan-700 dark:text-cyan-300">
+                                        Residencial
+                                    </span>
+</div>
+</td>
+<td class="px-4 py-4 hidden sm:table-cell text-sm text-slate-500 dark:text-slate-400">
+                                Vitacura, Santiago
+                            </td>
+<td class="px-4 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<span class="ml-2 text-xs font-medium text-slate-500 dark:text-slate-400 hidden lg:inline">Visible</span>
+</label>
+</td>
+<td class="px-4 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Alternating BG) -->
+<tr class="group hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors bg-slate-50 dark:bg-slate-800/30">
+<td class="px-4 py-4 text-center">
+<span class="material-symbols-outlined text-slate-400 cursor-grab hover:text-slate-600 active:cursor-grabbing">drag_indicator</span>
+</td>
+<td class="px-4 py-4">
+<div class="relative size-12 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+<img alt="Industrial machinery maintenance worker" class="object-cover size-full" data-alt="Industrial machinery maintenance worker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD9LGTwlXg0GgzIJHoYSXzoYKudKBBDT0QmsB_3H0sf-6MSUdG3n1BRPl5AJYOs8G4uStKJQ19pUQFVQgw3iW7aohtIoAkFe425TzXtpSFkPDzhCHHwqoyDth3vozzzwLFeCWnKAt9rkVNjmWPA2gMzmvg8qyF_V4QP_NIel6aVgCArwH8LuYDYpqwCrWArFTKPJ-YeD20JaLIbbtuEUqg2fyyextb_3S1PQK-7UfTPxkpDOfjRgp1vq1GkunmYubH8rEfGF8LpY2Z"/>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-navy dark:text-slate-100 text-sm">Mantenimiento Industrial</span>
+<span class="inline-flex w-fit items-center rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                        Corporativo
+                                    </span>
+</div>
+</td>
+<td class="px-4 py-4 hidden sm:table-cell text-sm text-slate-500 dark:text-slate-400">
+                                Las Condes, Santiago
+                            </td>
+<td class="px-4 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="px-4 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors bg-white dark:bg-slate-900">
+<td class="px-4 py-4 text-center">
+<span class="material-symbols-outlined text-slate-400 cursor-grab hover:text-slate-600 active:cursor-grabbing">drag_indicator</span>
+</td>
+<td class="px-4 py-4">
+<div class="relative size-12 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+<img alt="Modern office LED lighting installation" class="object-cover size-full" data-alt="Modern office LED lighting installation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCnnL52mgopBQl-NV8f16ZQtQYNdw5xCfwTfWK_digDq0kAgMI-92VneW7WPO4QcyyAe2AkyNdF9ESRbgs6Qgbee1RNA2nGyEDJYvyDXioJVrhvYWcbd97TQ8hD9iQi4F6QQ5f_X0mHSysnM-Y0vsRwlcf8jeSHuSeKgUd3RInzThxnqqw4ritmJmNxB-TPsn9la5THe4diyIdwGorCo5Zfsjvhag40AZvXygszXQCcx5StW89DAvZkonQSgSXGwW7aLL4vgG5sEEZ"/>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-navy dark:text-slate-100 text-sm">Iluminación LED</span>
+<span class="inline-flex w-fit items-center rounded bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-300">
+                                        Comercial
+                                    </span>
+</div>
+</td>
+<td class="px-4 py-4 hidden sm:table-cell text-sm text-slate-500 dark:text-slate-400">
+                                Providencia, Santiago
+                            </td>
+<td class="px-4 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<span class="ml-2 text-xs font-medium text-slate-400 hidden lg:inline">Oculto</span>
+</label>
+</td>
+<td class="px-4 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 (Alternating BG) -->
+<tr class="group hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors bg-slate-50 dark:bg-slate-800/30">
+<td class="px-4 py-4 text-center">
+<span class="material-symbols-outlined text-slate-400 cursor-grab hover:text-slate-600 active:cursor-grabbing">drag_indicator</span>
+</td>
+<td class="px-4 py-4">
+<div class="relative size-12 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+<img alt="Server room network cabling" class="object-cover size-full" data-alt="Server room network cabling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLHV3jLhr7FLQoO4FOrU1-jZhkGaXpA0EhhrEkZ7S6yz9TfjjInQxrLXSDTkCqDL9eVFWghAR1DaPssH-AyUb9HJcWRmPVscQEg86pZ5Iu4wdafrRdev2D7UgeYGEMU5-tgmIa-_3pd7qQVFW0WQQR0LvuzrWzDDZGtdvpIVObOPM-nDGOAnH4eS3o-HUalYmnJyYvx92MVF3XUbzvXYHd2aMckTZphw2FhdzoLn69IEI1TmKTvosDan4Q-0ZC7sCqp5ZBv-G0vfrw"/>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-navy dark:text-slate-100 text-sm">Red de Datos</span>
+<span class="inline-flex w-fit items-center rounded bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 text-xs font-medium text-purple-700 dark:text-purple-300">
+                                        Oficina
+                                    </span>
+</div>
+</td>
+<td class="px-4 py-4 hidden sm:table-cell text-sm text-slate-500 dark:text-slate-400">
+                                Centro, Santiago
+                            </td>
+<td class="px-4 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="px-4 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination (Visual) -->
+<div class="px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
+<p class="text-xs text-slate-500">Mostrando 4 de 12 proyectos</p>
+<div class="flex gap-1">
+<button class="px-2 py-1 rounded text-slate-400 hover:text-slate-600 disabled:opacity-50 text-xs font-medium" disabled="">Anterior</button>
+<button class="px-2 py-1 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium">1</button>
+<button class="px-2 py-1 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium">2</button>
+<button class="px-2 py-1 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium">3</button>
+<button class="px-2 py-1 rounded text-primary hover:text-primary/80 text-xs font-medium">Siguiente</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal (Add/Edit Project) - Simulating Open State on a separate layer via fixed positioning -->
+<div class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+<!-- The modal itself -->
+<div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden">
+<!-- Modal Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+<h3 class="text-xl font-bold text-navy dark:text-white">Nuevo Proyecto</h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 overflow-y-auto space-y-5">
+<!-- Title & Category Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="project-title">Título del proyecto</label>
+<input class="w-full rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 text-sm focus:border-primary focus:ring-primary shadow-sm" id="project-title" placeholder="Ej. Instalación Tablero Sur" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="project-category">Categoría</label>
+<select class="w-full rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 text-sm focus:border-primary focus:ring-primary shadow-sm" id="project-category">
+<option>Residencial</option>
+<option>Comercial</option>
+<option>Industrial</option>
+<option>Oficina</option>
+</select>
+</div>
+</div>
+<!-- Location -->
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="project-location">Ubicación</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">location_on</span>
+<input class="w-full rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 text-sm pl-10 focus:border-primary focus:ring-primary shadow-sm" id="project-location" placeholder="Ciudad, Comuna" type="text"/>
+</div>
+</div>
+<!-- Description -->
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="project-desc">Descripción</label>
+<textarea class="w-full rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 text-sm focus:border-primary focus:ring-primary shadow-sm resize-none" id="project-desc" placeholder="Breve descripción del trabajo realizado..." rows="3"></textarea>
+</div>
+<!-- Image Upload -->
+<div class="space-y-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Imagen de portada</label>
+<div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-[28px]">cloud_upload</span>
+</div>
+<p class="text-sm font-medium text-slate-700 dark:text-slate-200">Haz clic o arrastra una imagen aquí</p>
+<p class="text-xs text-slate-400 mt-1">PNG, JPG hasta 5MB</p>
+</div>
+</div>
+<!-- Visibility Toggle -->
+<div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
+<div>
+<p class="text-sm font-medium text-navy dark:text-white">Visible en la página pública</p>
+<p class="text-xs text-slate-500">El proyecto será visible inmediatamente para los visitantes.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+<button class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-white border border-transparent hover:border-slate-200 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-all">
+                    Cancelar
+                </button>
+<button class="px-4 py-2 rounded-lg text-sm font-bold text-white bg-primary hover:bg-[#00b5c9] shadow-sm transition-all">
+                    Guardar proyecto
+                </button>
+</div>
+</div>
+</div>
+<!-- Example Delete Warning Modal (Smaller) - Not hidden for demonstration purposes in static view if needed, but usually hidden -->
+<!-- Ideally, in a static output, we shouldn't show overlapping modals. I will keep it hidden but structured correctly. -->
+<div class="hidden fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center p-4">
+<div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-xl shadow-2xl p-6 text-center">
+<div class="mx-auto size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-red-600 text-[24px]">warning</span>
+</div>
+<h3 class="text-lg font-bold text-navy dark:text-white mb-2">¿Eliminar proyecto?</h3>
+<p class="text-sm text-slate-500 mb-6">Esta acción no se puede deshacer. El proyecto será eliminado permanentemente.</p>
+<div class="flex gap-3 justify-center">
+<button class="flex-1 px-4 py-2 rounded-lg text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800">
+                    Cancelar
+                </button>
+<button class="flex-1 px-4 py-2 rounded-lg text-sm font-bold text-white bg-red-600 hover:bg-red-700">
+                    Eliminar
+                </button>
+</div>
+</div>
+</div>
+</body></html>

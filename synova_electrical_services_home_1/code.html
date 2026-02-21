@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SYNOVA - Soluciones Eléctricas en Santiago</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&amp;family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#00C8E0", // Electric Cyan
+                        secondary: "#1A3A8F", // Deep Blue
+                        "background-light": "#F5F7FA", // Off-white
+                        "background-alt": "#EFF6FF", // Very light blue
+                        "surface-white": "#FFFFFF", // Pure white for cards
+                        "text-navy": "#0F1A2E", // Dark Navy for titles
+                        "text-gray": "#6B7280", // Medium gray for body
+                        "footer-bg": "#0F1A2E", // Footer dark navy
+                    },
+                    fontFamily: {
+                        display: ["Montserrat", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px rgba(0, 200, 224, 0.25)',
+                        'glow-hover': '0 0 25px rgba(0, 200, 224, 0.4)',
+                        'subtle': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                    }
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+    @layer utilities {
+        .text-cyan-gradient {
+            background: linear-gradient(to right, #1A3A8F, #00C8E0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-cyan-gradient {
+            background: linear-gradient(135deg, #1A3A8F 0%, #00C8E0 100%);
+        }
+    }
+</style>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F7FA;
+            color: #6B7280;
+        }
+        h1, h2, h3, h4, h5, h6, .display-font {
+            font-family: 'Montserrat', sans-serif;
+            color: #0F1A2E;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-text-gray transition-colors duration-300">
+<nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-24">
+<div class="flex-shrink-0 flex items-center gap-3">
+<a href="../synova_electrical_services_home_1/code.html">
+<img alt="SYNOVA" class="h-12 w-auto" src="../logo.png"/>
+</a>
+</div>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-sm font-bold text-primary" href="../synova_electrical_services_home_1/code.html">Inicio</a>
+<a class="text-sm font-medium text-text-navy hover:text-primary transition-colors tracking-wide" href="../synova_nuestros_servicios_page/code.html">Servicios</a>
+<a class="text-sm font-medium text-text-navy hover:text-primary transition-colors tracking-wide" href="../synova_nuestros_proyectos_page/code.html">Proyectos</a>
+<a class="text-sm font-medium text-text-navy hover:text-primary transition-colors tracking-wide" href="../synova_electrical_services_home_2/code.html">Nosotros</a>
+<a class="text-sm font-medium text-text-navy hover:text-primary transition-colors tracking-wide" href="../synova_admin_private_login/code.html">Admin Login</a>
+<a class="text-sm font-medium text-text-navy hover:text-primary transition-colors tracking-wide" href="../synova_admin_dashboard_proyectos/code.html">Admin Panel</a>
+<a class="px-6 py-2.5 rounded bg-cyan-gradient text-white font-semibold text-sm hover:brightness-110 transition-all duration-300 shadow-lg hover:shadow-glow flex items-center gap-2" href="../synova_contacto_professional_page/code.html">
+<span class="material-symbols-outlined text-lg">call</span>
+                        Contacto
+                    </a>
+</div>
+<div class="md:hidden flex items-center">
+<button class="text-text-navy hover:text-primary" type="button">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-[#EFF6FF] to-[#F5F7FA]">
+<div class="absolute inset-0 z-0 opacity-10">
+<img alt="Industrial lighting abstract background" class="w-full h-full object-cover mix-blend-multiply grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsxDgGDLNnwtuJwaH1OW0SdsKIiE7Wi22khRCzc5b66OgDu3ZH3ZyY2RL6xaXjFgB1GGluWpsQXhGajsn4t0lgnKYUAZGHW2uEhANotGjnwGpAKjqzC0IDimqJNiUXrNVV33WBljZlXQoNwxoNC6-xRaWy20c1b-uqL4G7K1BJ9lqnz6Tmc-R6GADafE4J9ErcQz1RVSnNpipjj90YCZdkJnaO3g9kOa1EKbjvjcP3O_nPNdamXq7EO3NTL106NAW3rfaJO_5S6mcF"/>
+</div>
+<div class="absolute inset-0 bg-white/40"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<span class="inline-block py-1.5 px-4 rounded-full bg-white text-secondary text-xs font-bold tracking-widest mb-8 uppercase border border-secondary/20 shadow-sm">
+                Certificados SEC Clase A
+            </span>
+<h1 class="text-4xl md:text-5xl lg:text-7xl font-bold text-text-navy mb-8 leading-tight tracking-tight">
+                Soluciones Eléctricas <br/>
+<span class="text-cyan-gradient">Profesionales en Santiago</span>
+</h1>
+<p class="mt-4 max-w-2xl mx-auto text-xl text-text-gray font-light leading-relaxed">
+                Expertos en instalaciones de alto estándar, mantenimiento industrial y residencial. Seguridad certificada para su tranquilidad.
+            </p>
+<div class="mt-12 flex flex-col sm:flex-row justify-center gap-6">
+<a class="px-10 py-4 rounded bg-cyan-gradient text-white font-bold text-lg hover:brightness-110 transition-all shadow-lg hover:shadow-glow transform hover:-translate-y-1" href="#contacto">
+                    Cotiza ahora
+                </a>
+<a class="px-10 py-4 rounded border-2 border-secondary text-secondary font-bold text-lg hover:bg-secondary/5 transition-all" href="#servicios">
+                    Ver servicios
+                </a>
+</div>
+</div>
+</section>
+<section class="border-y border-gray-200 bg-white py-12 relative overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100">
+<div class="px-4">
+<p class="text-4xl font-bold text-secondary display-font">+10</p>
+<p class="text-xs text-text-gray mt-2 uppercase tracking-widest font-semibold">Años de experiencia</p>
+</div>
+<div class="px-4">
+<p class="text-4xl font-bold text-secondary display-font">500+</p>
+<p class="text-xs text-text-gray mt-2 uppercase tracking-widest font-semibold">Proyectos Ejecutados</p>
+</div>
+<div class="px-4">
+<p class="text-4xl font-bold text-secondary display-font">100%</p>
+<p class="text-xs text-text-gray mt-2 uppercase tracking-widest font-semibold">Certificación SEC</p>
+</div>
+<div class="px-4">
+<p class="text-4xl font-bold text-secondary display-font">24/7</p>
+<p class="text-xs text-text-gray mt-2 uppercase tracking-widest font-semibold">Soporte Técnico</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-background-alt relative" id="servicios">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-20">
+<h2 class="text-3xl md:text-5xl font-bold text-text-navy mb-6 tracking-tight">Nuestros Servicios</h2>
+<div class="h-1 w-24 bg-gradient-to-r from-secondary to-primary mx-auto rounded-full"></div>
+<p class="mt-6 text-text-gray max-w-2xl mx-auto text-lg font-light">Excelencia técnica y compromiso en cada proyecto eléctrico.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="group relative p-8 bg-surface-white rounded-lg border border-gray-200 hover:border-primary/50 transition-all duration-300 shadow-subtle hover:shadow-glow flex flex-col h-full">
+<div class="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-cyan-gradient group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">electrical_services</span>
+</div>
+<h3 class="text-xl font-bold text-text-navy mb-4 group-hover:text-secondary transition-colors">Instalaciones Eléctricas</h3>
+<p class="text-text-gray text-sm leading-relaxed mb-4 flex-grow font-light">
+                        Diseño y ejecución de proyectos eléctricos domiciliarios e industriales bajo normativa vigente.
+                    </p>
+</div>
+<div class="group relative p-8 bg-surface-white rounded-lg border border-gray-200 hover:border-primary/50 transition-all duration-300 shadow-subtle hover:shadow-glow flex flex-col h-full">
+<div class="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-cyan-gradient group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">verified</span>
+</div>
+<h3 class="text-xl font-bold text-text-navy mb-4 group-hover:text-secondary transition-colors">Certificaciones SEC</h3>
+<p class="text-text-gray text-sm leading-relaxed mb-4 flex-grow font-light">
+                        Regularización y certificación de instalaciones (TE1) ante la Superintendencia de Electricidad y Combustibles.
+                    </p>
+</div>
+<div class="group relative p-8 bg-surface-white rounded-lg border border-gray-200 hover:border-primary/50 transition-all duration-300 shadow-subtle hover:shadow-glow flex flex-col h-full">
+<div class="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-cyan-gradient group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+</div>
+<h3 class="text-xl font-bold text-text-navy mb-4 group-hover:text-secondary transition-colors">Emergencias 24/7</h3>
+<p class="text-text-gray text-sm leading-relaxed mb-4 flex-grow font-light">
+                        Respuesta inmediata ante cortes de energía, cortocircuitos y fallas críticas en Santiago.
+                    </p>
+</div>
+<div class="group relative p-8 bg-surface-white rounded-lg border border-gray-200 hover:border-primary/50 transition-all duration-300 shadow-subtle hover:shadow-glow flex flex-col h-full">
+<div class="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-cyan-gradient group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">build</span>
+</div>
+<h3 class="text-xl font-bold text-text-navy mb-4 group-hover:text-secondary transition-colors">Mantención Preventiva</h3>
+<p class="text-text-gray text-sm leading-relaxed mb-4 flex-grow font-light">
+                        Planes de mantenimiento para tableros, sistemas de iluminación y redes de distribución.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-background-light relative overflow-hidden">
+<div class="absolute right-0 bottom-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div class="relative rounded-lg overflow-hidden group shadow-xl">
+<div class="absolute inset-0 border border-white/20 rounded-lg z-20 pointer-events-none"></div>
+<img alt="Electrician working on panel" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpe6RelrGCFnl9zag4R1lAAazDXh42QKxnn3w-3ySrOAKh_LVrL_r36cvnNsyQ1Vfx6XR4LhWq2H1MiATt4ovx9GwbFLhFbEZOdweD5cUPyHNOy3bksYE9tQ9QAxJcuWbj5qC9sgjGbMN83vTkxobWSJJYQ1k2Jav0p3HdZF_QKQ8rYzsfzn7ycxyAhef9JAVs11IUpTc82_NDB60P0xlqvmXOyVjuXTMd79HPuNyVTJ_aipAAEaJA_3RYmMTenaYrbaYIC8iUNzA5"/>
+</div>
+<div>
+<h2 class="text-3xl md:text-4xl font-bold text-text-navy mb-2">¿Por qué elegir a SYNOVA?</h2>
+<div class="h-1 w-16 bg-secondary mb-10 rounded-full"></div>
+<div class="space-y-10">
+<div class="flex group">
+<div class="flex-shrink-0">
+<div class="flex items-center justify-center h-12 w-12 rounded bg-white text-secondary border border-gray-200 shadow-sm group-hover:bg-secondary group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined">badge</span>
+</div>
+</div>
+<div class="ml-6">
+<h4 class="text-xl font-bold text-text-navy mb-2 group-hover:text-secondary transition-colors">Instaladores Certificados SEC</h4>
+<p class="text-text-gray font-light leading-relaxed">
+                                    Todo nuestro personal cuenta con licencia SEC vigente, asegurando cumplimiento normativo total.
+                                </p>
+</div>
+</div>
+<div class="flex group">
+<div class="flex-shrink-0">
+<div class="flex items-center justify-center h-12 w-12 rounded bg-white text-secondary border border-gray-200 shadow-sm group-hover:bg-secondary group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+</div>
+<div class="ml-6">
+<h4 class="text-xl font-bold text-text-navy mb-2 group-hover:text-secondary transition-colors">Respuesta Rápida y Puntualidad</h4>
+<p class="text-text-gray font-light leading-relaxed">
+                                    Valoramos su tiempo. Llegamos a la hora acordada y entregamos los proyectos en los plazos establecidos.
+                                </p>
+</div>
+</div>
+<div class="flex group">
+<div class="flex-shrink-0">
+<div class="flex items-center justify-center h-12 w-12 rounded bg-white text-secondary border border-gray-200 shadow-sm group-hover:bg-secondary group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined">security</span>
+</div>
+</div>
+<div class="ml-6">
+<h4 class="text-xl font-bold text-text-navy mb-2 group-hover:text-secondary transition-colors">Garantía en Todos los Trabajos</h4>
+<p class="text-text-gray font-light leading-relaxed">
+                                    Ofrecemos garantía escrita sobre la mano de obra y materiales utilizados en cada instalación.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-background-alt relative">
+<div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold text-text-navy mb-4">Lo que dicen nuestros clientes</h2>
+<div class="h-px w-full max-w-xs bg-gradient-to-r from-transparent via-secondary/20 to-transparent mx-auto mt-4"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface-white p-10 rounded-lg border border-gray-200 hover:border-primary/40 transition-all duration-300 shadow-subtle hover:shadow-glow group">
+<div class="flex text-yellow-500 mb-6">
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+</div>
+<p class="text-text-gray italic mb-8 font-light leading-relaxed group-hover:text-text-navy transition-colors">"Solicité una regularización TE1 para mi local comercial. El proceso fue transparente y rápido. Totalmente recomendados por su profesionalismo."</p>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm">RF</div>
+<div>
+<p class="font-bold text-text-navy text-sm">Roberto Fernández</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Providencia</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-white p-10 rounded-lg border border-gray-200 hover:border-primary/40 transition-all duration-300 shadow-subtle hover:shadow-glow group">
+<div class="flex text-yellow-500 mb-6">
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+</div>
+<p class="text-text-gray italic mb-8 font-light leading-relaxed group-hover:text-text-navy transition-colors">"Excelente servicio de emergencia. Tuvimos un corte total en la oficina un domingo y llegaron en menos de una hora. Nos salvaron la semana."</p>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm">CS</div>
+<div>
+<p class="font-bold text-text-navy text-sm">Camila Soto</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Las Condes</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-white p-10 rounded-lg border border-gray-200 hover:border-primary/40 transition-all duration-300 shadow-subtle hover:shadow-glow group">
+<div class="flex text-yellow-500 mb-6">
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+<span class="material-symbols-outlined text-sm fill-current">star</span>
+</div>
+<p class="text-text-gray italic mb-8 font-light leading-relaxed group-hover:text-text-navy transition-colors">"Hicieron toda la iluminación LED de mi departamento nuevo. Muy prolijos, limpios y respetuosos. El acabado final es de lujo."</p>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm">AV</div>
+<div>
+<p class="font-bold text-text-navy text-sm">Andrés Valenzuela</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Vitacura</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-white border-y border-gray-100 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-secondary/5 to-primary/5"></div>
+<div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+<h2 class="text-3xl md:text-5xl font-bold text-text-navy mb-6">¿Necesitas un electricista de confianza?</h2>
+<p class="text-lg text-text-gray mb-10 font-light max-w-2xl mx-auto">
+                Contáctanos hoy para una evaluación gratuita. Garantizamos soluciones seguras y eficientes para tu hogar o empresa.
+            </p>
+<a class="inline-block px-12 py-4 rounded bg-cyan-gradient text-white font-bold text-lg hover:brightness-110 transition-all shadow-lg hover:shadow-glow transform hover:-translate-y-1" href="#contacto">
+                Contactar Ahora
+            </a>
+</div>
+</section>
+<footer class="bg-[#0F1A2E] border-t border-white/5 pt-16 pb-8">
+<div class="mx-auto max-w-7xl px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+<div class="col-span-1 lg:col-span-1">
+<div class="flex items-center gap-2 mb-6">
+<img alt="SYNOVA" class="h-14 w-auto" src="../logo.png"/>
+</div>
+<p class="text-sm text-slate-400 leading-relaxed mb-6">
+                        Soluciones eléctricas de alto estándar para industrias y residencias. Certificación, seguridad y compromiso en cada proyecto.
+                    </p>
+<div class="flex gap-4">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+<path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path>
+</svg>
+</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+<path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.373c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" fill-rule="evenodd"></path>
+</svg>
+</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+<path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
+</svg>
+</a>
+</div>
+</div>
+<div class="col-span-1">
+<h3 class="text-sm font-semibold leading-6 text-white uppercase tracking-wider mb-4">Empresa</h3>
+<ul class="space-y-3" role="list">
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Nosotros</a></li>
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Certificaciones</a></li>
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Trabaja con nosotros</a></li>
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Blog</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h3 class="text-sm font-semibold leading-6 text-white uppercase tracking-wider mb-4">Servicios</h3>
+<ul class="space-y-3" role="list">
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Residencial</a></li>
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Industrial</a></li>
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Certificación SEC</a></li>
+<li><a class="text-sm leading-6 text-slate-400 hover:text-primary" href="#">Mantención</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h3 class="text-sm font-semibold leading-6 text-white uppercase tracking-wider mb-4">Contacto</h3>
+<ul class="space-y-3" role="list">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">location_on</span>
+<span class="text-sm text-slate-400">Av. Providencia 1234, Santiago, Chile</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[18px]">call</span>
+<span class="text-sm text-slate-400">+56 9 1234 5678</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[18px]">mail</span>
+<span class="text-sm text-slate-400">contacto@synova.cl</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-slate-500 order-2 md:order-1">
+                    © 2024 SYNOVA Servicios Eléctricos. Todos los derechos reservados.
+                </p>
+<div class="flex gap-6 order-1 md:order-2">
+<a class="text-xs text-slate-500 hover:text-slate-300" href="#">Privacidad</a>
+<a class="text-xs text-slate-500 hover:text-slate-300" href="#">Términos</a>
+<a class="text-xs text-slate-500 hover:text-slate-300" href="#">Mapa del sitio</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>
