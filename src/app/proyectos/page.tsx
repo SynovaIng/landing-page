@@ -31,7 +31,7 @@ export default function ProyectosPage() {
   return (
     <div className="pt-24">
       {/* ── Hero ── */}
-      <main className="flex-grow pt-8 pb-20 bg-[#F5F7FA]">
+      <main className="grow pt-8 pb-20 bg-[#F5F7FA]">
         <div className="max-w-7xl mx-auto px-6">
           {/* Header + filters */}
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
@@ -59,7 +59,7 @@ export default function ProyectosPage() {
                   onClick={() => setActive(cat)}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm ${
                     active === cat
-                      ? "bg-gradient-to-r from-[#1A3A8F] to-[#00C8E0] text-white font-bold shadow-md"
+                      ? "bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] text-white font-bold shadow-md"
                       : "bg-white border border-gray-200 text-[#0F1A2E] hover:border-[#1A3A8F] hover:text-[#1A3A8F]"
                   }`}
                 >

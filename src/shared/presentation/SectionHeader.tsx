@@ -22,7 +22,7 @@ export default function SectionHeader({
         {title}
       </h2>
       <div
-        className={`h-1 w-24 bg-gradient-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full ${centered ? "mx-auto" : ""}`}
+        className={`h-1 w-24 bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full ${centered ? "mx-auto" : ""}`}
       />
       {subtitle && (
         <p className="mt-6 text-[#6B7280] max-w-2xl text-lg font-light leading-relaxed mx-auto">

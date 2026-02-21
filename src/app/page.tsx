@@ -43,7 +43,7 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-[#EFF6FF] to-[#F5F7FA]">
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center bg-linear-to-br from-[#EFF6FF] to-[#F5F7FA]">
         <div className="absolute inset-0 z-0 opacity-10">
           <Image
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsxDgGDLNnwtuJwaH1OW0SdsKIiE7Wi22khRCzc5b66OgDu3ZH3ZyY2RL6xaXjFgB1GGluWpsQXhGajsn4t0lgnKYUAZGHW2uEhANotGjnwGpAKjqzC0IDimqJNiUXrNVV33WBljZlXQoNwxoNC6-xRaWy20c1b-uqL4G7K1BJ9lqnz6Tmc-R6GADafE4J9ErcQz1RVSnNpipjj90YCZdkJnaO3g9kOa1EKbjvjcP3O_nPNdamXq7EO3NTL106NAW3rfaJO_5S6mcF"
@@ -112,7 +112,7 @@ export default function HomePage() {
 
       {/* ── Why Us ── */}
       <section className="py-24 bg-[#F5F7FA] relative overflow-hidden">
-        <div className="absolute right-0 bottom-0 w-1/2 h-full bg-gradient-to-l from-[#00C8E0]/5 to-transparent pointer-events-none" />
+        <div className="absolute right-0 bottom-0 w-1/2 h-full bg-linear-to-l from-[#00C8E0]/5 to-transparent pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div className="relative rounded-lg overflow-hidden group shadow-xl">
@@ -132,7 +132,7 @@ export default function HomePage() {
               <div className="space-y-10">
                 {whyUs.map((item) => (
                   <div key={item.title} className="flex group">
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       <div className="flex items-center justify-center h-12 w-12 rounded bg-white text-[#1A3A8F] border border-gray-200 shadow-sm group-hover:bg-[#1A3A8F] group-hover:text-white transition-all duration-300">
                         <span className="material-symbols-outlined">{item.icon}</span>
                       </div>
@@ -165,7 +165,7 @@ export default function HomePage() {
 
       {/* ── CTA ── */}
       <section className="py-24 bg-white border-y border-gray-100 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1A3A8F]/5 to-[#00C8E0]/5" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#1A3A8F]/5 to-[#00C8E0]/5" />
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold text-[#0F1A2E] mb-6">
             ¿Necesitas un electricista de confianza?

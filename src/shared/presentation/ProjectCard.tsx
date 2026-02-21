@@ -14,7 +14,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div className="group relative overflow-hidden rounded-2xl bg-white cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-[#00C8E0]/20 transition-all duration-500 border border-gray-100">
       {/* Image */}
-      <div className="aspect-[4/3] w-full overflow-hidden relative">
+      <div className="aspect-4/3 w-full overflow-hidden relative">
         <div
           className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
           style={{ backgroundImage: `url('${project.imageUrl}')` }}

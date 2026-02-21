@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ContactoPage() {
   return (
     <div className="pt-24">
-      <main className="flex-grow bg-[#F5F7FA]">
+      <main className="grow bg-[#F5F7FA]">
         {/* ── Page header ── */}
         <section className="relative overflow-hidden pt-20 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-[#00C8E0]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -22,7 +22,7 @@ export default function ContactoPage() {
             <h1 className="text-4xl font-extrabold tracking-tight text-[#0F1A2E] sm:text-5xl lg:text-6xl">
               Contáctanos
             </h1>
-            <div className="mt-4 mx-auto h-1 w-24 bg-gradient-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full" />
+            <div className="mt-4 mx-auto h-1 w-24 bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full" />
             <p className="mt-6 text-lg leading-8 text-[#6B7280] max-w-2xl mx-auto">
               Estamos listos para ayudarte. Escríbenos para cotizar tu proyecto
               o llámanos directamente para emergencias.
@@ -160,7 +160,7 @@ export default function ContactoPage() {
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#1A3A8F] to-[#00C8E0] px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl transition-all"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl transition-all"
                     >
                       <span>Enviar mensaje</span>
                       <span className="material-symbols-outlined text-[20px]">send</span>
@@ -179,7 +179,7 @@ export default function ContactoPage() {
               {/* Teléfono */}
               <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[#1A3A8F]/30 hover:shadow-md">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#1A3A8F] to-[#00C8E0] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
                     <span className="material-symbols-outlined text-2xl">phone_in_talk</span>
                   </div>
                   <div>
@@ -197,7 +197,7 @@ export default function ContactoPage() {
               {/* WhatsApp */}
               <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[#25D366]/30 hover:shadow-md">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#25D366] to-[#128C7E] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
                     <span className="material-symbols-outlined text-2xl">chat</span>
                   </div>
                   <div>
@@ -216,7 +216,7 @@ export default function ContactoPage() {
               {/* Email */}
               <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[#1A3A8F]/30 hover:shadow-md">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#1A3A8F] to-[#00C8E0] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
                     <span className="material-symbols-outlined text-2xl">mail</span>
                   </div>
                   <div>
@@ -274,7 +274,7 @@ export default function ContactoPage() {
           {/* Card overlay */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 md:left-12 md:translate-x-0 bg-white/95 backdrop-blur-md border border-slate-200 p-5 rounded-xl shadow-xl max-w-xs w-full z-20">
             <div className="flex items-start gap-4">
-              <div className="bg-gradient-to-br from-[#1A3A8F]/10 to-[#00C8E0]/10 p-2 rounded-lg">
+              <div className="bg-linear-to-br from-[#1A3A8F]/10 to-[#00C8E0]/10 p-2 rounded-lg">
                 <span className="material-symbols-outlined text-[#1A3A8F] text-2xl">business</span>
               </div>
               <div>

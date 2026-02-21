@@ -38,7 +38,7 @@ export default function ServiciosPage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#0F1A2E] leading-tight">
               Nuestros Servicios
             </h1>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full" />
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1 bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full" />
           </div>
           <p className="text-[#6B7280] text-lg md:text-xl font-medium max-w-2xl mt-4 leading-relaxed">
             Soluciones eléctricas completas para hogares, empresas e industrias
@@ -59,14 +59,10 @@ export default function ServiciosPage() {
       {/* ── Sectores ── */}
       <section className="bg-white border-y border-gray-200 py-20 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="text-[#1A3A8F] font-bold tracking-wider text-sm uppercase">
-              Sectores que atendemos
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0F1A2E] mt-2">
-              Experiencia en todos los niveles
-            </h2>
-          </div>
+          <SectionHeader
+            eyebrow="Sectores que atendemos"
+            title="Experiencia en todos los niveles"
+          />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
             {sectors.map((s) => (
               <div key={s.title} className="px-4 py-6 flex flex-col items-center">
@@ -104,14 +100,14 @@ export default function ServiciosPage() {
               <p className="text-[#6B7280]">Instaladores autorizados por la SEC Clase A.</p>
             </div>
           </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
+          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-gray-300 to-transparent" />
           <div className="text-center md:text-left">
             <p className="text-4xl lg:text-5xl font-black text-[#1A3A8F] mb-1">10+</p>
             <p className="text-[#0F1A2E] font-medium uppercase tracking-wide text-sm">
               Años de Experiencia
             </p>
           </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
+          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-gray-300 to-transparent" />
           <div className="text-center md:text-left">
             <p className="text-4xl lg:text-5xl font-black text-[#1A3A8F] mb-1">500+</p>
             <p className="text-[#0F1A2E] font-medium uppercase tracking-wide text-sm">
@@ -124,7 +120,7 @@ export default function ServiciosPage() {
       {/* ── CTA ── */}
       <section className="py-24 px-6 bg-[#F5F7FA] border-t border-gray-200">
         <div className="max-w-5xl mx-auto bg-white rounded-2xl p-8 md:p-16 text-center border border-gray-200 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-slate-50 to-transparent pointer-events-none" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-linear-to-b from-slate-50 to-transparent pointer-events-none" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold text-[#0F1A2E] mb-4">
               ¿No encuentras lo que buscas?

@@ -67,7 +67,7 @@ export default function NosotrosPage() {
     <div className="pt-24">
       {/* ── Page Hero ── */}
       <div className="pt-16 pb-16 lg:pt-24 lg:pb-20 bg-[#F5F7FA] text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-[#F5F7FA]" />
+        <div className="absolute inset-0 bg-linear-to-b from-white/60 to-[#F5F7FA]" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0F1A2E] mb-6 tracking-tight relative inline-block">
             Nosotros

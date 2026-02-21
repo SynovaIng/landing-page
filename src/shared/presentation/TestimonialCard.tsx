@@ -6,7 +6,7 @@ interface TestimonialCardProps {
 
 export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
-    <div className="bg-white p-10 rounded-lg border border-gray-200 hover:border-[#00C8E0]/40 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(0,200,224,0.25)] group">
+    <div className="bg-white p-10 rounded-lg border border-gray-200 hover:border-[#00C8E0]/40 transition-all duration-300 shadow-sm hover:shadow-glow group">
       {/* Stars */}
       <div className="flex text-yellow-500 mb-6">
         {Array.from({ length: testimonial.rating }).map((_, i) => (
@@ -27,7 +27,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
       {/* Author */}
       <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A3A8F] to-[#00C8E0] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+        <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] flex items-center justify-center text-white font-bold text-sm shrink-0">
           {testimonial.authorInitials}
         </div>
         <div>

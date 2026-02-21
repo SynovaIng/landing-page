@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#1A3A8F] to-[#00C8E0] shadow-lg mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] shadow-lg mb-4">
               <span className="material-symbols-outlined text-white text-3xl">
                 bolt
               </span>
@@ -101,7 +101,7 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              className="mt-2 w-full py-3 px-6 rounded-lg bg-gradient-to-r from-[#1A3A8F] to-[#00C8E0] text-white font-bold text-base shadow-lg shadow-[#00C8E0]/20 hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              className="mt-2 w-full py-3 px-6 rounded-lg bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] text-white font-bold text-base shadow-lg shadow-[#00C8E0]/20 hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
             >
               Iniciar sesión
               <span className="material-symbols-outlined text-[20px]">
