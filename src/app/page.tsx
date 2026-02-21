@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import SectionHeader from "@/shared/presentation/SectionHeader";
-import StatCard from "@/shared/presentation/StatCard";
+import StatsBar from "@/shared/presentation/StatsBar";
 import ServiceCard from "@/shared/presentation/ServiceCard";
 import TestimonialCard from "@/shared/presentation/TestimonialCard";
 import Button from "@/shared/presentation/Button";
@@ -80,15 +80,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Stats Bar ── */}
-      <section className="border-y border-gray-200 bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100">
-            {stats.map((s) => (
-              <StatCard key={s.label} value={s.value} label={s.label} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <StatsBar stats={stats} />
 
       {/* ── Servicios (preview) ── */}
       <section className="py-24 bg-[#EFF6FF]" id="servicios">
