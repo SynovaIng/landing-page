@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ── Colores de marca ── */
+  --color-primary: #00c8e0;
+  --color-primary-dark: #00a0b3;
+  --color-secondary: #1a3a8f;
+  --color-secondary-dark: #142d70;
+
+  /* ── Fondos ── */
+  --color-background-light: #f5f7fa;
+  --color-background-alt: #eff6ff;
+  --color-surface-white: #ffffff;
+  --color-footer-bg: #0f1a2e;
+
+  /* ── Texto ── */
+  --color-text-navy: #0f1a2e;
+  --color-text-gray: #6b7280;
+
+  /* ── Fuentes ── */
+  --font-display: var(--font-montserrat), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+
+  /* ── Sombras ── */
+  --shadow-glow: 0 0 15px rgba(0, 200, 224, 0.25);
+  --shadow-glow-hover: 0 0 25px rgba(0, 200, 224, 0.4);
+  --shadow-subtle:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Gradientes reutilizables ── */
+@layer utilities {
+  .text-cyan-gradient {
+    background: linear-gradient(to right, #1a3a8f, #00c8e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .bg-cyan-gradient {
+    background: linear-gradient(135deg, #1a3a8f 0%, #00c8e0 100%);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  .shadow-glow-hover:hover {
+    box-shadow: var(--shadow-glow-hover);
+  }
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f5f7fa;
+  color: #6b7280;
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-montserrat), sans-serif;
+  color: #0f1a2e;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f7fa;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00c8e0;
+}
