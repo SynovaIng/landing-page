@@ -12,7 +12,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
       <div className="absolute top-0 right-0 w-32 h-32 bg-[#1A3A8F]/5 rounded-bl-full -mr-8 -mt-8 group-hover:bg-[#1A3A8F]/10 blur-xl transition-all" />
 
       {/* Icon */}
-      <div className="w-14 h-14 mb-6 rounded-lg bg-[#EFF6FF] border border-[#00C8E0]/20 flex items-center justify-center text-[#1A3A8F] group-hover:bg-cyan-gradient group-hover:text-white group-hover:border-transparent transition-all duration-300 shadow-sm relative z-10">
+      <div className="w-14 h-14 mb-6 rounded-full bg-[#EFF6FF] border border-[#00C8E0]/20 flex items-center justify-center text-[#1A3A8F] group-hover:bg-gradient-to-br group-hover:from-[#1A3A8F] group-hover:to-[#00C8E0] group-hover:text-white group-hover:border-transparent transition-all duration-300 shadow-sm relative z-10">
         <span className="material-symbols-outlined text-3xl">{service.icon}</span>
       </div>
 
