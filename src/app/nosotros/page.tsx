@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import SectionHeader from "@/shared/presentation/SectionHeader";
 import Button from "@/shared/presentation/Button";
+import ValueCard from "@/shared/presentation/ValueCard";
 
 export const metadata: Metadata = {
   title: "Nosotros",
@@ -135,21 +136,12 @@ export default function NosotrosPage() {
           <SectionHeader title="Nuestros Valores" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {values.map((v) => (
-              <div
+              <ValueCard
                 key={v.title}
-                className="group p-8 bg-white rounded-lg border border-gray-200 hover:border-primary/50 hover:shadow-xl transition-all duration-300 relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                  <span className="material-symbols-outlined text-9xl text-navy">
-                    {v.icon}
-                  </span>
-                </div>
-                <div className="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-cyan-gradient group-hover:text-white transition-colors duration-300 shadow-sm relative z-10">
-                  <span className="material-symbols-outlined text-3xl">{v.icon}</span>
-                </div>
-                <h3 className="text-xl font-bold text-navy mb-4 relative z-10">{v.title}</h3>
-                <p className="text-muted text-sm leading-relaxed relative z-10">{v.desc}</p>
-              </div>
+                icon={v.icon}
+                title={v.title}
+                description={v.desc}
+              />
             ))}
           </div>
         </div>
