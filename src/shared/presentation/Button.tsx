@@ -18,8 +18,8 @@ const variantClasses: Record<Variant, string> = {
   primary:
     "bg-cyan-gradient text-white font-bold hover:brightness-110 shadow-lg hover:shadow-glow",
   outline:
-    "border-2 border-[#1A3A8F] text-[#1A3A8F] font-bold hover:bg-[#1A3A8F]/5",
-  ghost: "text-[#1A3A8F] font-medium hover:text-[#00C8E0]",
+    "border-2 border-secondary text-secondary font-bold hover:bg-secondary/5",
+  ghost: "text-secondary font-medium hover:text-primary",
 };
 
 const sizeClasses: Record<Size, string> = {

@@ -7,15 +7,17 @@
   --color-secondary: #1a3a8f;
   --color-secondary-dark: #142d70;
 
+  /* ── Texto & Navy ── */
+  --color-navy: #0f1a2e;
+  --color-muted: #6b7280;
+
   /* ── Fondos ── */
   --color-background-light: #f5f7fa;
   --color-background-alt: #eff6ff;
-  --color-surface-white: #ffffff;
-  --color-footer-bg: #0f1a2e;
 
-  /* ── Texto ── */
-  --color-text-navy: #0f1a2e;
-  --color-text-gray: #6b7280;
+  /* ── Categorías de proyecto ── */
+  --color-category-comercial: #0047ab;
+  --color-category-industrial: #0f4c75;
 
   /* ── Fuentes ── */
   --font-display: var(--font-montserrat), sans-serif;
@@ -31,13 +33,13 @@
 /* ── Gradientes reutilizables ── */
 @layer utilities {
   .text-cyan-gradient {
-    background: linear-gradient(to right, #1a3a8f, #00c8e0);
+    background: linear-gradient(to right, var(--color-secondary), var(--color-primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .bg-cyan-gradient {
-    background: linear-gradient(135deg, #1a3a8f 0%, #00c8e0 100%);
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
   }
   .shadow-glow {
     box-shadow: var(--shadow-glow);
@@ -53,8 +55,8 @@ html {
 }
 
 body {
-  background-color: #f5f7fa;
-  color: #6b7280;
+  background-color: var(--color-background-light);
+  color: var(--color-muted);
   font-family: var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -66,7 +68,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-montserrat), sans-serif;
-  color: #0f1a2e;
+  color: var(--color-navy);
 }
 
 /* ── Scrollbar ── */
@@ -74,12 +76,12 @@ h6 {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f5f7fa;
+  background: var(--color-background-light);
 }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00c8e0;
+  background: var(--color-primary);
 }

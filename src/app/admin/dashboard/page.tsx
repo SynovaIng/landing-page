@@ -7,10 +7,10 @@ export const metadata: Metadata = {
 
 export default function AdminDashboardPage() {
   return (
-    <div className="min-h-screen bg-[#0F1A2E] flex flex-col text-white p-8">
+    <div className="min-h-screen bg-navy flex flex-col text-white p-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-10">
-        <div className="w-8 h-8 rounded bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] flex items-center justify-center">
+        <div className="w-8 h-8 rounded bg-linear-to-br from-secondary to-primary flex items-center justify-center">
           <span className="material-symbols-outlined text-white text-lg">bolt</span>
         </div>
         <span className="font-bold text-lg tracking-wide">SYNOVA Admin</span>
@@ -19,7 +19,7 @@ export default function AdminDashboardPage() {
       {/* Placeholder content */}
       <div className="grow flex flex-col items-center justify-center gap-6 text-center">
         <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-          <span className="material-symbols-outlined text-5xl text-[#00C8E0]">
+          <span className="material-symbols-outlined text-5xl text-primary">
             construction
           </span>
         </div>

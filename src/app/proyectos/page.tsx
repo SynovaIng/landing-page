@@ -31,21 +31,21 @@ export default function ProyectosPage() {
   return (
     <div className="pt-24">
       {/* ── Hero ── */}
-      <main className="grow pt-8 pb-20 bg-[#F5F7FA]">
+      <main className="grow pt-8 pb-20 bg-background-light">
         <div className="max-w-7xl mx-auto px-6">
           {/* Header + filters */}
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-4">
-                <span className="h-px w-12 bg-[#1A3A8F]" />
-                <span className="text-[#1A3A8F] uppercase tracking-widest text-xs font-bold">
+                <span className="h-px w-12 bg-secondary" />
+                <span className="text-secondary uppercase tracking-widest text-xs font-bold">
                   Portafolio
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-[#0F1A2E] leading-tight mb-4">
+              <h1 className="text-4xl md:text-6xl font-black text-navy leading-tight mb-4">
                 Nuestros Proyectos
               </h1>
-              <p className="text-[#6B7280] text-lg md:text-xl mt-4 leading-relaxed">
+              <p className="text-muted text-lg md:text-xl mt-4 leading-relaxed">
                 Excelencia eléctrica y precisión técnica en cada instalación a lo
                 largo de Santiago.
               </p>
@@ -59,8 +59,8 @@ export default function ProyectosPage() {
                   onClick={() => setActive(cat)}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm ${
                     active === cat
-                      ? "bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] text-white font-bold shadow-md"
-                      : "bg-white border border-gray-200 text-[#0F1A2E] hover:border-[#1A3A8F] hover:text-[#1A3A8F]"
+                      ? "bg-linear-to-r from-secondary to-primary text-white font-bold shadow-md"
+                      : "bg-white border border-gray-200 text-navy hover:border-secondary hover:text-secondary"
                   }`}
                 >
                   {cat}
@@ -91,11 +91,11 @@ export default function ProyectosPage() {
         {/* CTA */}
         <div className="max-w-7xl mx-auto px-6 py-24 text-center">
           <div className="max-w-3xl mx-auto relative">
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#00C8E0]/10 rounded-full blur-3xl" />
-            <h2 className="text-3xl md:text-5xl font-bold text-[#0F1A2E] mb-6 relative z-10">
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
+            <h2 className="text-3xl md:text-5xl font-bold text-navy mb-6 relative z-10">
               ¿Quieres un trabajo como estos?
             </h2>
-            <p className="text-[#6B7280] text-lg mb-10 relative z-10">
+            <p className="text-muted text-lg mb-10 relative z-10">
               Contamos con el equipo y la experiencia para llevar tu proyecto
               eléctrico al siguiente nivel.
             </p>

@@ -11,21 +11,21 @@ export const metadata: Metadata = {
 export default function ContactoPage() {
   return (
     <div className="pt-24">
-      <main className="grow bg-[#F5F7FA]">
+      <main className="grow bg-background-light">
         {/* ── Page header ── */}
         <section className="relative overflow-hidden pt-20 pb-12 px-4 sm:px-6 lg:px-8">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-[#00C8E0]/5 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
           <div className="relative mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center justify-center rounded-full border border-[#1A3A8F]/20 bg-[#1A3A8F]/5 px-3 py-1 mb-6">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#1A3A8F]">
+            <div className="inline-flex items-center justify-center rounded-full border border-secondary/20 bg-secondary/5 px-3 py-1 mb-6">
+              <span className="text-xs font-semibold uppercase tracking-wider text-secondary">
                 Atención al cliente
               </span>
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-[#0F1A2E] sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-extrabold tracking-tight text-navy sm:text-5xl lg:text-6xl">
               Contáctanos
             </h1>
-            <div className="mt-4 mx-auto h-1 w-24 bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] rounded-full" />
-            <p className="mt-6 text-lg leading-8 text-[#6B7280] max-w-2xl mx-auto">
+            <div className="mt-4 mx-auto h-1 w-24 bg-linear-to-r from-secondary to-primary rounded-full" />
+            <p className="mt-6 text-lg leading-8 text-muted max-w-2xl mx-auto">
               Estamos listos para ayudarte. Escríbenos para cotizar tu proyecto
               o llámanos directamente para emergencias.
             </p>
@@ -33,7 +33,7 @@ export default function ContactoPage() {
         </section>
 
         {/* ── Formulario + info ── */}
-        <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-[#F5F7FA]">
+        <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-background-light">
           <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             {/* Form */}
             <div className="lg:col-span-7 xl:col-span-8">
@@ -63,7 +63,7 @@ export default function ContactoPage() {
                           type="text"
                           autoComplete="name"
                           placeholder="Juan Pérez"
-                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-[#00C8E0] sm:text-sm transition-all"
+                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         />
                       </div>
                     </div>
@@ -86,7 +86,7 @@ export default function ContactoPage() {
                           type="tel"
                           autoComplete="tel"
                           placeholder="+56 9 1234 5678"
-                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-[#00C8E0] sm:text-sm transition-all"
+                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         />
                       </div>
                     </div>
@@ -111,7 +111,7 @@ export default function ContactoPage() {
                           type="email"
                           autoComplete="email"
                           placeholder="juan@empresa.com"
-                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-[#00C8E0] sm:text-sm transition-all"
+                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         />
                       </div>
                     </div>
@@ -131,7 +131,7 @@ export default function ContactoPage() {
                         <select
                           id="service"
                           name="service"
-                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 pr-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-[#00C8E0] sm:text-sm transition-all"
+                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 pr-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         >
                           <option>Instalación Eléctrica</option>
                           <option>Certificación SEC</option>
@@ -155,20 +155,20 @@ export default function ContactoPage() {
                         name="message"
                         rows={4}
                         placeholder="Describa brevemente su requerimiento..."
-                        className="block w-full rounded-lg border-0 bg-white py-3 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-[#00C8E0] sm:text-sm transition-all"
+                        className="block w-full rounded-lg border-0 bg-white py-3 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                       />
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl transition-all"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-linear-to-r from-secondary to-primary px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl transition-all"
                     >
                       <span>Enviar mensaje</span>
                       <span className="material-symbols-outlined text-[20px]">send</span>
                     </button>
                     <div className="flex items-center gap-2 text-slate-500 text-sm">
-                      <span className="material-symbols-outlined text-[#1A3A8F] text-[18px]">verified</span>
+                      <span className="material-symbols-outlined text-secondary text-[18px]">verified</span>
                       <span>Respondemos en menos de 24 horas</span>
                     </div>
                   </div>
@@ -182,13 +182,13 @@ export default function ContactoPage() {
               <ContactCard
                 title="Llámanos"
                 subtitle="Atención inmediata para proyectos."
-                iconGradient="from-[#1A3A8F] to-[#00C8E0]"
-                hoverBorderColor="hover:border-[#1A3A8F]/30"
+                iconGradient="from-secondary to-primary"
+                hoverBorderColor="hover:border-secondary/30"
                 icon={<span className="material-symbols-outlined text-2xl">phone_in_talk</span>}
                 action={
                   <a
                     href="tel:+56912345678"
-                    className="mt-3 inline-block text-xl font-bold text-[#1A3A8F] hover:text-[#00C8E0] transition-colors"
+                    className="mt-3 inline-block text-xl font-bold text-secondary hover:text-primary transition-colors"
                   >
                     +56 9 1234 5678
                   </a>
@@ -226,15 +226,15 @@ export default function ContactoPage() {
               <ContactCard
                 title="Email"
                 subtitle="Envíanos tus planos o consultas."
-                iconGradient="from-[#1A3A8F] to-[#00C8E0]"
-                hoverBorderColor="hover:border-[#1A3A8F]/30"
+                iconGradient="from-secondary to-primary"
+                hoverBorderColor="hover:border-secondary/30"
                 icon={<span className="material-symbols-outlined text-2xl">mail</span>}
                 action={<CopyEmailButton email="contacto@synova.cl" />}
               />
               {/* Horarios */}
               <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-                  <span className="material-symbols-outlined text-[#1A3A8F]">schedule</span>
+                  <span className="material-symbols-outlined text-secondary">schedule</span>
                   Horario de Atención
                 </h3>
                 <div className="space-y-3">
@@ -247,7 +247,7 @@ export default function ContactoPage() {
                     <span className="font-medium text-slate-700">09:00 - 14:00 hrs</span>
                   </div>
                   <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-sm font-bold text-[#1A3A8F]">Emergencias Eléctricas</span>
+                    <span className="text-sm font-bold text-secondary">Emergencias Eléctricas</span>
                     <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-600/10">
                       24/7 Disponible
                     </span>

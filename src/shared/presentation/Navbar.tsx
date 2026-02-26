@@ -41,8 +41,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors tracking-wide ${
                   pathname === link.href
-                    ? "font-bold text-[#00C8E0]"
-                    : "text-[#0F1A2E] hover:text-[#00C8E0]"
+                    ? "font-bold text-primary"
+                    : "text-navy hover:text-primary"
                 }`}
               >
                 {link.label}
@@ -62,7 +62,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="text-[#0F1A2E] hover:text-[#00C8E0]"
+              className="text-navy hover:text-primary"
               aria-label="Abrir menú"
             >
               <span className="material-symbols-outlined">
@@ -83,8 +83,8 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               className={`block py-2 text-sm font-medium transition-colors ${
                 pathname === link.href
-                  ? "text-[#00C8E0] font-bold"
-                  : "text-[#0F1A2E] hover:text-[#00C8E0]"
+                  ? "text-primary font-bold"
+                  : "text-navy hover:text-primary"
               }`}
             >
               {link.label}
