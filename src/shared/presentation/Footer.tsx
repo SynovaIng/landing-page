@@ -54,13 +54,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-1 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
+            <div className="mb-6">
               <Image
-                src="/logo.svg"
+                src="/synova-al-lado-blanco.svg"
                 alt="SYNOVA"
-                width={140}
-                height={56}
-                className="h-14 w-auto"
+                width={0}
+                height={0}
+                sizes="100vw"
+                className="h-18 w-auto"
               />
             </div>
             <p className="text-sm text-slate-400 leading-relaxed mb-6">

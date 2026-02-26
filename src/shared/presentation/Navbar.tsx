@@ -22,13 +22,12 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-24">
           {/* Logo */}
           <div className="shrink-0">
-            <Link href="/">
+            <Link href="/" className="relative block h-20 w-60">
               <Image
-                src="/logo.svg"
+                src="/synova-al-lado.svg"
                 alt="SYNOVA"
-                width={120}
-                height={48}
-                className="h-12 w-auto"
+                fill
+                className="object-contain object-left"
                 priority
               />
             </Link>
