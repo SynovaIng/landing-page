@@ -99,7 +99,7 @@ export const themes: ColorTheme[] = [
     vars: {
       "--color-primary": "#eab308",
       "--color-primary-dark": "#ca8a04",
-      "--color-secondary": "#c9a227",      // Mostaza dorado suave
+      "--color-secondary": "#e7b201",      // Mostaza dorado suave
       "--color-secondary-dark": "#a88b1f",  // Mostaza oscuro
       "--color-navy": "#252526",
       "--color-muted": "#64748b",
