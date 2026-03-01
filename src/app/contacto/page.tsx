@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import ContactCard from "@/components/ContactCard";
 import CopyEmailButton from "@/components/CopyEmailButton";
 

@@ -7,7 +7,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { ColorTheme, DEFAULT_THEME_ID, themes } from "./themes";
+
+import { type ColorTheme, DEFAULT_THEME_ID, themes } from "./themes";
 
 // ─── Tipos ───────────────────────────────────────────────────
 interface ThemeContextValue {

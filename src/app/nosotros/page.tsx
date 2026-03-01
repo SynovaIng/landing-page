@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import SectionHeader from "@/shared/presentation/SectionHeader";
+
 import Button from "@/shared/presentation/Button";
+import SectionHeader from "@/shared/presentation/SectionHeader";
 import ValueCard from "@/shared/presentation/ValueCard";
 
 export const metadata: Metadata = {

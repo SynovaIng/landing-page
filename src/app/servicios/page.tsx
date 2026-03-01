@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+
+import { services } from "@/shared/domain/data/services";
+import Button from "@/shared/presentation/Button";
 import SectionHeader from "@/shared/presentation/SectionHeader";
 import ServiceCard from "@/shared/presentation/ServiceCard";
-import Button from "@/shared/presentation/Button";
-import { services } from "@/shared/domain/data/services";
 
 export const metadata: Metadata = {
   title: "Servicios",

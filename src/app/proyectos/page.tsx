@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import ProjectCard from "@/shared/presentation/ProjectCard";
-import Button from "@/shared/presentation/Button";
-import StatCard from "@/shared/presentation/StatCard";
-import { projects, type ProjectCategory } from "@/shared/domain/data/projects";
 
-const categories: Array<ProjectCategory | "Todos"> = [
+import { type ProjectCategory,projects } from "@/shared/domain/data/projects";
+import Button from "@/shared/presentation/Button";
+import ProjectCard from "@/shared/presentation/ProjectCard";
+import StatCard from "@/shared/presentation/StatCard";
+
+const categories: (ProjectCategory | "Todos")[] = [
   "Todos",
   "Residencial",
   "Comercial",

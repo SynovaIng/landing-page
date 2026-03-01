@@ -1,5 +1,5 @@
-import { type ReactNode } from "react";
 import Link from "next/link";
+import { type ReactNode } from "react";
 
 type Variant = "primary" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";

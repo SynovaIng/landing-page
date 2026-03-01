@@ -9,9 +9,8 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
     <div className="bg-surface p-10 rounded-lg border border-border hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-glow group">
       {/* Stars */}
       <div className="flex text-yellow-500 mb-6">
-        {Array.from({ length: testimonial.rating }).map((_, i) => (
-          <span
-            key={i}
+        {Array.from({ length: testimonial.rating }, (_, i) => i + 1).map((star) => (
+          <span key={star}
             className="material-symbols-outlined text-sm"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >

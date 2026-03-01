@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import SectionHeader from "@/shared/presentation/SectionHeader";
-import StatsBar from "@/shared/presentation/StatsBar";
-import ServiceCard from "@/shared/presentation/ServiceCard";
-import TestimonialCard from "@/shared/presentation/TestimonialCard";
-import Button from "@/shared/presentation/Button";
+
 import { services } from "@/shared/domain/data/services";
 import { testimonials } from "@/shared/domain/data/testimonials";
+import Button from "@/shared/presentation/Button";
+import SectionHeader from "@/shared/presentation/SectionHeader";
+import ServiceCard from "@/shared/presentation/ServiceCard";
+import StatsBar from "@/shared/presentation/StatsBar";
+import TestimonialCard from "@/shared/presentation/TestimonialCard";
 
 export const metadata: Metadata = {
   title: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",

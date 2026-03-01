@@ -1,5 +1,6 @@
-import type { Service } from "@/shared/domain/data/services";
 import Link from "next/link";
+
+import type { Service } from "@/shared/domain/data/services";
 
 interface ServiceCardProps {
   service: Service;
@@ -27,8 +28,8 @@ export default function ServiceCard({ service }: ServiceCardProps) {
       {/* Features */}
       {service.features.length > 0 && (
         <ul className="flex flex-col gap-2 mb-6 relative z-10">
-          {service.features.map((f, i) => (
-            <li key={i} className="flex items-start gap-2 text-muted text-sm">
+          {service.features.map((f) => (
+            <li key={f} className="flex items-start gap-2 text-muted text-sm">
               <span className="material-symbols-outlined text-secondary text-[18px] mt-0.5">{"check_circle"}</span>
               <span>{f}</span>
             </li>

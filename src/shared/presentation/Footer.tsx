@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
 import { useTheme } from "./ThemeContext";
 
 const footerLinks = {
