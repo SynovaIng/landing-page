@@ -42,7 +42,7 @@ export default function ContactCard({
 }: ContactCardProps) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all ${hoverBorderColor} hover:shadow-md`}
+      className={`group relative overflow-hidden rounded-xl border border-border bg-surface p-6 transition-all ${hoverBorderColor} hover:shadow-md`}
     >
       <div className="flex items-start gap-4">
         {/* Icon badge */}
@@ -54,8 +54,8 @@ export default function ContactCard({
 
         {/* Content */}
         <div>
-          <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-          <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+          <h3 className="text-lg font-bold text-on-surface">{title}</h3>
+          <p className="mt-1 text-sm text-on-surface-muted">{subtitle}</p>
           {action}
         </div>
       </div>

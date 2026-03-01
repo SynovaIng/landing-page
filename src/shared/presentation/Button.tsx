@@ -1,5 +1,5 @@
-import { type ReactNode } from "react";
 import Link from "next/link";
+import { type ReactNode } from "react";
 
 type Variant = "primary" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";
@@ -16,9 +16,9 @@ interface ButtonProps {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-cyan-gradient text-white font-bold hover:brightness-110 shadow-lg hover:shadow-glow",
+    "bg-[image:var(--gradient-brand)] text-white font-bold hover:opacity-90 shadow-md",
   outline:
-    "border-2 border-secondary text-secondary font-bold hover:bg-secondary/5",
+    "border-2 border-[var(--color-secondary)] text-[var(--color-secondary)] font-bold hover:bg-[var(--color-secondary)] hover:text-white transition-colors",
   ghost: "text-secondary font-medium hover:text-primary",
 };
 

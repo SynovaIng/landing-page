@@ -10,7 +10,7 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-navy flex flex-col text-white p-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-10">
-        <div className="w-8 h-8 rounded bg-linear-to-br from-secondary to-primary flex items-center justify-center">
+        <div className="w-8 h-8 rounded bg-cyan-gradient flex items-center justify-center">
           <span className="material-symbols-outlined text-white text-lg">bolt</span>
         </div>
         <span className="font-bold text-lg tracking-wide">SYNOVA Admin</span>

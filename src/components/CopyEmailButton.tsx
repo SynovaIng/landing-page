@@ -32,7 +32,7 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
       {/* Email link */}
       <a
         href={`mailto:${email}`}
-        className="text-base font-medium text-slate-700 hover:text-primary transition-colors"
+        className="text-base font-medium text-on-surface hover:text-primary transition-colors"
       >
         {email}
       </a>
@@ -43,7 +43,7 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
           type="button"
           onClick={handleCopy}
           aria-label="Copiar correo al portapapeles"
-          className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-all duration-200 active:scale-95"
+          className="flex items-center justify-center w-8 h-8 rounded-lg border border-border bg-surface-alt text-on-surface-muted hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-all duration-200 active:scale-95"
         >
           {copied ? (
             /* Check icon */

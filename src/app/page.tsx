@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import SectionHeader from "@/shared/presentation/SectionHeader";
-import StatsBar from "@/shared/presentation/StatsBar";
-import ServiceCard from "@/shared/presentation/ServiceCard";
-import TestimonialCard from "@/shared/presentation/TestimonialCard";
-import Button from "@/shared/presentation/Button";
+
 import { services } from "@/shared/domain/data/services";
 import { testimonials } from "@/shared/domain/data/testimonials";
+import Button from "@/shared/presentation/Button";
+import SectionHeader from "@/shared/presentation/SectionHeader";
+import ServiceCard from "@/shared/presentation/ServiceCard";
+import StatsBar from "@/shared/presentation/StatsBar";
+import TestimonialCard from "@/shared/presentation/TestimonialCard";
 
 export const metadata: Metadata = {
   title: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",
@@ -53,16 +54,17 @@ export default function HomePage() {
             priority
           />
         </div>
-        <div className="absolute inset-0 bg-white/40" />
+        <div className="absolute inset-0 bg-surface/40" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-block py-1.5 px-4 rounded-full bg-white text-secondary text-xs font-bold tracking-widest mb-8 uppercase border border-secondary/20 shadow-sm">
+          <span className="inline-block py-1.5 px-4 rounded-full bg-surface text-secondary text-xs font-bold tracking-widest mb-8 uppercase border border-secondary/20 shadow-sm">
             Certificados SEC Clase A
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-navy mb-8 leading-tight tracking-tight">
             Soluciones Eléctricas <br />
-            <span className="text-cyan-gradient">Profesionales en Santiago</span>
+            <span className="text-secondary">Profesionales</span>{" "}
+            <span className="text-primary">en Santiago</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-muted font-light leading-relaxed">
             Expertos en instalaciones de alto estándar, mantenimiento industrial
@@ -125,7 +127,7 @@ export default function HomePage() {
                 {whyUs.map((item) => (
                   <div key={item.title} className="flex group">
                     <div className="shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded bg-white text-secondary border border-gray-200 shadow-sm group-hover:bg-secondary group-hover:text-white transition-all duration-300">
+                      <div className="flex items-center justify-center h-12 w-12 rounded bg-surface text-secondary border border-border shadow-sm group-hover:bg-secondary group-hover:text-white transition-all duration-300">
                         <span className="material-symbols-outlined">{item.icon}</span>
                       </div>
                     </div>
@@ -156,7 +158,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 bg-white border-y border-gray-100 relative overflow-hidden">
+      <section className="py-24 bg-surface border-y border-border-light relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-r from-secondary/5 to-primary/5" />
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold text-navy mb-6">

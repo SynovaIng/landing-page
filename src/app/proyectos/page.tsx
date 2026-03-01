@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import ProjectCard from "@/shared/presentation/ProjectCard";
-import Button from "@/shared/presentation/Button";
-import StatCard from "@/shared/presentation/StatCard";
-import { projects, type ProjectCategory } from "@/shared/domain/data/projects";
 
-const categories: Array<ProjectCategory | "Todos"> = [
+import { type ProjectCategory,projects } from "@/shared/domain/data/projects";
+import Button from "@/shared/presentation/Button";
+import ProjectCard from "@/shared/presentation/ProjectCard";
+import StatCard from "@/shared/presentation/StatCard";
+
+const categories: (ProjectCategory | "Todos")[] = [
   "Todos",
   "Residencial",
   "Comercial",
@@ -59,8 +60,8 @@ export default function ProyectosPage() {
                   onClick={() => setActive(cat)}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm ${
                     active === cat
-                      ? "bg-linear-to-r from-secondary to-primary text-white font-bold shadow-md"
-                      : "bg-white border border-gray-200 text-navy hover:border-secondary hover:text-secondary"
+                      ? "bg-cyan-gradient text-white font-bold shadow-md"
+                      : "bg-surface border border-border text-navy hover:border-secondary hover:text-secondary"
                   }`}
                 >
                   {cat}
@@ -78,7 +79,7 @@ export default function ProyectosPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="bg-white border-y border-gray-200 py-16">
+        <div className="bg-surface border-y border-border py-16">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
               {stats.map((s) => (

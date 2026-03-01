@@ -12,7 +12,7 @@ const categoryColors: Record<string, string> = {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-gray-100">
+    <div className="group relative overflow-hidden rounded-2xl bg-surface cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-border-light">
       {/* Image */}
       <div className="aspect-4/3 w-full overflow-hidden relative">
         <div

@@ -1,8 +1,11 @@
-import type { Metadata } from "next";
-import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/shared/presentation/Navbar";
+
+import type { Metadata } from "next";
+import { Inter,Montserrat } from "next/font/google";
+
 import Footer from "@/shared/presentation/Footer";
+import Navbar from "@/shared/presentation/Navbar";
+import { ThemeProvider } from "@/shared/presentation/ThemeContext";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -40,9 +43,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <ThemeProvider>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
