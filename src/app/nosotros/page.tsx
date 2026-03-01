@@ -49,18 +49,18 @@ const credentials = [
 
 const team = [
   {
-    name: "Carlos Mendoza",
+    name: "Freddy Soto",
     role: "Fundador & Ingeniero Jefe",
     bio: "Lidera la visión técnica de SYNOVA con más de 15 años de experiencia en ingeniería eléctrica.",
     imgSrc:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAOQuLnLPQDVBPBNAisZQjVI2GmOVVJ6i2PJ5mKBQ6zVwU6UMh08xWnBY3N1BWV86gBZEGX0FeAtdV7q5Puw7OKYS-_fu3DPAoHGBt5rVd80cTMlz-qe2Xap74IujVLjNn1t5OFlg03zsILfEa7UWiU2OPxZy4aqxtC55LEkB4NA2KETl2cBcauy_kBrN02IXyjkBCqgvGlrQj5azR8IgBiyGLWLLWZbit-ifb1Vlm1mE1hM2RAJ1-BrIe0lBEC66HLf8kKd7wMIYn0",
+      "/Freddy.jpg",
   },
   {
-    name: "Ana Gutiérrez",
+    name: "Moto moto",
     role: "Jefe de Proyectos",
-    bio: "Coordina la ejecución precisa de cada obra, asegurando tiempos y presupuestos óptimos.",
+    bio: "No se cual es su apellido :V",
     imgSrc:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAPSaHbTN0mUwuQZj_J5vB5zfNHNE5-omjy-qheYRX6zgtVP0ODbJLJrYkDvyRL8ex6u1LkeY6fitG0ro6RURbmxhKR5dLvcdIaW8USG7OaaZRgScLp8MlQaFl8Ofd3hFLqREjspeVRR9aek8VqIRrnxhekabszenfb6gbco-XJucvGCglsVcwJJmrf386xxu2aegQFBgObqVvJhHI_XXyLs-X12tuKqMdEFmYFoTXpGj0ZknIYvu9PAE5rfg1KfC7hbGV5XeVJQOjg",
+      "/Isaac.jpg",
   },
 ];
 
