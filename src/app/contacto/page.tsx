@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import ContactCard from "@/components/ContactCard";
 import CopyEmailButton from "@/components/CopyEmailButton";
+import { services } from "@/shared/domain/data/services";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -9,7 +10,13 @@ export const metadata: Metadata = {
     "Contáctanos para cotizar tu proyecto eléctrico. Respondemos en menos de 24 horas. Atención de emergencias 24/7.",
 };
 
-export default function ContactoPage() {
+export default async function ContactoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ servicio?: string }>;
+}) {
+  const { servicio } = await searchParams;
+  const selectedService = services.find((s) => s.id === servicio)?.id ?? "";
   return (
     <div className="pt-24">
       <main className="grow bg-background-light">
@@ -132,13 +139,16 @@ export default function ContactoPage() {
                         <select
                           id="service"
                           name="service"
+                          defaultValue={selectedService}
                           className="block w-full rounded-lg border-0 bg-surface py-3 pl-10 pr-10 text-on-surface shadow-sm ring-1 ring-inset ring-border focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         >
-                          <option>Instalación Eléctrica</option>
-                          <option>Certificación SEC</option>
-                          <option>Emergencia 24/7</option>
-                          <option>Mantención Industrial</option>
-                          <option>Otro</option>
+                          <option value="">Selecciona un servicio</option>
+                          {services.map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.title}
+                            </option>
+                          ))}
+                          <option value="otro">Otro</option>
                         </select>
                       </div>
                     </div>

@@ -40,7 +40,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
       {/* CTA */}
       <div className="mt-auto relative z-10">
         <Link
-          href="/contacto"
+          href={`/contacto?servicio=${service.id}`}
           className="inline-flex items-center gap-2 text-secondary font-bold text-sm hover:brightness-125 transition-all group-hover:translate-x-1 duration-300"
         >
           <span>{service.ctaLabel}</span>
