@@ -17,7 +17,7 @@ export default function NotFound() {
       <div className="relative z-10 max-w-xl mx-auto">
         {/* Número 404 */}
         <div className="relative mb-6">
-          <span className="text-[10rem] lg:text-[14rem] font-black leading-none text-transparent bg-clip-text bg-linear-to-br from-secondary to-primary select-none">
+          <span className="text-[10rem] lg:text-[14rem] font-black leading-none text-secondary select-none">
             404
           </span>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -41,7 +41,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-sm bg-linear-to-r from-secondary to-primary text-white font-bold text-base shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-sm bg-cyan-gradient text-white font-bold text-base shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300"
           >
             <span className="material-symbols-outlined text-[20px]">home</span>
             Volver al inicio

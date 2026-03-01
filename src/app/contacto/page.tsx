@@ -24,7 +24,7 @@ export default function ContactoPage() {
             <h1 className="text-4xl font-extrabold tracking-tight text-navy sm:text-5xl lg:text-6xl">
               Contáctanos
             </h1>
-            <div className="mt-4 mx-auto h-1 w-24 bg-linear-to-r from-secondary to-primary rounded-full" />
+            <div className="mt-4 mx-auto h-1 w-24 bg-cyan-gradient rounded-full" />
             <p className="mt-6 text-lg leading-8 text-muted max-w-2xl mx-auto">
               Estamos listos para ayudarte. Escríbenos para cotizar tu proyecto
               o llámanos directamente para emergencias.
@@ -37,7 +37,7 @@ export default function ContactoPage() {
           <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             {/* Form */}
             <div className="lg:col-span-7 xl:col-span-8">
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 shadow-xl shadow-slate-200/50">
+              <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10 shadow-xl shadow-border/50">
                 <form
                   action="#"
                   method="POST"
@@ -46,14 +46,14 @@ export default function ContactoPage() {
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
                       <label
-                        className="block text-sm font-medium text-slate-700"
+                        className="block text-sm font-medium text-on-surface"
                         htmlFor="name"
                       >
                         Nombre completo
                       </label>
                       <div className="mt-2 relative">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                          <span className="material-symbols-outlined text-slate-400 text-[20px]">
+                          <span className="material-symbols-outlined text-on-surface-muted text-[20px]">
                             person
                           </span>
                         </div>
@@ -63,7 +63,7 @@ export default function ContactoPage() {
                           type="text"
                           autoComplete="name"
                           placeholder="Juan Pérez"
-                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
+                          className="block w-full rounded-lg border-0 bg-surface py-3 pl-10 text-on-surface shadow-sm ring-1 ring-inset ring-border placeholder:text-on-surface-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         />
                       </div>
                     </div>
@@ -131,7 +131,7 @@ export default function ContactoPage() {
                         <select
                           id="service"
                           name="service"
-                          className="block w-full rounded-lg border-0 bg-white py-3 pl-10 pr-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
+                          className="block w-full rounded-lg border-0 bg-surface py-3 pl-10 pr-10 text-on-surface shadow-sm ring-1 ring-inset ring-border focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                         >
                           <option>Instalación Eléctrica</option>
                           <option>Certificación SEC</option>
@@ -155,19 +155,19 @@ export default function ContactoPage() {
                         name="message"
                         rows={4}
                         placeholder="Describa brevemente su requerimiento..."
-                        className="block w-full rounded-lg border-0 bg-white py-3 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
+                        className="block w-full rounded-lg border-0 bg-surface py-3 px-4 text-on-surface shadow-sm ring-1 ring-inset ring-border placeholder:text-on-surface-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                       />
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-linear-to-r from-secondary to-primary px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl transition-all"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-cyan-gradient px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-primary/30 hover:-translate-y-0.5 hover:shadow-xl hover:brightness-110 transition-all"
                     >
                       <span>Enviar mensaje</span>
                       <span className="material-symbols-outlined text-[20px]">send</span>
                     </button>
-                    <div className="flex items-center gap-2 text-slate-500 text-sm">
+                    <div className="flex items-center gap-2 text-on-surface-muted text-sm">
                       <span className="material-symbols-outlined text-secondary text-[18px]">verified</span>
                       <span>Respondemos en menos de 24 horas</span>
                     </div>
@@ -232,21 +232,21 @@ export default function ContactoPage() {
                 action={<CopyEmailButton email="contacto@synova.cl" />}
               />
               {/* Horarios */}
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
+              <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+                <h3 className="flex items-center gap-2 text-lg font-bold text-on-surface mb-4">
                   <span className="material-symbols-outlined text-secondary">schedule</span>
                   Horario de Atención
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500">Lunes - Viernes</span>
-                    <span className="font-medium text-slate-700">08:00 - 18:00 hrs</span>
+                    <span className="text-on-surface-muted">Lunes - Viernes</span>
+                    <span className="font-medium text-on-surface">08:00 - 18:00 hrs</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500">Sábado</span>
-                    <span className="font-medium text-slate-700">09:00 - 14:00 hrs</span>
+                    <span className="text-on-surface-muted">Sábado</span>
+                    <span className="font-medium text-on-surface">09:00 - 14:00 hrs</span>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-border-light flex items-center justify-between">
                     <span className="text-sm font-bold text-secondary">Emergencias Eléctricas</span>
                     <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-600/10">
                       24/7 Disponible

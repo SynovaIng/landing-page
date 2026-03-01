@@ -6,7 +6,7 @@ interface ValueCardProps {
 
 export default function ValueCard({ icon, title, description }: ValueCardProps) {
   return (
-    <div className="group p-8 bg-white rounded-lg border border-gray-200 hover:border-primary/50 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+    <div className="group p-8 bg-surface rounded-lg border border-border hover:border-primary/50 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
       <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
         <span className="material-symbols-outlined text-9xl text-navy">
           {icon}

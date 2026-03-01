@@ -68,7 +68,7 @@ export default function NosotrosPage() {
     <div className="pt-24">
       {/* ── Page Hero ── */}
       <div className="pt-16 pb-16 lg:pt-24 lg:pb-20 bg-background-light text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-white/60 to-background-light" />
+        <div className="absolute inset-0 bg-linear-to-b from-surface/60 to-background-light" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-navy mb-6 tracking-tight relative inline-block">
             Nosotros
@@ -91,7 +91,7 @@ export default function NosotrosPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-navy leading-tight">
                 Expertos en Energía,{" "}
                 <br />
-                <span className="text-cyan-gradient">Comprometidos con el Futuro.</span>
+                <span className="text-secondary">Comprometidos con el Futuro.</span>
               </h2>
               <p className="text-muted text-lg leading-relaxed">
                 Fundada en Santiago, SYNOVA nació con la visión de elevar el
@@ -114,7 +114,7 @@ export default function NosotrosPage() {
             </div>
             <div className="relative group">
               <div className="absolute -inset-4 bg-primary/10 rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition duration-500" />
-              <div className="relative rounded-lg overflow-hidden border border-gray-200 p-2 bg-white shadow-xl">
+              <div className="relative rounded-lg overflow-hidden border border-border p-2 bg-surface shadow-xl">
                 <div className="relative overflow-hidden rounded border border-primary/20">
                   <Image
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8mDq9_R9-V4It5HAWL7nlQHwaTeUmiKCw0RBJiE8cUUE2r6xQnC04nizdjpo7ciXb8IGKxFjIph7Fq8C4smqDUfHDrU7CL63VKbThCEm2HOdqFKLNP9QZJrIVFBZMe2GAJmenkEm7jfQKmgZHjUK6yYSV4dTxVdQMPTmepQBS7iNrFNZJRBpFXfksISpbaBHbLKOGcdSijiEg8xLnOleQ9UyDhmq6Sa0R6viQEuibYe_X-Yb4apaOFrLmN7XhBbwZIBi61cAA0ush"
@@ -131,7 +131,7 @@ export default function NosotrosPage() {
       </section>
 
       {/* ── Valores ── */}
-      <section className="py-24 bg-background-alt border-y border-gray-200">
+      <section className="py-24 bg-background-alt border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Nuestros Valores" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -148,16 +148,16 @@ export default function NosotrosPage() {
       </section>
 
       {/* ── Credenciales ── */}
-      <section className="bg-white border-y border-gray-100 py-12">
+      <section className="bg-surface border-y border-border-light py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-border">
             {credentials.map((c) => (
               <div key={c.title} className="px-4 py-4 md:py-0 flex flex-col items-center">
                 <div className="flex items-center justify-center w-16 h-16 rounded-full bg-background-alt border border-primary/20 mb-4 shadow-sm text-secondary">
                   <span className="material-symbols-outlined text-3xl">{c.icon}</span>
                 </div>
                 <h4 className="text-navy font-bold text-lg mb-1">{c.title}</h4>
-                <p className="text-gray-500 text-sm">{c.desc}</p>
+                <p className="text-on-surface-muted text-sm">{c.desc}</p>
               </div>
             ))}
           </div>
@@ -176,7 +176,7 @@ export default function NosotrosPage() {
               <div key={member.name} className="text-center group">
                 <div className="relative w-48 h-48 mx-auto mb-6">
                   <div className="absolute inset-0 rounded-full border-2 border-primary/30 scale-105 group-hover:scale-110 transition-transform duration-500" />
-                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-white relative z-10 ring-2 ring-primary shadow-lg">
+                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-surface relative z-10 ring-2 ring-primary shadow-lg">
                     <Image
                       src={member.imgSrc}
                       alt={member.name}
@@ -200,7 +200,7 @@ export default function NosotrosPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 bg-white border-t border-gray-200 relative overflow-hidden">
+      <section className="py-24 bg-surface border-t border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-background-alt/50" />
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold text-navy mb-6">

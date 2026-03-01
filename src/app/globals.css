@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   /* ── Colores de marca ── */
   --color-primary: #00c8e0;
   --color-primary-dark: #00a0b3;
@@ -15,6 +15,18 @@
   --color-background-light: #f5f7fa;
   --color-background-alt: #eff6ff;
 
+  /* ── Superficie, bordes y texto sobre superficie ── */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-on-surface: #0f172a;
+  --color-on-surface-muted: #64748b;
+
+  /* ── Header (Navbar) ── */
+  --color-header-bg: #ffffff;
+  --color-header-text: #0f172a;
+
   /* ── Categorías de proyecto ── */
   --color-category-comercial: #0047ab;
   --color-category-industrial: #0f4c75;
@@ -28,18 +40,21 @@
   --shadow-glow-hover: 0 0 25px rgba(0, 200, 224, 0.4);
   --shadow-subtle:
     0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+  /* ── Gradiente principal (sobreescrito por ThemeContext) ── */
+  --gradient-brand: linear-gradient(135deg, #1a3a8f 0%, #00c8e0 100%);
 }
 
 /* ── Gradientes reutilizables ── */
 @layer utilities {
   .text-cyan-gradient {
-    background: linear-gradient(to right, var(--color-secondary), var(--color-primary));
+    background: var(--gradient-brand);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .bg-cyan-gradient {
-    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+    background: var(--gradient-brand);
   }
   .shadow-glow {
     box-shadow: var(--shadow-glow);

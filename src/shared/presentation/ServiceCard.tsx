@@ -7,7 +7,7 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ service }: ServiceCardProps) {
   return (
-    <div className="group relative p-8 bg-white rounded-lg border border-gray-200 hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-glow flex flex-col h-full overflow-hidden">
+    <div className="group relative p-8 bg-surface rounded-lg border border-border hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-glow flex flex-col h-full overflow-hidden">
       {/* Corner glow */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full -mr-8 -mt-8 group-hover:bg-secondary/10 blur-xl transition-all" />
 
@@ -40,7 +40,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
       <div className="mt-auto relative z-10">
         <Link
           href="/contacto"
-          className="inline-flex items-center gap-2 text-transparent bg-clip-text bg-linear-to-r from-secondary to-primary font-bold text-sm hover:brightness-125 transition-all group-hover:translate-x-1 duration-300"
+          className="inline-flex items-center gap-2 text-secondary font-bold text-sm hover:brightness-125 transition-all group-hover:translate-x-1 duration-300"
         >
           <span>{service.ctaLabel}</span>
           <span className="material-symbols-outlined text-[18px] text-secondary">{"arrow_forward"}</span>

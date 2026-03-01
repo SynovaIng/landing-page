@@ -32,13 +32,13 @@ export default function ServiciosPage() {
   return (
     <div className="pt-24">
       {/* ── Hero ── */}
-      <section className="relative py-20 px-6 bg-background-light border-b border-gray-200">
+      <section className="relative py-20 px-6 bg-background-light border-b border-border">
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center gap-6">
           <div className="relative inline-block">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-navy leading-tight">
               Nuestros Servicios
             </h1>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1 bg-linear-to-r from-secondary to-primary rounded-full" />
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1 bg-cyan-gradient rounded-full" />
           </div>
           <p className="text-muted text-lg md:text-xl font-medium max-w-2xl mt-4 leading-relaxed">
             Soluciones eléctricas completas para hogares, empresas e industrias
@@ -57,16 +57,16 @@ export default function ServiciosPage() {
       </section>
 
       {/* ── Sectores ── */}
-      <section className="bg-white border-y border-gray-200 py-20 px-6 md:px-10">
+      <section className="bg-surface border-y border-border py-20 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             eyebrow="Sectores que atendemos"
             title="Experiencia en todos los niveles"
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-border">
             {sectors.map((s) => (
               <div key={s.title} className="px-4 py-6 flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-secondary mb-6 shadow-md shadow-blue-100">
+                <div className="w-16 h-16 rounded-full bg-surface-alt border border-border flex items-center justify-center text-secondary mb-6 shadow-md shadow-border-light">
                   <span className="material-symbols-outlined text-3xl">{s.icon}</span>
                 </div>
                 <h3 className="text-xl font-bold text-navy mb-3">{s.title}</h3>
@@ -78,7 +78,7 @@ export default function ServiciosPage() {
       </section>
 
       {/* ── Stats Banner ── */}
-      <section className="py-16 px-6 bg-slate-50 relative overflow-hidden">
+      <section className="py-16 px-6 bg-surface-alt relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-5"
           style={{
@@ -89,7 +89,7 @@ export default function ServiciosPage() {
         />
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="flex items-center gap-6">
-            <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+            <div className="bg-surface p-4 rounded-xl shadow-lg border border-border-light">
               <div className="text-navy text-center">
                 <span className="material-symbols-outlined text-5xl text-secondary">verified</span>
                 <div className="text-xs font-bold mt-1 tracking-wider text-secondary">SEC</div>
@@ -100,14 +100,14 @@ export default function ServiciosPage() {
               <p className="text-muted">Instaladores autorizados por la SEC Clase A.</p>
             </div>
           </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-gray-300 to-transparent" />
+          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-border to-transparent" />
           <div className="text-center md:text-left">
             <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">10+</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
               Años de Experiencia
             </p>
           </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-gray-300 to-transparent" />
+          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-border to-transparent" />
           <div className="text-center md:text-left">
             <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">500+</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
@@ -118,9 +118,9 @@ export default function ServiciosPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 px-6 bg-background-light border-t border-gray-200">
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl p-8 md:p-16 text-center border border-gray-200 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-linear-to-b from-slate-50 to-transparent pointer-events-none" />
+      <section className="py-24 px-6 bg-background-light border-t border-border">
+        <div className="max-w-5xl mx-auto bg-surface rounded-2xl p-8 md:p-16 text-center border border-border shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-linear-to-b from-surface-alt to-transparent pointer-events-none" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
               ¿No encuentras lo que buscas?
