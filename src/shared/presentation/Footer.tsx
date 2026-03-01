@@ -54,7 +54,7 @@ export default function Footer() {
   const { activeTheme } = useTheme();
 
   return (
-    <footer className="bg-navy border-t border-gray-700 pt-16 pb-8">
+    <footer className="bg-(--color-footer-bg) border-t border-gray-700 pt-16 pb-8">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
@@ -69,7 +69,7 @@ export default function Footer() {
                 className="h-18 w-auto"
               />
             </div>
-            <p className="text-sm text-on-surface-muted leading-relaxed mb-6">
+            <p className="text-sm text-footer-text-muted leading-relaxed mb-6">
               Soluciones eléctricas de alto estándar para industrias y
               residencias. Certificación, seguridad y compromiso en cada
               proyecto.
@@ -80,7 +80,7 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="text-on-surface-muted hover:text-primary transition-colors"
+                  className="text-footer-text-muted hover:text-primary transition-colors"
                 >
                   <svg
                     className="h-5 w-5"
@@ -97,7 +97,7 @@ export default function Footer() {
 
           {/* Empresa */}
           <div>
-            <h3 className="text-sm font-semibold text-[var(--color-header-text)] uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold text-(--color-footer-text) uppercase tracking-wider mb-4">
               Empresa
             </h3>
             <ul className="space-y-3">
@@ -105,7 +105,7 @@ export default function Footer() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-on-surface-muted hover:text-primary transition-colors"
+                    className="text-sm text-footer-text-muted hover:text-primary transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -116,7 +116,7 @@ export default function Footer() {
 
           {/* Servicios */}
           <div>
-            <h3 className="text-sm font-semibold text-[var(--color-header-text)] uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold text-(--color-footer-text) uppercase tracking-wider mb-4">
               Servicios
             </h3>
             <ul className="space-y-3">
@@ -124,7 +124,7 @@ export default function Footer() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-on-surface-muted hover:text-primary transition-colors"
+                    className="text-sm text-footer-text-muted hover:text-primary transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -135,7 +135,7 @@ export default function Footer() {
 
           {/* Contacto */}
           <div>
-            <h3 className="text-sm font-semibold text-[var(--color-header-text)] uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold text-(--color-footer-text) uppercase tracking-wider mb-4">
               Contacto
             </h3>
             <ul className="space-y-3">
@@ -143,7 +143,7 @@ export default function Footer() {
                 <span className="material-symbols-outlined text-primary text-[18px] mt-0.5">
                   location_on
                 </span>
-                <span className="text-sm text-on-surface-muted">
+                <span className="text-sm text-footer-text-muted">
                   Av. Providencia 1234, Santiago, Chile
                 </span>
               </li>
@@ -153,7 +153,7 @@ export default function Footer() {
                 </span>
                 <a
                   href="tel:+56912345678"
-                  className="text-sm text-on-surface-muted hover:text-primary transition-colors"
+                  className="text-sm text-footer-text-muted hover:text-primary transition-colors"
                 >
                   +56 9 1234 5678
                 </a>
@@ -164,7 +164,7 @@ export default function Footer() {
                 </span>
                 <a
                   href="mailto:contacto@synova.cl"
-                  className="text-sm text-on-surface-muted hover:text-primary transition-colors"
+                  className="text-sm text-footer-text-muted hover:text-primary transition-colors"
                 >
                   contacto@synova.cl
                 </a>
@@ -174,14 +174,14 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-on-surface-muted order-2 md:order-1">
+          <p className="text-xs text-footer-text-muted order-2 md:order-1">
             © 2025 SYNOVA Servicios Eléctricos. Todos los derechos reservados.
           </p>
           <div className="flex gap-6 order-1 md:order-2">
-            <a href="#" className="text-xs text-on-surface-muted hover:text-muted">
+            <a href="#" className="text-xs text-footer-text-muted hover:text-muted">
               Privacidad
             </a>
-            <a href="#" className="text-xs text-on-surface-muted hover:text-muted">
+            <a href="#" className="text-xs text-footer-text-muted hover:text-muted">
               Términos
             </a>
           </div>

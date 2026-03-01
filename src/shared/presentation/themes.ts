@@ -45,6 +45,11 @@ export interface ColorTheme {
     /** ── Header (Navbar) ── */
     "--color-header-bg": string;
     "--color-header-text": string;
+    /** ── Footer ── */
+    "--color-footer-bg": string;
+    "--color-footer-text": string;
+    "--color-footer-text-muted": string;
+
   };
 }
 
@@ -58,6 +63,9 @@ const lightSurface = {
   "--color-on-surface-muted": "#64748b",
   "--color-header-bg": "#ffffff",
   "--color-header-text": "#0f172a",
+  "--color-footer-bg": "#0f172a",
+  "--color-footer-text": "#f8fafc",
+  "--color-footer-text-muted": "#94a3b8",
 } as const;
 
 export const themes: ColorTheme[] = [
@@ -107,7 +115,6 @@ export const themes: ColorTheme[] = [
     id: "dark-yellow-premium",
     label: "Oscuro · Dorado",
     emoji: "🌙",
-    // 💡 TIP: Exporta el vector del logo con el rayo amarillo y las letras "SYNOVA" en blanco puro
     logoNavbar: "/synova-al-lado-amarillo-blanco.svg",
     logoFooter: "/synova-al-lado-amarillo-blanco.svg",
     vars: {
@@ -128,32 +135,12 @@ export const themes: ColorTheme[] = [
       "--color-on-surface-muted": "#a1a1aa",
       "--color-header-bg": "#09090b",
       "--color-header-text": "#f8fafc",
+      "--color-footer-bg": "#09090b",
+      "--color-footer-text": "red",
+      "--color-footer-text-muted": "#a1a1aa",
     },
   },
-  // ── 4. Claro y Dorado (Fondo Blanco + Amarillo) ───────────
-  {
-    id: "light-yellow-premium",
-    label: "Claro · Dorado",
-    emoji: "☀️",
-    // 💡 TIP: Para este tema, necesitas exportar el logo con el isotipo amarillo 
-    // y la palabra "SYNOVA" en un color oscuro (como #0f172a) para que se lea sobre blanco.
-    logoNavbar: "/synova-al-lado-amarillo-oscuro.svg", 
-    logoFooter: "/synova-al-lado-amarillo-blanco.svg",
-    vars: {
-      "--color-primary": "#eab308", // Amarillo vibrante (Tailwind yellow-500)
-      "--color-primary-dark": "#ca8a04", // Amarillo oscuro para hover (Tailwind yellow-600)
-      "--color-secondary": "#1e3a8a", // Azul marino elegante para mantener la formalidad
-      "--color-secondary-dark": "#1e40af", 
-      "--color-navy": "#0f172a", // Texto principal muy oscuro
-      "--color-muted": "#64748b", // Textos secundarios en gris
-      "--color-background-light": "#ffffff", // Fondo blanco puro
-      "--color-background-alt": "#f8fafc", // Gris casi blanco para separar secciones
-      "--gradient-brand": "linear-gradient(135deg, #1e3a8a 0%, #eab308 100%)",
-      ...lightSurface, // Inyecta las variables de superficie claras que ya definiste
-    },
-  },
-
-  // ── 5. Claro con Header Oscuro (High Contrast) ──────────
+  // ── 4. Claro con Header Oscuro (High Contrast) ──────────
   {
     id: "light-yellow-dark-header",
     label: "Claro · Header Oscuro",
@@ -178,36 +165,12 @@ export const themes: ColorTheme[] = [
       "--color-on-surface-muted": "#64748b",
       "--color-header-bg": "#1f2937",
       "--color-header-text": "#f8fafc",
+      "--color-footer-bg": "#1f2937",
+      "--color-footer-text": "white",
+      "--color-footer-text-muted": "#9ca3af",
     },
   },
 
-  // ── 6. Mostaza y Azul Rey ───────────────────────────────
-  {
-    id: "mustard-royal",
-    label: "Claro · Mostaza y Azul Rey",
-    emoji: "⚡",
-    logoNavbar: "/synova-mostaza-blanco.svg",
-    logoFooter: "/synova-mostaza-blanco.svg",
-    vars: {
-      "--color-primary": "#d4af37",        // Mostaza elegante
-      "--color-primary-dark": "#b8962e",   // Mostaza oscuro (hover)
-      "--color-secondary": "#2563eb",      // Azul Rey brillante
-      "--color-secondary-dark": "#1e3a8a", // Azul Rey muy oscuro para contrastes
-      "--color-navy": "#0f172a",
-      "--color-muted": "#64748b",
-      "--color-background-light": "#ffffff",
-      "--color-background-alt": "#f8fafc",
-      "--gradient-brand": "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)", // Gradiente SOLO mostaza
-      "--color-header-bg": "#1e3a8a",      // Azul Rey oscuro para Header y Footer
-      "--color-header-text": "#ffffff",
-      "--color-surface": "#ffffff",
-      "--color-surface-alt": "#f8fafc",
-      "--color-border": "#e2e8f0",
-      "--color-border-light": "#f1f5f9",
-      "--color-on-surface": "#0f172a",
-      "--color-on-surface-muted": "#64748b",
-    },
-  },
 ];
 
 /** Tema por defecto si no hay ninguno guardado */

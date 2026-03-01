@@ -27,6 +27,11 @@
   --color-header-bg: #ffffff;
   --color-header-text: #0f172a;
 
+  /* ── Footer ── */
+  --color-footer-bg: #0f172a;
+  --color-footer-text: #f8fafc;
+  --color-footer-text-muted: #94a3b8;
+
   /* ── Categorías de proyecto ── */
   --color-category-comercial: #0047ab;
   --color-category-industrial: #0f4c75;
@@ -65,25 +70,27 @@
 }
 
 /* ── Base ── */
-html {
-  scroll-behavior: smooth;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  background-color: var(--color-background-light);
-  color: var(--color-muted);
-  font-family: var(--font-inter), sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    background-color: var(--color-background-light);
+    color: var(--color-muted);
+    font-family: var(--font-inter), sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-montserrat), sans-serif;
-  color: var(--color-navy);
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-montserrat), sans-serif;
+    color: var(--color-navy);
+  }
 }
 
 /* ── Scrollbar ── */
