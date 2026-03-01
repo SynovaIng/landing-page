@@ -12,7 +12,7 @@ export default function ValueCard({ icon, title, description }: ValueCardProps) 
           {icon}
         </span>
       </div>
-      <div className="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-cyan-gradient group-hover:text-white transition-colors duration-300 shadow-sm relative z-10">
+      <div className="w-14 h-14 mb-6 rounded-full bg-background-alt border border-primary/20 flex items-center justify-center text-secondary group-hover:bg-linear-to-br group-hover:from-secondary group-hover:to-primary group-hover:text-white group-hover:border-transparent transition-all duration-300 shadow-sm relative z-10">
         <span className="material-symbols-outlined text-3xl">{icon}</span>
       </div>
       <h3 className="text-xl font-bold text-navy mb-4 relative z-10">{title}</h3>
