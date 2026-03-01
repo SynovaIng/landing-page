@@ -7,16 +7,16 @@ export const metadata: Metadata = {
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-screen bg-[#0F1A2E] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-navy flex items-center justify-center p-4">
       {/* Background accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#1A3A8F]/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#00C8E0]/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              "radial-gradient(#00C8E0 1px, transparent 1px)",
+              "radial-gradient(var(--color-primary) 1px, transparent 1px)",
             backgroundSize: "30px 30px",
           }}
         />
@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-linear-to-br from-[#1A3A8F] to-[#00C8E0] shadow-lg mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-linear-to-br from-secondary to-primary shadow-lg mb-4">
               <span className="material-symbols-outlined text-white text-3xl">
                 bolt
               </span>
@@ -60,7 +60,7 @@ export default function AdminLoginPage() {
                   type="email"
                   autoComplete="email"
                   placeholder="admin@synova.cl"
-                  className="block w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-[#00C8E0] focus:ring-1 focus:ring-[#00C8E0] focus:outline-none text-sm backdrop-blur transition-all"
+                  className="block w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-sm backdrop-blur transition-all"
                 />
               </div>
             </div>
@@ -84,24 +84,24 @@ export default function AdminLoginPage() {
                   type="password"
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="block w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-[#00C8E0] focus:ring-1 focus:ring-[#00C8E0] focus:outline-none text-sm backdrop-blur transition-all"
+                  className="block w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-sm backdrop-blur transition-all"
                 />
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
-                <input type="checkbox" className="accent-[#00C8E0] rounded" />
+                <input type="checkbox" className="accent-primary rounded" />
                 Recuérdame
               </label>
-              <a href="#" className="text-sm text-[#00C8E0] hover:text-white transition-colors">
+              <a href="#" className="text-sm text-primary hover:text-white transition-colors">
                 ¿Olvidaste tu contraseña?
               </a>
             </div>
 
             <button
               type="submit"
-              className="mt-2 w-full py-3 px-6 rounded-lg bg-linear-to-r from-[#1A3A8F] to-[#00C8E0] text-white font-bold text-base shadow-lg shadow-[#00C8E0]/20 hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              className="mt-2 w-full py-3 px-6 rounded-lg bg-linear-to-r from-secondary to-primary text-white font-bold text-base shadow-lg shadow-primary/20 hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
             >
               Iniciar sesión
               <span className="material-symbols-outlined text-[20px]">

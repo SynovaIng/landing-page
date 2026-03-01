@@ -32,7 +32,7 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
       {/* Email link */}
       <a
         href={`mailto:${email}`}
-        className="text-base font-medium text-slate-700 hover:text-[#00C8E0] transition-colors"
+        className="text-base font-medium text-slate-700 hover:text-primary transition-colors"
       >
         {email}
       </a>
@@ -43,14 +43,14 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
           type="button"
           onClick={handleCopy}
           aria-label="Copiar correo al portapapeles"
-          className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 hover:bg-[#00C8E0]/10 hover:border-[#00C8E0]/40 hover:text-[#00C8E0] transition-all duration-200 active:scale-95"
+          className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-all duration-200 active:scale-95"
         >
           {copied ? (
             /* Check icon */
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-4 h-4 fill-none stroke-[#00C8E0] stroke-2"
+              className="w-4 h-4 fill-none stroke-primary stroke-2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -73,7 +73,7 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
 
         {/* Tooltip */}
         <div
-          className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 rounded-lg bg-[#0F1A2E] text-white text-xs font-medium whitespace-nowrap shadow-lg pointer-events-none transition-all duration-300 ${
+          className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 rounded-lg bg-navy text-white text-xs font-medium whitespace-nowrap shadow-lg pointer-events-none transition-all duration-300 ${
             copied
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-1"
@@ -83,7 +83,7 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-3.5 h-3.5 fill-none stroke-[#00C8E0] stroke-2"
+              className="w-3.5 h-3.5 fill-none stroke-primary stroke-2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -92,7 +92,7 @@ export default function CopyEmailButton({ email }: CopyEmailButtonProps) {
             ¡Correo copiado!
           </span>
           {/* Arrow */}
-          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#0F1A2E]" />
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-navy" />
         </div>
       </div>
     </div>

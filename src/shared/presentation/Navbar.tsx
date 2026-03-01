@@ -22,13 +22,12 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-24">
           {/* Logo */}
           <div className="shrink-0">
-            <Link href="/">
+            <Link href="/" className="relative block h-20 w-60">
               <Image
-                src="/logo.svg"
+                src="/synova-al-lado.svg"
                 alt="SYNOVA"
-                width={120}
-                height={48}
-                className="h-12 w-auto"
+                fill
+                className="object-contain object-left"
                 priority
               />
             </Link>
@@ -42,8 +41,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors tracking-wide ${
                   pathname === link.href
-                    ? "font-bold text-[#00C8E0]"
-                    : "text-[#0F1A2E] hover:text-[#00C8E0]"
+                    ? "font-bold text-primary"
+                    : "text-navy hover:text-primary"
                 }`}
               >
                 {link.label}
@@ -63,7 +62,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="text-[#0F1A2E] hover:text-[#00C8E0]"
+              className="text-navy hover:text-primary"
               aria-label="Abrir menú"
             >
               <span className="material-symbols-outlined">
@@ -84,8 +83,8 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               className={`block py-2 text-sm font-medium transition-colors ${
                 pathname === link.href
-                  ? "text-[#00C8E0] font-bold"
-                  : "text-[#0F1A2E] hover:text-[#00C8E0]"
+                  ? "text-primary font-bold"
+                  : "text-navy hover:text-primary"
               }`}
             >
               {link.label}

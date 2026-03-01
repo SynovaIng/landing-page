@@ -7,12 +7,12 @@ interface ContactCardProps {
   subtitle: string;
   /**
    * Clases del gradiente del fondo del ícono.
-   * Ej: "from-[#1A3A8F] to-[#00C8E0]"
+   * Ej: "from-secondary to-primary"
    */
   iconGradient: string;
   /**
    * Color del borde en hover.
-   * Ej: "hover:border-[#1A3A8F]/30"
+   * Ej: "hover:border-secondary/30"
    */
   hoverBorderColor: string;
   /**

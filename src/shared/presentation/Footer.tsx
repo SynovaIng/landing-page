@@ -49,18 +49,19 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0F1A2E] border-t border-white/5 pt-16 pb-8">
+    <footer className="bg-navy border-t border-white/5 pt-16 pb-8">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-1 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
+            <div className="mb-6">
               <Image
-                src="/logo.svg"
+                src="/synova-al-lado-blanco.svg"
                 alt="SYNOVA"
-                width={140}
-                height={56}
-                className="h-14 w-auto"
+                width={0}
+                height={0}
+                sizes="100vw"
+                className="h-18 w-auto"
               />
             </div>
             <p className="text-sm text-slate-400 leading-relaxed mb-6">
@@ -74,7 +75,7 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="text-slate-400 hover:text-[#00C8E0] transition-colors"
+                  className="text-slate-400 hover:text-primary transition-colors"
                 >
                   <svg
                     className="h-5 w-5"
@@ -99,7 +100,7 @@ export default function Footer() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-slate-400 hover:text-[#00C8E0] transition-colors"
+                    className="text-sm text-slate-400 hover:text-primary transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -118,7 +119,7 @@ export default function Footer() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-slate-400 hover:text-[#00C8E0] transition-colors"
+                    className="text-sm text-slate-400 hover:text-primary transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -134,7 +135,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-[#00C8E0] text-[18px] mt-0.5">
+                <span className="material-symbols-outlined text-primary text-[18px] mt-0.5">
                   location_on
                 </span>
                 <span className="text-sm text-slate-400">
@@ -142,23 +143,23 @@ export default function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[#00C8E0] text-[18px]">
+                <span className="material-symbols-outlined text-primary text-[18px]">
                   call
                 </span>
                 <a
                   href="tel:+56912345678"
-                  className="text-sm text-slate-400 hover:text-[#00C8E0] transition-colors"
+                  className="text-sm text-slate-400 hover:text-primary transition-colors"
                 >
                   +56 9 1234 5678
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[#00C8E0] text-[18px]">
+                <span className="material-symbols-outlined text-primary text-[18px]">
                   mail
                 </span>
                 <a
                   href="mailto:contacto@synova.cl"
-                  className="text-sm text-slate-400 hover:text-[#00C8E0] transition-colors"
+                  className="text-sm text-slate-400 hover:text-primary transition-colors"
                 >
                   contacto@synova.cl
                 </a>
