@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { Service } from "@/shared/domain/data/services";
+import type { Service } from "../domain/Service";
 
 interface ServiceCardProps {
   service: Service;

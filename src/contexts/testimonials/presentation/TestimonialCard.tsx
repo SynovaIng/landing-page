@@ -1,4 +1,4 @@
-import type { Testimonial } from "@/shared/domain/data/testimonials";
+import type { Testimonial } from "../domain/Testimonial";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;

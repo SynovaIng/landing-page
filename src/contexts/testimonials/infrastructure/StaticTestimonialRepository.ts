@@ -1,13 +1,7 @@
-export interface Testimonial {
-  id: string;
-  text: string;
-  authorName: string;
-  authorInitials: string;
-  authorLocation: string;
-  rating: number;
-}
+import type { Testimonial } from "../domain/Testimonial";
+import type { ITestimonialRepository } from "../repositories/ITestimonialRepository";
 
-export const testimonials: Testimonial[] = [
+const staticTestimonials: Testimonial[] = [
   {
     id: "roberto-f",
     text: "Solicité una regularización TE1 para mi local comercial. El proceso fue transparente y rápido. Totalmente recomendados por su profesionalismo.",
@@ -33,3 +27,13 @@ export const testimonials: Testimonial[] = [
     rating: 5,
   },
 ];
+
+export class StaticTestimonialRepository implements ITestimonialRepository {
+  async getAll(): Promise<Testimonial[]> {
+    return staticTestimonials;
+  }
+
+  async getById(id: string): Promise<Testimonial | null> {
+    return staticTestimonials.find((t) => t.id === id) ?? null;
+  }
+}

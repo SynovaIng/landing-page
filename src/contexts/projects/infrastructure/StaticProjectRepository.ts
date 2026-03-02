@@ -1,14 +1,7 @@
-export type ProjectCategory = "Residencial" | "Comercial" | "Industrial";
+import type { Project } from "../domain/Project";
+import type { IProjectRepository } from "../repositories/IProjectRepository";
 
-export interface Project {
-  id: string;
-  title: string;
-  location: string;
-  category: ProjectCategory;
-  imageUrl: string;
-}
-
-export const projects: Project[] = [
+const staticProjects: Project[] = [
   {
     id: "iluminacion-las-condes",
     title: "Iluminación LED Las Condes",
@@ -58,3 +51,13 @@ export const projects: Project[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBc8fD3T_oaTbS4ZqTsiXsOUfDycQr0yHEZSnzF-cIcXDmsDgtK0Tc3Zo6nDRKcDkAvPGLgL0e9y-t08E8R7jhZrzhyiJL2VFUNVjIkemjIoy-otAbCBuNg0d5S5PZvtamQYG5hsYmpLlUfvP1MFTFSD7a61bAvDjaKj8YGLkF-qYZiXWsgaFWB_uYmqgKrntGJ_-dxgueqklrOA41pcTJjVoZlQ86KE_lqNgPuJ_gpHapThUeNPosCcL6X3CxJX5eBikI2dG5Wq0LC",
   },
 ];
+
+export class StaticProjectRepository implements IProjectRepository {
+  async getAll(): Promise<Project[]> {
+    return staticProjects;
+  }
+
+  async getById(id: string): Promise<Project | null> {
+    return staticProjects.find((p) => p.id === id) ?? null;
+  }
+}

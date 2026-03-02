@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
-import { services } from "@/shared/domain/data/services";
-import Button from "@/shared/presentation/Button";
-import SectionHeader from "@/shared/presentation/SectionHeader";
-import ServiceCard from "@/shared/presentation/ServiceCard";
+import { StaticServiceRepository } from "@/contexts/services/infrastructure/StaticServiceRepository";
+import ServiceCard from "@/contexts/services/presentation/ServiceCard";
+import { getServices } from "@/contexts/services/use-cases/GetServices";
+import Button from "@/contexts/shared/presentation/Button";
+import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 
 export const metadata: Metadata = {
   title: "Servicios",
@@ -29,7 +30,8 @@ const sectors = [
   },
 ];
 
-export default function ServiciosPage() {
+export default async function ServiciosPage() {
+  const services = await getServices(new StaticServiceRepository());
   return (
     <div className="pt-24">
       {/* ── Hero ── */}

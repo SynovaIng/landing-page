@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
-import { services } from "@/shared/domain/data/services";
-import { testimonials } from "@/shared/domain/data/testimonials";
-import Button from "@/shared/presentation/Button";
-import SectionHeader from "@/shared/presentation/SectionHeader";
-import ServiceCard from "@/shared/presentation/ServiceCard";
-import StatsBar from "@/shared/presentation/StatsBar";
-import TestimonialCard from "@/shared/presentation/TestimonialCard";
+import { StaticServiceRepository } from "@/contexts/services/infrastructure/StaticServiceRepository";
+import ServiceCard from "@/contexts/services/presentation/ServiceCard";
+import { getServices } from "@/contexts/services/use-cases/GetServices";
+import Button from "@/contexts/shared/presentation/Button";
+import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
+import StatsBar from "@/contexts/shared/presentation/StatsBar";
+import { StaticTestimonialRepository } from "@/contexts/testimonials/infrastructure/StaticTestimonialRepository";
+import TestimonialCard from "@/contexts/testimonials/presentation/TestimonialCard";
+import { getTestimonials } from "@/contexts/testimonials/use-cases/GetTestimonials";
 
 export const metadata: Metadata = {
   title: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",
@@ -40,7 +42,9 @@ const whyUs = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const services = await getServices(new StaticServiceRepository());
+  const testimonials = await getTestimonials(new StaticTestimonialRepository());
   return (
     <>
       {/* ── Hero ── */}

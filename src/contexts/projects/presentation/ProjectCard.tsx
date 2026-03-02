@@ -1,4 +1,4 @@
-import type { Project } from "@/shared/domain/data/projects";
+import type { Project } from "../domain/Project";
 
 interface ProjectCardProps {
   project: Project;

@@ -1,13 +1,7 @@
-export interface Service {
-  id: string;
-  icon: string; // Material Symbols icon name
-  title: string;
-  description: string;
-  features: string[];
-  ctaLabel: string;
-}
+import type { Service } from "../domain/Service";
+import type { IServiceRepository } from "../repositories/IServiceRepository";
 
-export const services: Service[] = [
+const staticServices: Service[] = [
   {
     id: "instalaciones",
     icon: "electric_bolt",
@@ -61,3 +55,13 @@ export const services: Service[] = [
     ctaLabel: "Solicitar Plan",
   },
 ];
+
+export class StaticServiceRepository implements IServiceRepository {
+  async getAll(): Promise<Service[]> {
+    return staticServices;
+  }
+
+  async getById(id: string): Promise<Service | null> {
+    return staticServices.find((s) => s.id === id) ?? null;
+  }
+}

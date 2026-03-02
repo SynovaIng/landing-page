@@ -1,4 +1,4 @@
-import StatCard from "@/shared/presentation/StatCard";
+import StatCard from "./StatCard";
 
 interface Stat {
   value: string;
