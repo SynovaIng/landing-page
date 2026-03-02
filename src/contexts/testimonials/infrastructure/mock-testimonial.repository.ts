@@ -1,7 +1,9 @@
-import type { Testimonial } from "../domain/Testimonial";
-import type { ITestimonialRepository } from "../repositories/ITestimonialRepository";
+import { Service } from "diod";
 
-const staticTestimonials: Testimonial[] = [
+import type { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
+import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
+
+const mockTestimonials: Testimonial[] = [
   {
     id: "roberto-f",
     text: "Solicité una regularización TE1 para mi local comercial. El proceso fue transparente y rápido. Totalmente recomendados por su profesionalismo.",
@@ -28,12 +30,13 @@ const staticTestimonials: Testimonial[] = [
   },
 ];
 
-export class StaticTestimonialRepository implements ITestimonialRepository {
+@Service()
+export class MockTestimonialRepository extends TestimonialRepository {
   async getAll(): Promise<Testimonial[]> {
-    return staticTestimonials;
+    return mockTestimonials;
   }
 
   async getById(id: string): Promise<Testimonial | null> {
-    return staticTestimonials.find((t) => t.id === id) ?? null;
+    return mockTestimonials.find((t) => t.id === id) ?? null;
   }
 }

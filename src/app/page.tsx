@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
-import { StaticServiceRepository } from "@/contexts/services/infrastructure/StaticServiceRepository";
+import { container } from "@/config/container";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
-import { getServices } from "@/contexts/services/use-cases/GetServices";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import Button from "@/contexts/shared/presentation/Button";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 import StatsBar from "@/contexts/shared/presentation/StatsBar";
-import { StaticTestimonialRepository } from "@/contexts/testimonials/infrastructure/StaticTestimonialRepository";
 import TestimonialCard from "@/contexts/testimonials/presentation/TestimonialCard";
-import { getTestimonials } from "@/contexts/testimonials/use-cases/GetTestimonials";
+import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 
 export const metadata: Metadata = {
   title: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",
@@ -43,8 +42,8 @@ const whyUs = [
 ];
 
 export default async function HomePage() {
-  const services = await getServices(new StaticServiceRepository());
-  const testimonials = await getTestimonials(new StaticTestimonialRepository());
+  const services = await container.get(GetAllServicesUseCase).execute();
+  const testimonials = await container.get(GetAllTestimonialsUseCase).execute();
   return (
     <>
       {/* ── Hero ── */}

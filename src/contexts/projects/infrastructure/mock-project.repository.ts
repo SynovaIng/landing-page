@@ -1,7 +1,9 @@
-import type { Project } from "../domain/Project";
-import type { IProjectRepository } from "../repositories/IProjectRepository";
+import { Service } from "diod";
 
-const staticProjects: Project[] = [
+import type { Project } from "@/contexts/projects/domain/project.entity";
+import { ProjectRepository } from "@/contexts/projects/domain/project.repository";
+
+const mockProjects: Project[] = [
   {
     id: "iluminacion-las-condes",
     title: "Iluminación LED Las Condes",
@@ -52,12 +54,13 @@ const staticProjects: Project[] = [
   },
 ];
 
-export class StaticProjectRepository implements IProjectRepository {
+@Service()
+export class MockProjectRepository extends ProjectRepository {
   async getAll(): Promise<Project[]> {
-    return staticProjects;
+    return mockProjects;
   }
 
   async getById(id: string): Promise<Project | null> {
-    return staticProjects.find((p) => p.id === id) ?? null;
+    return mockProjects.find((p) => p.id === id) ?? null;
   }
 }

@@ -1,7 +1,9 @@
-import type { Service } from "../domain/Service";
-import type { IServiceRepository } from "../repositories/IServiceRepository";
+import { Service as DiodService } from "diod";
 
-const staticServices: Service[] = [
+import type { Service } from "@/contexts/services/domain/service.entity";
+import { ServiceRepository } from "@/contexts/services/domain/service.repository";
+
+const mockServices: Service[] = [
   {
     id: "instalaciones",
     icon: "electric_bolt",
@@ -56,12 +58,13 @@ const staticServices: Service[] = [
   },
 ];
 
-export class StaticServiceRepository implements IServiceRepository {
+@DiodService()
+export class MockServiceRepository extends ServiceRepository {
   async getAll(): Promise<Service[]> {
-    return staticServices;
+    return mockServices;
   }
 
   async getById(id: string): Promise<Service | null> {
-    return staticServices.find((s) => s.id === id) ?? null;
+    return mockServices.find((s) => s.id === id) ?? null;
   }
 }

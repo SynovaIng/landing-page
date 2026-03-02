@@ -1,4 +1,4 @@
-import type { Project } from "../domain/Project";
+import type { Project } from "@/contexts/projects/domain/project.entity";
 
 interface ProjectCardProps {
   project: Project;

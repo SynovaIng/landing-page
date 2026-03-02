@@ -1,4 +1,4 @@
-import type { Testimonial } from "../domain/Testimonial";
+import type { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { Service } from "../domain/Service";
+import type { Service } from "@/contexts/services/domain/service.entity";
 
 interface ServiceCardProps {
   service: Service;

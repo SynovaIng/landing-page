@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import type { Project, ProjectCategory } from "@/contexts/projects/domain/Project";
+import type { Project, ProjectCategory } from "@/contexts/projects/domain/project.entity";
 import ProjectCard from "@/contexts/projects/presentation/ProjectCard";
 import Button from "@/contexts/shared/presentation/Button";
 import StatCard from "@/contexts/shared/presentation/StatCard";

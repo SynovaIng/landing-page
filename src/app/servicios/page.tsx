@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { StaticServiceRepository } from "@/contexts/services/infrastructure/StaticServiceRepository";
+import { container } from "@/config/container";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
-import { getServices } from "@/contexts/services/use-cases/GetServices";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import Button from "@/contexts/shared/presentation/Button";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 
@@ -31,7 +31,7 @@ const sectors = [
 ];
 
 export default async function ServiciosPage() {
-  const services = await getServices(new StaticServiceRepository());
+  const services = await container.get(GetAllServicesUseCase).execute();
   return (
     <div className="pt-24">
       {/* ── Hero ── */}

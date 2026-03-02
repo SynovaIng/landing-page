@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
+import { container } from "@/config/container";
 import ContactCard from "@/contexts/contacto/presentation/ContactCard";
 import CopyEmailButton from "@/contexts/contacto/presentation/CopyEmailButton";
-import { StaticServiceRepository } from "@/contexts/services/infrastructure/StaticServiceRepository";
-import { getServices } from "@/contexts/services/use-cases/GetServices";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -17,7 +17,7 @@ export default async function ContactoPage({
   searchParams: Promise<{ servicio?: string }>;
 }) {
   const { servicio } = await searchParams;
-  const services = await getServices(new StaticServiceRepository());
+  const services = await container.get(GetAllServicesUseCase).execute();
   const selectedService = services.find((s) => s.id === servicio)?.id ?? "";
   return (
     <div className="pt-24">
