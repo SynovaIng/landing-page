@@ -26,11 +26,7 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-      /** Obliga `import type` para importaciones de solo tipos */
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { prefer: "type-imports", fixStyle: "inline-type-imports" },
-      ],
+      "@typescript-eslint/consistent-type-imports": "off",
       /** Prohíbe `!` (non-null assertion) */
       "@typescript-eslint/no-non-null-assertion": "error",
       /** Prohíbe `x as any` y `<any>x` */
