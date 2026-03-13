@@ -1,22 +1,44 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { logoutAction } from "@/app/(protected)/actions";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
 export const metadata: Metadata = {
   title: "Dashboard — SYNOVA Admin",
 };
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="min-h-screen bg-navy flex flex-col text-white p-8">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-10">
-        <div className="w-8 h-8 rounded bg-cyan-gradient flex items-center justify-center">
-          <span className="material-symbols-outlined text-white text-lg">bolt</span>
+      <div className="mb-10 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-cyan-gradient">
+            <span className="material-symbols-outlined text-lg text-white">bolt</span>
+          </div>
+          <span className="text-lg font-bold tracking-wide">SYNOVA Admin</span>
         </div>
-        <span className="font-bold text-lg tracking-wide">SYNOVA Admin</span>
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-slate-300">{user?.email ?? ""}</span>
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+            >
+              <span className="material-symbols-outlined text-[18px]">logout</span>
+              Cerrar sesión
+            </button>
+          </form>
+        </div>
       </div>
 
-      {/* Placeholder content */}
       <div className="grow flex flex-col items-center justify-center gap-6 text-center">
         <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
           <span className="material-symbols-outlined text-5xl text-primary">

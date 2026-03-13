@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 
+import { loginAction } from "@/app/(protected)/actions";
+
 export const metadata: Metadata = {
   title: "Admin — SYNOVA",
   description: "Panel de administración SYNOVA",
 };
 
-export default function AdminLoginPage() {
+interface AdminLoginPageProps {
+  searchParams: Promise<{ error?: string }>;
+}
+
+export default async function AdminLoginPage({
+  searchParams,
+}: AdminLoginPageProps) {
+  const { error } = await searchParams;
+
   return (
     <div className="min-h-screen bg-navy flex items-center justify-center p-4">
-      {/* Background accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
@@ -23,9 +32,7 @@ export default function AdminLoginPage() {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Card */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-          {/* Logo */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-cyan-gradient shadow-lg mb-4">
               <span className="material-symbols-outlined text-white text-3xl">
@@ -40,7 +47,12 @@ export default function AdminLoginPage() {
             </p>
           </div>
 
-          <form action="#" method="POST" className="space-y-4">
+          <form action={loginAction} className="space-y-4">
+            {error ? (
+              <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {error}
+              </p>
+            ) : null}
             <div>
               <label
                 htmlFor="email"

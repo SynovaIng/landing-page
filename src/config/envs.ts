@@ -1,12 +1,10 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  // Supabase — public (available on client and server)
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-
-  // Supabase — server only (never expose to the client)
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+  SUPABASE_ADMIN_EMAILS: z.string().default(""),
 });
 
 const parsed = envSchema.safeParse(process.env);
