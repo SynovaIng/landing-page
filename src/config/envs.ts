@@ -2,9 +2,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
-  SUPABASE_ADMIN_EMAILS: z.string().default(""),
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().min(1),
 });
 
 const parsed = envSchema.safeParse(process.env);

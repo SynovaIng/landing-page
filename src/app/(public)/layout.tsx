@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { isAdminEmail } from "@/lib/auth/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function PublicLayout({
@@ -14,12 +13,8 @@ export default async function PublicLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user && isAdminEmail(user.email)) {
+  if (user) {
     redirect("/dashboard");
-  }
-
-  if (user && !isAdminEmail(user.email)) {
-    await supabase.auth.signOut();
   }
 
   return children;
