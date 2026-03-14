@@ -2,18 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { logoutAction } from "@/app/(protected)/actions";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 
 export const metadata: Metadata = {
   title: "Dashboard — SYNOVA Admin",
 };
 
 export default async function AdminDashboardPage() {
-  const supabase = await createSupabaseServerClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { getAuthenticatedUserUseCase } = await createServerAuthUseCases();
+  const user = await getAuthenticatedUserUseCase.execute();
 
   return (
     <div className="min-h-screen bg-navy flex flex-col text-white p-8">

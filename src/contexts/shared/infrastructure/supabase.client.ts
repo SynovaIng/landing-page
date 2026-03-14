@@ -9,7 +9,7 @@ export class SupabaseClientService {
 
   constructor() {
     const supabaseUrl = envs.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = envs.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseKey = envs.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
     this.client = createClient(supabaseUrl, supabaseKey);
   }

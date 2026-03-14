@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 
 const toLoginWithError = (message: string) => {
 	const encodedMessage = encodeURIComponent(message);
@@ -13,36 +13,20 @@ export const loginAction = async (formData: FormData): Promise<void> => {
 	const email = String(formData.get("email") ?? "").trim();
 	const password = String(formData.get("password") ?? "");
 
-	if (!email || !password) {
-		toLoginWithError("Email and password are required");
-	}
+	const { loginUseCase } = await createServerAuthUseCases();
 
-	const supabase = await createSupabaseServerClient();
-
-	const { error: loginError } = await supabase.auth.signInWithPassword({
-		email,
-		password,
-	});
-
-	if (loginError) {
-		toLoginWithError("Invalid credentials");
-	}
-
-	const {
-		data: { user },
-		error: userError,
-	} = await supabase.auth.getUser();
-
-	if (userError || !user) {
-		await supabase.auth.signOut();
-		toLoginWithError("Unable to validate session");
+	try {
+		await loginUseCase.execute(email, password);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : "Invalid credentials";
+		toLoginWithError(message);
 	}
 
 	redirect("/dashboard");
 };
 
 export const logoutAction = async (): Promise<void> => {
-	const supabase = await createSupabaseServerClient();
-	await supabase.auth.signOut();
+	const { logoutUseCase } = await createServerAuthUseCases();
+	await logoutUseCase.execute();
 	redirect("/login");
 };

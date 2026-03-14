@@ -1,17 +1,14 @@
 import { redirect } from "next/navigation";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 
 export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createSupabaseServerClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { getAuthenticatedUserUseCase } = await createServerAuthUseCases();
+  const user = await getAuthenticatedUserUseCase.execute();
 
   if (user) {
     redirect("/dashboard");
