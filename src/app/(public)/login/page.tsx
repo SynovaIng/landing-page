@@ -26,7 +26,7 @@ export default async function AdminLoginPage({
   const { error } = await searchParams;
 
   return (
-    <div className="min-h-screen bg-navy flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
@@ -41,37 +41,37 @@ export default async function AdminLoginPage({
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-cyan-gradient shadow-lg mb-4">
               <span className="material-symbols-outlined text-white text-3xl">
                 bolt
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold">
               SYNOVA Admin
             </h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-slate-600 text-sm mt-1">
               Ingresa tus credenciales para continuar
             </p>
           </div>
 
           <form action={loginAction} className="space-y-4">
             {error ? (
-              <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
               </p>
             ) : null}
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-300 mb-2"
+                className="block text-sm font-medium text-slate-700 mb-2"
               >
                 Correo electrónico
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="material-symbols-outlined text-slate-500 text-[20px]">
+                  <span className="material-symbols-outlined text-slate-400 text-[20px]">
                     mail
                   </span>
                 </div>
@@ -81,7 +81,7 @@ export default async function AdminLoginPage({
                   type="email"
                   autoComplete="email"
                   placeholder="admin@synova.cl"
-                  className="block w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-sm backdrop-blur transition-all"
+                  className="block w-full rounded-lg border border-slate-200 bg-white py-3 pl-10 pr-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-sm transition-all"
                 />
               </div>
             </div>
@@ -89,13 +89,13 @@ export default async function AdminLoginPage({
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-slate-300 mb-2"
+                className="block text-sm font-medium text-slate-700 mb-2"
               >
                 Contraseña
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="material-symbols-outlined text-slate-500 text-[20px]">
+                  <span className="material-symbols-outlined text-slate-400 text-[20px]">
                     lock
                   </span>
                 </div>
@@ -105,17 +105,17 @@ export default async function AdminLoginPage({
                   type="password"
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="block w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-sm backdrop-blur transition-all"
+                  className="block w-full rounded-lg border border-slate-200 bg-white py-3 pl-10 pr-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-sm transition-all"
                 />
               </div>
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-slate-500 cursor-pointer">
                 <input type="checkbox" className="accent-primary rounded" />
                 Recuérdame
               </label>
-              <a href="#" className="text-sm text-primary hover:text-white transition-colors">
+              <a href="#" className="text-sm text-primary hover:text-primary-dark transition-colors">
                 ¿Olvidaste tu contraseña?
               </a>
             </div>
