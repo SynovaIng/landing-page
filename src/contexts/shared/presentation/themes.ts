@@ -123,4 +123,4 @@ export const themes: ColorTheme[] = [
 ];
 
 /** Tema por defecto si no hay ninguno guardado */
-export const DEFAULT_THEME_ID = "cyan-navy";
+export const DEFAULT_THEME_ID = "light-yellow-dark-header";

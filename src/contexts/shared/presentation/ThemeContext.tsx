@@ -41,25 +41,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     () => themes.find((t) => t.id === DEFAULT_THEME_ID) ?? themes[0]
   );
 
-  /** Al montar, restaura el tema guardado en localStorage */
   useEffect(() => {
-    const saved = localStorage.getItem("synova-theme");
-    const found = themes.find((t) => t.id === saved);
-    if (found) {
-      setActiveTheme(found);
-      applyTheme(found);
-    } else {
-      applyTheme(activeTheme);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    applyTheme(activeTheme);
+  }, [activeTheme]);
 
   const setTheme = useCallback((id: string) => {
     const found = themes.find((t) => t.id === id);
     if (!found) return;
-    setActiveTheme(found);
-    applyTheme(found);
-    localStorage.setItem("synova-theme", id);
+    if (found.id === DEFAULT_THEME_ID) {
+      setActiveTheme(found);
+    }
   }, []);
 
   return (
