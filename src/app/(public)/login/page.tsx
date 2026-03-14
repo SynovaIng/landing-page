@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { loginAction } from "@/app/(protected)/actions";
+import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 
 export const metadata: Metadata = {
   title: "Admin — SYNOVA",
@@ -14,6 +16,13 @@ interface AdminLoginPageProps {
 export default async function AdminLoginPage({
   searchParams,
 }: AdminLoginPageProps) {
+  const { getAuthenticatedUserUseCase } = createServerAuthUseCases();
+  const user = await getAuthenticatedUserUseCase.execute();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   const { error } = await searchParams;
 
   return (

@@ -3,7 +3,7 @@ import { GetAuthenticatedUserUseCase } from "@/contexts/auth/use-cases/get-authe
 import { LoginUseCase } from "@/contexts/auth/use-cases/login.use-case";
 import { LogoutUseCase } from "@/contexts/auth/use-cases/logout.use-case";
 
-export const createServerAuthUseCases = async () => {
+export const createServerAuthUseCases = () => {
   return {
     getAuthenticatedUserUseCase: container.get(GetAuthenticatedUserUseCase),
     loginUseCase: container.get(LoginUseCase),

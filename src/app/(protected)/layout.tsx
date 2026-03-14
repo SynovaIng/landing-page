@@ -7,7 +7,7 @@ export default async function AdminProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { getAuthenticatedUserUseCase } = await createServerAuthUseCases();
+  const { getAuthenticatedUserUseCase } = createServerAuthUseCases();
   const user = await getAuthenticatedUserUseCase.execute();
 
   if (!user) {

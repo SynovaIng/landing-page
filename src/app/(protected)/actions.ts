@@ -13,7 +13,7 @@ export const loginAction = async (formData: FormData): Promise<void> => {
 	const email = String(formData.get("email") ?? "").trim();
 	const password = String(formData.get("password") ?? "");
 
-	const { loginUseCase } = await createServerAuthUseCases();
+	const { loginUseCase } = createServerAuthUseCases();
 
 	try {
 		await loginUseCase.execute(email, password);
@@ -26,7 +26,7 @@ export const loginAction = async (formData: FormData): Promise<void> => {
 };
 
 export const logoutAction = async (): Promise<void> => {
-	const { logoutUseCase } = await createServerAuthUseCases();
+	const { logoutUseCase } = createServerAuthUseCases();
 	await logoutUseCase.execute();
 	redirect("/login");
 };

@@ -7,7 +7,7 @@ import { LoginUseCase } from "@/contexts/auth/use-cases/login.use-case";
 import { LogoutUseCase } from "@/contexts/auth/use-cases/logout.use-case";
 
 export const registerAuthContainer = (builder: ContainerBuilder): void => {
-  builder.register(AuthRepository).useClass(SupabaseAuthRepository).asSingleton();
+  builder.register(AuthRepository).useClass(SupabaseAuthRepository).asTransient();
 
   builder.registerAndUse(LoginUseCase);
   builder.registerAndUse(GetAuthenticatedUserUseCase);
