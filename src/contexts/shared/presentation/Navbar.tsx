@@ -70,8 +70,8 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* ── Theme picker ── */}
-            <div ref={desktopDropdownRef} className="relative">
+            {/* ── Theme picker (hidden) ── */}
+            <div ref={desktopDropdownRef} className="relative hidden">
               <button
                 type="button"
                 onClick={() => setThemeOpen((o) => !o)}
@@ -164,27 +164,8 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile: theme pill + hamburger */}
+          {/* Mobile: hamburger */}
           <div className="md:hidden flex items-center gap-3">
-            {/* Mini theme button (mobile) */}
-            <button
-              type="button"
-              onClick={() => {
-                setThemeOpen((o) => !o);
-                setMobileOpen(false);
-              }}
-              title="Cambiar tema"
-              className="flex items-center gap-1 p-2 rounded-md border border-border bg-[var(--color-header-bg)]"
-            >
-              <span
-                className="inline-block w-3.5 h-3.5 rounded-full border border-surface shadow-sm"
-                style={{ background: activeTheme.vars["--color-primary"] }}
-              />
-              <span className="material-symbols-outlined text-base text-muted">
-                palette
-              </span>
-            </button>
-
             <button
               type="button"
               onClick={() => {
@@ -202,11 +183,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile theme picker */}
+      {/* Mobile theme picker (hidden) */}
       {themeOpen && (
         <div
           ref={mobileDropdownRef}
-          className="md:hidden bg-[var(--color-header-bg)] border-t border-border-light px-4 py-3"
+          className="md:hidden bg-[var(--color-header-bg)] border-t border-border-light px-4 py-3 hidden"
         >
           <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-2">
             Tema de color
