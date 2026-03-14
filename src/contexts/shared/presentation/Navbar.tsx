@@ -18,6 +18,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +36,46 @@ export default function Navbar() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchAuthStatus = async () => {
+      try {
+        const response = await fetch("/api/auth/session", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch auth session");
+        }
+        const data = (await response.json()) as { authenticated: boolean };
+        if (isMounted) {
+          setIsAuthenticated(Boolean(data.authenticated));
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthenticated(false);
+        }
+      }
+    };
+
+    fetchAuthStatus();
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        fetchAuthStatus();
+      }
+    };
+
+    window.addEventListener("focus", fetchAuthStatus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("focus", fetchAuthStatus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   return (
@@ -69,6 +110,19 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {isAuthenticated && (
+              <Link
+                href="/dashboard"
+                className={`text-sm font-medium transition-colors tracking-wide ${
+                  pathname === "/dashboard"
+                    ? "font-bold text-primary"
+                    : "text-[var(--color-header-text)] hover:text-primary"
+                }`}
+              >
+                Panel de Administracion
+              </Link>
+            )}
 
             {/* ── Theme picker (hidden) ── */}
             <div ref={desktopDropdownRef} className="relative hidden">
@@ -244,6 +298,19 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          {isAuthenticated && (
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className={`block py-2 text-sm font-medium transition-colors ${
+                pathname === "/dashboard"
+                  ? "text-primary font-bold"
+                  : "text-[var(--color-header-text)] hover:text-primary"
+              }`}
+            >
+              Panel de Administracion
+            </Link>
+          )}
           <Link
             href="/contacto"
             onClick={() => setMobileOpen(false)}

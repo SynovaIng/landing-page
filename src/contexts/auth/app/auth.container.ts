@@ -2,6 +2,7 @@ import type { ContainerBuilder } from "diod";
 
 import { AuthRepository } from "@/contexts/auth/domain/auth.repository";
 import { SupabaseAuthRepository } from "@/contexts/auth/infrastructure/supabase-auth.repository";
+import { CheckUserAuthenticatedUseCase } from "@/contexts/auth/use-cases/check-user-authenticated.use-case";
 import { GetAuthenticatedUserUseCase } from "@/contexts/auth/use-cases/get-authenticated-user.use-case";
 import { LoginUseCase } from "@/contexts/auth/use-cases/login.use-case";
 import { LogoutUseCase } from "@/contexts/auth/use-cases/logout.use-case";
@@ -10,6 +11,7 @@ export const registerAuthContainer = (builder: ContainerBuilder): void => {
   builder.register(AuthRepository).useClass(SupabaseAuthRepository).asTransient();
 
   builder.registerAndUse(LoginUseCase);
+  builder.registerAndUse(CheckUserAuthenticatedUseCase);
   builder.registerAndUse(GetAuthenticatedUserUseCase);
   builder.registerAndUse(LogoutUseCase);
 };

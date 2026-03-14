@@ -37,6 +37,17 @@ export class SupabaseAuthRepository extends AuthRepository {
     };
   }
 
+  async isAuthenticated(): Promise<boolean> {
+    const supabase = await createSupabaseServerClient();
+
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    return !error && Boolean(user);
+  }
+
   async signOut(): Promise<void> {
     const supabase = await createSupabaseServerClient();
     await supabase.auth.signOut();
