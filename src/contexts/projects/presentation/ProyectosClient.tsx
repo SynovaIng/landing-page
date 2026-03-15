@@ -56,12 +56,6 @@ export default function ProyectosClient({ projects }: ProyectosClientProps) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="h-px w-12 bg-secondary" />
-                <span className="text-secondary uppercase tracking-widest text-xs font-bold">
-                  Portafolio
-                </span>
-              </div>
               <h1 className="text-4xl md:text-6xl font-black text-navy leading-tight mb-4">
                 Nuestros Proyectos
               </h1>
