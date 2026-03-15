@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { useAuth } from "@/contexts/auth/presentation/AuthContext";
+
 import { useTheme } from "./ThemeContext";
 
 const navLinks = [
@@ -18,11 +20,20 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
+  const desktopProfileRef = useRef<HTMLDivElement>(null);
 
   const { activeTheme, setTheme, themes } = useTheme();
+  const { isAuthenticated, user, logout, isLoggingOut, isLoading } = useAuth();
+  const showAuthenticatedUi = !isLoading && isAuthenticated;
+
+  const handleLogout = async () => {
+    setProfileOpen(false);
+    setMobileOpen(false);
+    await logout();
+  };
 
   /* Cierra el dropdown al hacer clic fuera */
   useEffect(() => {
@@ -30,52 +41,18 @@ export default function Navbar() {
       const target = e.target as Node;
       const insideDesktop = desktopDropdownRef.current?.contains(target);
       const insideMobile = mobileDropdownRef.current?.contains(target);
+      const insideProfile = desktopProfileRef.current?.contains(target);
+
       if (!insideDesktop && !insideMobile) {
         setThemeOpen(false);
+      }
+
+      if (!insideProfile) {
+        setProfileOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchAuthStatus = async () => {
-      try {
-        const response = await fetch("/api/auth/session", {
-          cache: "no-store",
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch auth session");
-        }
-        const data = (await response.json()) as { authenticated: boolean };
-        if (isMounted) {
-          setIsAuthenticated(Boolean(data.authenticated));
-        }
-      } catch {
-        if (isMounted) {
-          setIsAuthenticated(false);
-        }
-      }
-    };
-
-    fetchAuthStatus();
-
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        fetchAuthStatus();
-      }
-    };
-
-    window.addEventListener("focus", fetchAuthStatus);
-    document.addEventListener("visibilitychange", handleVisibility);
-
-    return () => {
-      isMounted = false;
-      window.removeEventListener("focus", fetchAuthStatus);
-      document.removeEventListener("visibilitychange", handleVisibility);
-    };
   }, []);
 
   return (
@@ -111,7 +88,7 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {isAuthenticated && (
+            {showAuthenticatedUi && (
               <Link
                 href="/dashboard"
                 className={`text-sm font-medium transition-colors tracking-wide ${
@@ -216,6 +193,45 @@ export default function Navbar() {
               <span className="material-symbols-outlined text-lg">call</span>
               Contacto
             </Link>
+
+            {showAuthenticatedUi && (
+              <div ref={desktopProfileRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileOpen((open) => !open);
+                    setThemeOpen(false);
+                  }}
+                  title="Abrir perfil"
+                  className="w-10 h-10 rounded-full bg-primary text-white text-xs font-bold tracking-wide hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center"
+                >
+                  {user?.getInitials() ?? "US"}
+                </button>
+
+                {profileOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-[var(--color-header-bg)] rounded-xl shadow-lg border border-border-light overflow-hidden z-50">
+                    <div className="px-4 py-3 border-b border-border-light">
+                      <p className="text-xs font-semibold text-[var(--color-header-text)]/70 uppercase tracking-widest">
+                        Usuario
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-[var(--color-header-text)] truncate">
+                        {user?.fullName ?? "Usuario"}
+                      </p>
+                    </div>
+                    <div className="p-3">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        className="w-full px-3 py-2.5 rounded-md bg-[var(--color-header-bg)] text-sm font-semibold text-red-600 border border-red-200 hover:text-red-700 hover:border-red-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Mobile: hamburger */}
@@ -225,6 +241,7 @@ export default function Navbar() {
               onClick={() => {
                 setMobileOpen(!mobileOpen);
                 setThemeOpen(false);
+                setProfileOpen(false);
               }}
               className="text-[var(--color-header-text)] hover:text-primary"
               aria-label="Abrir menú"
@@ -298,7 +315,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          {isAuthenticated && (
+          {showAuthenticatedUi && (
             <Link
               href="/dashboard"
               onClick={() => setMobileOpen(false)}
@@ -318,6 +335,26 @@ export default function Navbar() {
           >
             Contacto
           </Link>
+          {showAuthenticatedUi && (
+            <div className="mt-3 p-3 rounded-lg border border-border-light bg-surface-alt space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="w-9 h-9 rounded-full bg-primary text-white text-xs font-bold tracking-wide flex items-center justify-center">
+                  {user?.getInitials() ?? "US"}
+                </span>
+                <span className="text-sm font-semibold text-[var(--color-header-text)] truncate">
+                  {user?.fullName ?? "Usuario"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full px-3 py-2.5 rounded-md bg-[var(--color-header-bg)] text-sm font-semibold text-red-600 border border-red-200 hover:text-red-700 hover:border-red-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
+              </button>
+            </div>
+          )}
         </div>
       )}
 

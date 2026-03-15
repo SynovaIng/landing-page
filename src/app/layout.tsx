@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter,Montserrat } from "next/font/google";
 
+import { AuthProvider } from "@/contexts/auth/presentation/AuthContext";
 import Footer from "@/contexts/shared/presentation/Footer";
 import Navbar from "@/contexts/shared/presentation/Navbar";
 import { ThemeProvider } from "@/contexts/shared/presentation/ThemeContext";
@@ -44,9 +45,11 @@ export default function RootLayout({
       </head>
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
         <ThemeProvider>
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          <AuthProvider>
+            <Navbar />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
