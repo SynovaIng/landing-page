@@ -54,7 +54,7 @@ const sectionConfig: Record<
     columns: [
       { key: "name", label: "Nombre" },
       { key: "slug", label: "Slug" },
-      { key: "ctaLabel", label: "CTA" },
+      { key: "ctaLabel", label: "Texto del botón" },
     ],
   },
   testimonials: {
@@ -83,7 +83,7 @@ const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "name", label: "Nombre", type: "text" },
     { key: "slug", label: "Slug", type: "text" },
     { key: "description", label: "Descripción", type: "textarea" },
-    { key: "ctaLabel", label: "Texto CTA", type: "text" },
+    { key: "ctaLabel", label: "Texto del botón", type: "text" },
     { key: "features", label: "Características", type: "textarea" },
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
@@ -301,7 +301,7 @@ export default function DashboardClient({
       </div>
 
       <div className="border-b border-border px-6 py-4">
-        <div className="inline-flex rounded-lg border border-border bg-surface-alt p-1">
+        <div className="flex w-full flex-col gap-1 rounded-lg border border-border bg-surface-alt p-1 sm:inline-flex sm:w-auto sm:flex-row sm:gap-0">
           {(Object.keys(sectionConfig) as DashboardSectionKey[]).map((sectionKey) => {
             const isActiveSection = sectionKey === activeSection;
 
@@ -310,7 +310,7 @@ export default function DashboardClient({
                 key={sectionKey}
                 type="button"
                 onClick={() => setActiveSection(sectionKey)}
-                className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                className={`w-full rounded-md px-4 py-2 text-left text-sm font-medium transition-colors sm:w-auto sm:text-center ${
                   isActiveSection
                     ? "bg-surface text-secondary shadow-sm"
                     : "text-on-surface-muted hover:text-navy"
@@ -331,19 +331,19 @@ export default function DashboardClient({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           <button
             type="button"
             onClick={removeSelected}
             disabled={selectedIds.length === 0}
-            className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-on-surface disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-alt"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-on-surface disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-alt sm:w-auto"
           >
             <span className="material-symbols-outlined text-[18px]">delete</span>
             Eliminar seleccionados
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90 sm:w-auto"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
             Nuevo
