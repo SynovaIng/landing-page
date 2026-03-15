@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type {
   DashboardRowBase,
@@ -154,6 +154,32 @@ export default function DashboardClient({
   >(createSelectedState());
   const [editContext, setEditContext] = useState<EditContext | null>(null);
   const [draftValues, setDraftValues] = useState<Record<string, DashboardEditableValue>>({});
+
+  useEffect(() => {
+    if (!editContext) {
+      return () => {};
+    }
+
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const previousOverflow = body.style.overflow;
+    const previousPosition = body.style.position;
+    const previousTop = body.style.top;
+    const previousWidth = body.style.width;
+
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+
+    return () => {
+      body.style.overflow = previousOverflow;
+      body.style.position = previousPosition;
+      body.style.top = previousTop;
+      body.style.width = previousWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [editContext]);
 
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
