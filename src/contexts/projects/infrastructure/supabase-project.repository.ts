@@ -10,6 +10,10 @@ import type {
   UpdateProjectInput,
 } from "@/contexts/projects/domain/project.repository";
 import { ProjectRepository } from "@/contexts/projects/domain/project.repository";
+import {
+  getProjectImagePathFromPublicUrl,
+  PROJECT_IMAGE_BUCKET,
+} from "@/contexts/projects/infrastructure/upload-project-image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const parseProjectCategory = (value: string): ProjectCategory => {
@@ -240,16 +244,31 @@ export class SupabaseProjectRepository extends ProjectRepository {
 
     const imageUrls = Array.from(new Set((input.imageUrls ?? []).map((value) => value.trim()).filter(Boolean)));
 
+    const { data: existingImagesData, error: existingImagesError } = await supabase
+      .from("project_images")
+      .select("url")
+      .eq("project_id", input.id);
+
+    if (existingImagesError) {
+      throw new Error("No se pudieron consultar las imágenes actuales del proyecto");
+    }
+
+    const existingImageUrls = (existingImagesData ?? []).map((item) => String(item.url));
+    const removedImageUrls = existingImageUrls.filter((url) => !imageUrls.includes(url));
+    const removedStoragePaths = removedImageUrls
+      .map((url) => getProjectImagePathFromPublicUrl(url))
+      .filter((path): path is string => Boolean(path));
+
+    const { error: deleteImagesError } = await supabase
+      .from("project_images")
+      .delete()
+      .eq("project_id", input.id);
+
+    if (deleteImagesError) {
+      throw new Error("No se pudieron reemplazar las imágenes del proyecto");
+    }
+
     if (imageUrls.length > 0) {
-      const { error: deleteImagesError } = await supabase
-        .from("project_images")
-        .delete()
-        .eq("project_id", input.id);
-
-      if (deleteImagesError) {
-        throw new Error("No se pudieron reemplazar las imágenes del proyecto");
-      }
-
       const imagesPayload = imageUrls.map((imageUrl, index) => ({
         project_id: input.id,
         url: imageUrl,
@@ -263,6 +282,17 @@ export class SupabaseProjectRepository extends ProjectRepository {
 
       if (insertImagesError) {
         throw new Error("No se pudieron guardar las nuevas imágenes del proyecto");
+      }
+    }
+
+    if (removedStoragePaths.length > 0) {
+      const { error: removeStorageError } = await supabase
+        .storage
+        .from(PROJECT_IMAGE_BUCKET)
+        .remove(removedStoragePaths);
+
+      if (removeStorageError) {
+        throw new Error(`Se actualizaron las imágenes en BD, pero falló su eliminación en Storage: ${removeStorageError.message}`);
       }
     }
 

@@ -1,6 +1,29 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-const PROJECT_IMAGE_BUCKET = "project-images";
+export const PROJECT_IMAGE_BUCKET = "project-images";
+
+export const getProjectImagePathFromPublicUrl = (publicUrl: string): string | null => {
+  const url = publicUrl.trim();
+
+  if (!url) {
+    return null;
+  }
+
+  const marker = `/storage/v1/object/public/${PROJECT_IMAGE_BUCKET}/`;
+  const markerIndex = url.indexOf(marker);
+
+  if (markerIndex === -1) {
+    return null;
+  }
+
+  const encodedPath = url.slice(markerIndex + marker.length).split("?")[0];
+
+  if (!encodedPath) {
+    return null;
+  }
+
+  return decodeURIComponent(encodedPath);
+};
 
 const getFileExtension = (filename: string): string => {
   const extension = filename.split(".").pop()?.trim().toLowerCase();

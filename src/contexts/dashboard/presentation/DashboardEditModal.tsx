@@ -387,6 +387,7 @@ export default function DashboardEditModal({
             }
 
             if (field.type === "file") {
+              const inputId = `${field.key}-input`;
               const selectedFiles = Array.isArray(value)
                 ? value.filter((file): file is File => file instanceof File)
                 : [];
@@ -400,13 +401,14 @@ export default function DashboardEditModal({
               }
 
               return (
-                <label key={field.key} className="block">
+                <div key={field.key} className="block">
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
                     {field.label}
                   </span>
 
                   <div className="space-y-3 rounded-lg border border-border bg-surface-alt p-3">
                     <input
+                      id={inputId}
                       type="file"
                       accept="image/*"
                       multiple
@@ -414,8 +416,15 @@ export default function DashboardEditModal({
                         const nextFiles = event.target.files ? Array.from(event.target.files) : [];
                         onValueChange(field.key, nextFiles);
                       }}
-                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none file:mr-3 file:rounded-md file:border file:border-border file:bg-surface-alt file:px-3 file:py-1 file:text-sm file:font-medium file:text-on-surface"
+                      className="sr-only"
                     />
+
+                    <label
+                      htmlFor={inputId}
+                      className="inline-flex cursor-pointer items-center rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt"
+                    >
+                      Elegir archivos
+                    </label>
 
                     <p className="text-xs text-on-surface-muted">
                       {selectedFiles.length > 0
@@ -467,6 +476,21 @@ export default function DashboardEditModal({
                                   <p className="text-xs font-medium text-secondary">Portada</p>
                                 )}
                               </div>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  onValueChange(
+                                    "imageUrls",
+                                    currentImageUrls.filter((_, imageIndex) => imageIndex !== index),
+                                  );
+                                }}
+                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-on-surface-muted hover:text-red-600"
+                                aria-label={`Eliminar imagen actual ${index + 1}`}
+                              >
+                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                              </button>
                             </li>
                           ))}
                         </ul>
@@ -503,13 +527,28 @@ export default function DashboardEditModal({
                                 <p className="truncate text-sm text-on-surface">{file.name}</p>
                                 <p className="text-xs text-on-surface-muted">Nueva imagen {index + 1}</p>
                               </div>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  onValueChange(
+                                    field.key,
+                                    selectedFiles.filter((_, fileIndex) => fileIndex !== index),
+                                  );
+                                }}
+                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-on-surface-muted hover:text-red-600"
+                                aria-label={`Eliminar nueva imagen ${index + 1}`}
+                              >
+                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                              </button>
                             </li>
                           ))}
                         </ul>
                       </div>
                     ) : null}
                   </div>
-                </label>
+                </div>
               );
             }
 
