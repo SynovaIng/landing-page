@@ -13,7 +13,7 @@ interface DashboardEditModalProps {
   singularLabel: string;
   fields: FieldConfig[];
   values: Record<string, string | number | boolean | string[]>;
-  projectServiceOptions: { id: string; name: string }[];
+  projectServiceOptions: { id: string; name: string; icon?: string }[];
   onValueChange: (fieldKey: string, value: string | number | boolean | string[]) => void;
   onClose: () => void;
   onSave: () => void;
@@ -34,6 +34,7 @@ export default function DashboardEditModal({
   const [iconSearchTerm, setIconSearchTerm] = useState("");
   const [remoteIconSuggestions, setRemoteIconSuggestions] = useState<string[]>([]);
   const [isSearchingIcons, setIsSearchingIcons] = useState(false);
+  const [isProjectServicesOpen, setIsProjectServicesOpen] = useState(false);
 
   const selectedIcon = String(values.icon ?? "").trim();
 
@@ -278,6 +279,7 @@ export default function DashboardEditModal({
               const selectedServiceIds = Array.isArray(value)
                 ? value.map((item) => String(item))
                 : [];
+              const selectedCount = selectedServiceIds.length;
 
               const toggleService = (serviceId: string) => {
                 const exists = selectedServiceIds.includes(serviceId);
@@ -293,21 +295,43 @@ export default function DashboardEditModal({
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
                     {field.label}
                   </span>
-                  <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border border-border bg-surface-alt p-3">
-                    {projectServiceOptions.length === 0 ? (
-                      <p className="text-sm text-on-surface-muted">No hay servicios disponibles.</p>
-                    ) : (
-                      projectServiceOptions.map((serviceOption) => (
-                        <label key={serviceOption.id} className="flex cursor-pointer items-center gap-3">
-                          <RoundedCheckbox
-                            checked={selectedServiceIds.includes(serviceOption.id)}
-                            onChange={() => toggleService(serviceOption.id)}
-                            ariaLabel={`Seleccionar ${serviceOption.name}`}
-                          />
-                          <span className="text-sm text-on-surface">{serviceOption.name}</span>
-                        </label>
-                      ))
-                    )}
+                  <div className="rounded-lg border border-border bg-surface-alt p-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsProjectServicesOpen((prev) => !prev)}
+                      className="inline-flex w-full items-center justify-between rounded-lg border border-border bg-surface px-3 py-2 text-left text-sm font-medium text-on-surface hover:bg-surface-alt"
+                    >
+                      <span>
+                        {selectedCount === 0
+                          ? "Seleccionar servicios"
+                          : `${selectedCount} servicio${selectedCount === 1 ? "" : "s"} seleccionado${selectedCount === 1 ? "" : "s"}`}
+                      </span>
+                      <span className="material-symbols-outlined text-[18px]">
+                        {isProjectServicesOpen ? "expand_less" : "expand_more"}
+                      </span>
+                    </button>
+
+                    {isProjectServicesOpen ? (
+                      <div className="mt-2 max-h-48 space-y-2 overflow-y-auto rounded-lg border border-border bg-surface p-3">
+                        {projectServiceOptions.length === 0 ? (
+                          <p className="text-sm text-on-surface-muted">No hay servicios disponibles.</p>
+                        ) : (
+                          projectServiceOptions.map((serviceOption) => (
+                            <label key={serviceOption.id} className="flex cursor-pointer items-center gap-3">
+                              <RoundedCheckbox
+                                checked={selectedServiceIds.includes(serviceOption.id)}
+                                onChange={() => toggleService(serviceOption.id)}
+                                ariaLabel={`Seleccionar ${serviceOption.name}`}
+                              />
+                              <span className="material-symbols-outlined text-[18px] text-secondary">
+                                {serviceOption.icon ?? "engineering"}
+                              </span>
+                              <span className="text-sm text-on-surface">{serviceOption.name}</span>
+                            </label>
+                          ))
+                        )}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               );
