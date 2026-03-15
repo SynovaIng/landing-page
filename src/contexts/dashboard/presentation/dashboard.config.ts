@@ -1,0 +1,81 @@
+import type { DashboardSectionKey } from "@/contexts/dashboard/domain/dashboard.entity";
+
+export interface TableColumn {
+  key: string;
+  label: string;
+}
+
+export interface FieldConfig {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "number" | "checkbox";
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
+interface SectionConfig {
+  label: string;
+  singularLabel: string;
+  columns: TableColumn[];
+}
+
+export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
+  projects: {
+    label: "Proyectos",
+    singularLabel: "proyecto",
+    columns: [
+      { key: "name", label: "Nombre" },
+      { key: "type", label: "Tipo" },
+      { key: "location", label: "Ubicación" },
+    ],
+  },
+  services: {
+    label: "Servicios",
+    singularLabel: "servicio",
+    columns: [
+      { key: "name", label: "Nombre" },
+      { key: "slug", label: "Slug" },
+      { key: "ctaLabel", label: "Texto del botón" },
+    ],
+  },
+  testimonials: {
+    label: "Reseñas",
+    singularLabel: "reseña",
+    columns: [
+      { key: "clientName", label: "Cliente" },
+      { key: "stars", label: "Estrellas" },
+      { key: "clientLocation", label: "Ubicación" },
+      { key: "message", label: "Comentario" },
+    ],
+  },
+};
+
+export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
+  projects: [
+    { key: "id", label: "ID", type: "text" },
+    { key: "name", label: "Nombre", type: "text" },
+    { key: "description", label: "Descripción", type: "textarea" },
+    { key: "type", label: "Tipo", type: "text" },
+    { key: "location", label: "Ubicación", type: "text" },
+    { key: "isActive", label: "Visible", type: "checkbox" },
+  ],
+  services: [
+    { key: "id", label: "ID", type: "text" },
+    { key: "name", label: "Nombre", type: "text" },
+    { key: "slug", label: "Slug", type: "text" },
+    { key: "description", label: "Descripción", type: "textarea" },
+    { key: "ctaLabel", label: "Texto del botón", type: "text" },
+    { key: "features", label: "Características", type: "textarea" },
+    { key: "isActive", label: "Visible", type: "checkbox" },
+  ],
+  testimonials: [
+    { key: "id", label: "ID", type: "text" },
+    { key: "clientName", label: "Nombre cliente", type: "text" },
+    { key: "clientInitials", label: "Iniciales", type: "text" },
+    { key: "clientLocation", label: "Ubicación", type: "text" },
+    { key: "stars", label: "Estrellas", type: "number", min: 0, max: 5, step: 0.5 },
+    { key: "message", label: "Comentario", type: "textarea" },
+    { key: "isActive", label: "Visible", type: "checkbox" },
+  ],
+};
