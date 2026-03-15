@@ -2,7 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { logoutAction } from "@/app/(protected)/actions";
+import { container } from "@/config/container";
 import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
+import { GetAllProjectsUseCase } from "@/contexts/projects/use-cases/get-all-projects.use-case";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
+
+import type {
+  DashboardProjectRow,
+  DashboardServiceRow,
+  DashboardTestimonialRow,
+} from "./dashboard.types";
+import DashboardClient from "./DashboardClient";
 
 export const metadata: Metadata = {
   title: "Dashboard — SYNOVA Admin",
@@ -11,6 +22,37 @@ export const metadata: Metadata = {
 export default async function AdminDashboardPage() {
   const { getAuthenticatedUserUseCase } = await createServerAuthUseCases();
   const user = await getAuthenticatedUserUseCase.execute();
+
+  const [projects, services, testimonials] = await Promise.all([
+    container.get(GetAllProjectsUseCase).execute(),
+    container.get(GetAllServicesUseCase).execute(),
+    container.get(GetAllTestimonialsUseCase).execute(),
+  ]);
+
+  const projectRows: DashboardProjectRow[] = projects.map((project) => ({
+    id: project.id,
+    title: project.title,
+    location: project.location,
+    category: project.category,
+    isActive: true,
+  }));
+
+  const serviceRows: DashboardServiceRow[] = services.map((service) => ({
+    id: service.id,
+    title: service.title,
+    description: service.description,
+    features: service.features.join(" · "),
+    isActive: true,
+  }));
+
+  const testimonialRows: DashboardTestimonialRow[] = testimonials.map((testimonial) => ({
+    id: testimonial.id,
+    authorName: testimonial.authorName,
+    authorLocation: testimonial.authorLocation,
+    rating: testimonial.rating,
+    text: testimonial.text,
+    isActive: true,
+  }));
 
   return (
     <div className="min-h-screen flex flex-col p-8">
@@ -36,25 +78,22 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="grow flex flex-col items-center justify-center gap-6 text-center">
-        <div className="w-20 h-20 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-subtle">
-          <span className="material-symbols-outlined text-5xl text-primary">
-            construction
-          </span>
+      <div className="grow flex flex-col gap-6">
+        <DashboardClient
+          projects={projectRows}
+          services={serviceRows}
+          testimonials={testimonialRows}
+        />
+
+        <div className="flex justify-end">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-surface text-on-surface text-sm font-medium hover:bg-surface-alt transition-colors"
+          >
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            Volver al sitio
+          </Link>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900">Dashboard en construcción</h1>
-        <p className="text-slate-600 max-w-md text-lg">
-          El panel de administración de proyectos se implementará en la
-          siguiente iteración. Aquí podrás gestionar proyectos, servicios y
-          solicitudes de contacto.
-        </p>
-        <Link
-          href="/"
-          className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition-colors text-sm font-medium"
-        >
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          Volver al sitio
-        </Link>
       </div>
     </div>
   );
