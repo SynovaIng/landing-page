@@ -262,6 +262,16 @@ export default function DashboardClient({
       normalizedValues[field.key] = String(rawValue ?? "");
     });
 
+    if (editContext.sectionKey === "projects") {
+      normalizedValues.imageUrls = Array.isArray(draftValues.imageUrls)
+        ? draftValues.imageUrls.map((value) => String(value)).filter((value) => value.length > 0)
+        : [];
+
+      if (!Array.isArray(normalizedValues.imageFiles)) {
+        normalizedValues.imageFiles = [];
+      }
+    }
+
     if (editContext.mode === "create") {
       const response = await (async () => {
         if (editContext.sectionKey !== "projects") {
@@ -328,6 +338,14 @@ export default function DashboardClient({
 
       imageFiles.forEach((file) => {
         formData.append("images", file);
+      });
+
+      const existingImageUrls = Array.isArray(normalizedValues.imageUrls)
+        ? normalizedValues.imageUrls.map((value) => String(value)).filter((value) => value.length > 0)
+        : [];
+
+      existingImageUrls.forEach((url) => {
+        formData.append("existingImageUrls", url);
       });
 
       const response = await fetch(`/api/dashboard/projects/${editContext.rowId}`, {

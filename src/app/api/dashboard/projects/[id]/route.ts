@@ -16,16 +16,19 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   const { id } = await params;
   let parsedInput;
   let imageFiles: File[] = [];
+  let existingImageUrls: string[] = [];
 
   try {
     const parsedRequest = await parseProjectMutationRequest(request);
     parsedInput = parsedRequest.payload;
     imageFiles = parsedRequest.imageFiles;
+    existingImageUrls = parsedRequest.existingImageUrls;
   } catch {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
-  const imageUrls = await uploadProjectImages(imageFiles, id);
+  const uploadedImageUrls = await uploadProjectImages(imageFiles, id);
+  const imageUrls = [...existingImageUrls, ...uploadedImageUrls];
 
   const useCase = new UpdateProjectUseCase(new SupabaseProjectRepository());
   const updated = await useCase.execute({

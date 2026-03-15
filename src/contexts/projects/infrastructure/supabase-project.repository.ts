@@ -241,23 +241,20 @@ export class SupabaseProjectRepository extends ProjectRepository {
     const imageUrls = Array.from(new Set((input.imageUrls ?? []).map((value) => value.trim()).filter(Boolean)));
 
     if (imageUrls.length > 0) {
-      const { data: existingImages, error: existingImagesError } = await supabase
+      const { error: deleteImagesError } = await supabase
         .from("project_images")
-        .select("id")
-        .eq("project_id", input.id)
-        .order("order_index", { ascending: true });
+        .delete()
+        .eq("project_id", input.id);
 
-      if (existingImagesError) {
-        throw new Error("No se pudieron consultar las imágenes actuales del proyecto");
+      if (deleteImagesError) {
+        throw new Error("No se pudieron reemplazar las imágenes del proyecto");
       }
-
-      const existingCount = existingImages?.length ?? 0;
 
       const imagesPayload = imageUrls.map((imageUrl, index) => ({
         project_id: input.id,
         url: imageUrl,
-        is_cover: existingCount === 0 && index === 0,
-        order_index: existingCount + index,
+        is_cover: index === 0,
+        order_index: index,
       }));
 
       const { error: insertImagesError } = await supabase

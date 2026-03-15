@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { type ReactElement, useMemo, useState } from "react";
 
 import {
@@ -35,6 +36,30 @@ export default function DashboardEditModal({
   const [remoteIconSuggestions, setRemoteIconSuggestions] = useState<string[]>([]);
   const [isSearchingIcons, setIsSearchingIcons] = useState(false);
   const [isProjectServicesOpen, setIsProjectServicesOpen] = useState(false);
+  const [draggingExistingImageIndex, setDraggingExistingImageIndex] = useState<number | null>(null);
+  const [draggingNewFileIndex, setDraggingNewFileIndex] = useState<number | null>(null);
+
+  const moveItem = <T,>(items: T[], fromIndex: number, toIndex: number): T[] => {
+    if (
+      fromIndex < 0
+      || toIndex < 0
+      || fromIndex >= items.length
+      || toIndex >= items.length
+      || fromIndex === toIndex
+    ) {
+      return items;
+    }
+
+    const nextItems = [...items];
+    const [movedItem] = nextItems.splice(fromIndex, 1);
+
+    if (typeof movedItem === "undefined") {
+      return items;
+    }
+
+    nextItems.splice(toIndex, 0, movedItem);
+    return nextItems;
+  };
 
   const selectedIcon = String(values.icon ?? "").trim();
 
@@ -368,9 +393,11 @@ export default function DashboardEditModal({
               const currentImageUrl = String(values.imageUrl ?? "").trim();
               const currentImageUrls = Array.isArray(values.imageUrls)
                 ? values.imageUrls.map((image) => String(image).trim()).filter(Boolean)
-                : currentImageUrl
-                  ? [currentImageUrl]
-                  : [];
+                : [];
+
+              if (currentImageUrls.length === 0 && currentImageUrl) {
+                currentImageUrls.push(currentImageUrl);
+              }
 
               return (
                 <label key={field.key} className="block">
@@ -397,15 +424,88 @@ export default function DashboardEditModal({
                     </p>
 
                     {currentImageUrls.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-lg border border-border bg-surface p-2">
-                        {currentImageUrls.slice(0, 4).map((url, index) => (
-                          <img
-                            key={`${url}-${index}`}
-                            src={url}
-                            alt={`Vista previa ${index + 1}`}
-                            className="h-24 w-full rounded-md object-cover"
-                          />
-                        ))}
+                      <div className="rounded-lg border border-border bg-surface p-2">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                          Imágenes actuales (arrastra para ordenar)
+                        </p>
+                        <ul className="space-y-2">
+                          {currentImageUrls.map((url, index) => (
+                            <li
+                              key={url}
+                              draggable
+                              onDragStart={() => setDraggingExistingImageIndex(index)}
+                              onDragEnd={() => setDraggingExistingImageIndex(null)}
+                              onDragOver={(event) => event.preventDefault()}
+                              onDrop={() => {
+                                if (draggingExistingImageIndex === null) {
+                                  return;
+                                }
+
+                                const reordered = moveItem(
+                                  currentImageUrls,
+                                  draggingExistingImageIndex,
+                                  index,
+                                );
+
+                                onValueChange("imageUrls", reordered);
+                                setDraggingExistingImageIndex(null);
+                              }}
+                              className="flex items-center gap-3 rounded-md border border-border bg-surface-alt p-2"
+                            >
+                              <span className="material-symbols-outlined text-on-surface-muted">drag_indicator</span>
+                              <Image
+                                src={url}
+                                alt={`Imagen actual ${index + 1}`}
+                                width={80}
+                                height={56}
+                                unoptimized
+                                className="h-14 w-20 rounded object-cover"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm text-on-surface">Imagen {index + 1}</p>
+                                {index === 0 && (
+                                  <p className="text-xs font-medium text-secondary">Portada</p>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {selectedFiles.length > 0 ? (
+                      <div className="rounded-lg border border-border bg-surface p-2">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                          Nuevas imágenes (arrastra para ordenar)
+                        </p>
+                        <ul className="space-y-2">
+                          {selectedFiles.map((file, index) => (
+                            <li
+                              key={`${file.name}-${file.lastModified}-${file.size}`}
+                              draggable
+                              onDragStart={() => setDraggingNewFileIndex(index)}
+                              onDragEnd={() => setDraggingNewFileIndex(null)}
+                              onDragOver={(event) => event.preventDefault()}
+                              onDrop={() => {
+                                if (draggingNewFileIndex === null) {
+                                  return;
+                                }
+
+                                const reordered = moveItem(selectedFiles, draggingNewFileIndex, index);
+                                onValueChange(field.key, reordered);
+                                setDraggingNewFileIndex(null);
+                              }}
+                              className="flex items-center gap-3 rounded-md border border-border bg-surface-alt p-2"
+                            >
+                              <span className="material-symbols-outlined text-on-surface-muted">drag_indicator</span>
+                              <span className="material-symbols-outlined text-secondary">image</span>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm text-on-surface">{file.name}</p>
+                                <p className="text-xs text-on-surface-muted">Nueva imagen {index + 1}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     ) : null}
                   </div>
