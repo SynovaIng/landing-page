@@ -14,7 +14,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       await Promise.all([
         supabase
           .from("services")
-          .select("id, name, description, cta_label, slug")
+          .select("id, name, description, cta_label, slug, icon")
           .order("order_index", { ascending: true }),
         supabase
           .from("service_points")
@@ -36,7 +36,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
 
     return servicesData.map((service) => new Service({
       id: String(service.id),
-      icon: "engineering",
+      icon: String(service.icon ?? "engineering"),
       title: String(service.name ?? ""),
       description: String(service.description ?? ""),
       features: pointsByService.get(String(service.id)) ?? [],
@@ -51,7 +51,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       await Promise.all([
         supabase
           .from("services")
-          .select("id, name, description, cta_label")
+          .select("id, name, description, cta_label, icon")
           .eq("id", id)
           .maybeSingle(),
         supabase
@@ -67,7 +67,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
 
     return new Service({
       id: String(serviceData.id),
-      icon: "engineering",
+      icon: String(serviceData.icon ?? "engineering"),
       title: String(serviceData.name ?? ""),
       description: String(serviceData.description ?? ""),
       features: (pointsData ?? []).map((point) => String(point.label)),
@@ -84,10 +84,11 @@ export class SupabaseServiceRepository extends ServiceRepository {
         name: input.title,
         slug: input.slug,
         description: input.description ?? "",
+        icon: input.icon,
         cta_label: input.ctaLabel,
         is_published: input.isPublished,
       })
-      .select("id, name, description, cta_label")
+      .select("id, name, description, cta_label, icon")
       .single();
 
     if (error || !data) {
@@ -111,7 +112,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
 
     return new Service({
       id: String(data.id),
-      icon: input.icon,
+      icon: String(data.icon ?? input.icon),
       title: String(data.name ?? input.title),
       description: String(data.description ?? input.description ?? ""),
       features,
