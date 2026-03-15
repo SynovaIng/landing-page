@@ -265,8 +265,9 @@ export default function DashboardClient({
                 </td>
               </tr>
             ) : (
-              currentRows.map((row) => {
+              currentRows.map((row, index) => {
                 const selected = selectedSet.has(row.id);
+                const stripedBackground = index % 2 === 0 ? "bg-surface" : "bg-surface-alt/70";
 
                 return (
                   <tr
@@ -274,7 +275,7 @@ export default function DashboardClient({
                     className={`border-t transition-colors ${
                       selected
                         ? "border-primary bg-background-alt/60 outline-1 -outline-offset-1 outline-primary"
-                        : "border-border bg-surface"
+                        : `border-border ${stripedBackground}`
                     }`}
                   >
                     <td className="px-4 py-3 align-top">
