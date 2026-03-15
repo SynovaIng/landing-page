@@ -73,7 +73,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop links */}
-          <div className="hidden md:flex space-x-8 items-center">
+          <div className="hidden lg:flex space-x-8 items-center">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -237,7 +237,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile: hamburger */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="lg:hidden flex items-center gap-3">
             <button
               type="button"
               onClick={() => {
@@ -260,7 +260,7 @@ export default function Navbar() {
       {themeOpen && (
         <div
           ref={mobileDropdownRef}
-          className="md:hidden bg-[var(--color-header-bg)] border-t border-border-light px-4 py-3 hidden"
+          className="lg:hidden bg-[var(--color-header-bg)] border-t border-border-light px-4 py-3 hidden"
         >
           <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-2">
             Tema de color
@@ -302,7 +302,7 @@ export default function Navbar() {
 
       {/* Mobile nav menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-[var(--color-header-bg)] border-t border-border-light px-4 pb-4 space-y-2">
+        <div className="lg:hidden bg-[var(--color-header-bg)] border-t border-border-light px-4 pb-4 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
