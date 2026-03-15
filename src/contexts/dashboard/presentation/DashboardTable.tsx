@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { DashboardRowBase } from "@/contexts/dashboard/domain/dashboard.entity";
 import type { DashboardSectionKey } from "@/contexts/dashboard/domain/dashboard.entity";
@@ -28,17 +28,102 @@ export default function DashboardTable({
   onToggleActive,
   onEdit,
 }: DashboardTableProps) {
-  const [openServiceListByRow, setOpenServiceListByRow] = useState<Record<string, boolean>>({});
+  const [openServiceListRowId, setOpenServiceListRowId] = useState<string | null>(null);
+  const [serviceListPosition, setServiceListPosition] = useState<{ top: number; left: number } | null>(null);
+  const serviceToggleButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const serviceListRef = useRef<HTMLDivElement | null>(null);
 
-  const toggleServiceList = (rowId: string) => {
-    setOpenServiceListByRow((prev) => ({
-      ...prev,
-      [rowId]: !prev[rowId],
-    }));
+  const openServiceRow = useMemo(() => {
+    if (!openServiceListRowId || sectionKey !== "projects") {
+      return null;
+    }
+
+    return rows.find((row) => row.id === openServiceListRowId) ?? null;
+  }, [openServiceListRowId, rows, sectionKey]);
+
+  const updateServiceListPosition = (rowId: string) => {
+    const button = serviceToggleButtonRefs.current[rowId];
+
+    if (!button) {
+      return;
+    }
+
+    const rect = button.getBoundingClientRect();
+
+    setServiceListPosition({
+      top: rect.bottom + 6,
+      left: rect.left,
+    });
   };
 
+  const toggleServiceList = (rowId: string) => {
+    setOpenServiceListRowId((prev) => {
+      if (prev === rowId) {
+        setServiceListPosition(null);
+        return null;
+      }
+
+      updateServiceListPosition(rowId);
+      return rowId;
+    });
+  };
+
+  useEffect(() => {
+    if (!openServiceListRowId) {
+      return;
+    }
+
+    const updatePosition = () => {
+      updateServiceListPosition(openServiceListRowId);
+    };
+
+    updatePosition();
+
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [openServiceListRowId]);
+
+  useEffect(() => {
+    if (!openServiceListRowId) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const dropdown = serviceListRef.current;
+      const triggerButton = serviceToggleButtonRefs.current[openServiceListRowId];
+
+      if (dropdown?.contains(target) || triggerButton?.contains(target)) {
+        return;
+      }
+
+      setOpenServiceListRowId(null);
+      setServiceListPosition(null);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenServiceListRowId(null);
+        setServiceListPosition(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [openServiceListRowId]);
+
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto overflow-y-visible">
       <table className="min-w-full">
         <thead className="bg-surface-alt text-left">
           <tr>
@@ -116,35 +201,18 @@ export default function DashboardTable({
 
                         if (sectionKey === "projects" && column.key === "projectServicesSummary") {
                           return (
-                            <div className="relative inline-flex flex-col gap-2">
+                            <div className="inline-flex flex-col gap-2">
                               <button
                                 type="button"
+                                ref={(element) => {
+                                  serviceToggleButtonRefs.current[row.id] = element;
+                                }}
                                 onClick={() => toggleServiceList(row.id)}
                                 className="inline-flex items-center gap-2 rounded-md border border-border bg-surface-alt px-2.5 py-1.5 text-xs font-medium text-on-surface hover:bg-surface"
                               >
                                 <span>{String(row[column.key as keyof typeof row] ?? "Sin servicios")}</span>
                                 <span className="material-symbols-outlined text-[16px]">expand_more</span>
                               </button>
-
-                              {openServiceListByRow[row.id] ? (
-                                <div className="absolute left-0 top-9 z-20 min-w-52 rounded-lg border border-border bg-surface p-2 shadow-lg">
-                                  {(row as DashboardRowBase & { projectServices?: { id: string; name: string; icon: string }[] }).projectServices
-                                    ?.length ? (
-                                      <ul className="space-y-1">
-                                        {(row as DashboardRowBase & { projectServices: { id: string; name: string; icon: string }[] }).projectServices.map((serviceItem) => (
-                                          <li key={serviceItem.id} className="flex items-center gap-2 rounded-md bg-surface-alt px-2 py-1 text-xs text-on-surface">
-                                            <span className="material-symbols-outlined text-[16px] text-secondary">
-                                              {serviceItem.icon}
-                                            </span>
-                                            <span>{serviceItem.name}</span>
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    ) : (
-                                      <p className="px-1 py-1 text-xs text-on-surface-muted">Sin servicios asociados.</p>
-                                    )}
-                                </div>
-                              ) : null}
                             </div>
                           );
                         }
@@ -192,6 +260,33 @@ export default function DashboardTable({
           )}
         </tbody>
       </table>
+
+      {openServiceRow && serviceListPosition ? (
+        <div
+          ref={serviceListRef}
+          className="fixed z-40 min-w-52 rounded-lg border border-border bg-surface p-2 shadow-lg"
+          style={{
+            top: `${serviceListPosition.top}px`,
+            left: `${serviceListPosition.left}px`,
+          }}
+        >
+          {(openServiceRow as DashboardRowBase & { projectServices?: { id: string; name: string; icon: string }[] }).projectServices
+            ?.length ? (
+              <ul className="space-y-1">
+                {(openServiceRow as DashboardRowBase & { projectServices: { id: string; name: string; icon: string }[] }).projectServices.map((serviceItem) => (
+                  <li key={serviceItem.id} className="flex items-center gap-2 rounded-md bg-surface-alt px-2 py-1 text-xs text-on-surface">
+                    <span className="material-symbols-outlined text-[16px] text-secondary">
+                      {serviceItem.icon}
+                    </span>
+                    <span>{serviceItem.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="px-1 py-1 text-xs text-on-surface-muted">Sin servicios asociados.</p>
+            )}
+        </div>
+      ) : null}
     </div>
   );
 }
