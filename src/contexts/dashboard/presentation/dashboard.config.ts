@@ -9,7 +9,7 @@ export interface TableColumn {
 export interface FieldConfig {
   key: string;
   label: string;
-  type: "text" | "textarea" | "number" | "checkbox" | "select";
+  type: "text" | "textarea" | "number" | "checkbox" | "select" | "file";
   options?: readonly string[];
   min?: number;
   max?: number;
@@ -85,6 +85,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "type", label: "Tipo", type: "select", options: PROJECT_CATEGORIES },
     { key: "location", label: "Ubicación", type: "text" },
     { key: "projectServiceIds", label: "Servicios", type: "text" },
+    { key: "imageFiles", label: "Imágenes del proyecto", type: "file" },
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   services: [
@@ -108,7 +109,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
 
 export const createFieldDefaults: Record<
   DashboardSectionKey,
-  Record<string, string | number | boolean | string[]>
+  Record<string, string | number | boolean | string[] | File[] | null>
 > = {
   projects: {
     name: "",
@@ -116,6 +117,9 @@ export const createFieldDefaults: Record<
     type: "Comercial",
     location: "",
     projectServiceIds: [],
+    imageUrl: "",
+    imageUrls: [],
+    imageFiles: [],
     isActive: true,
   },
   services: {

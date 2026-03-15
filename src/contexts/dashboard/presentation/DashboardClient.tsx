@@ -16,7 +16,7 @@ import {
 import DashboardEditModal from "./DashboardEditModal";
 import DashboardTable from "./DashboardTable";
 
-type DashboardEditableValue = string | number | boolean | string[];
+type DashboardEditableValue = string | number | boolean | string[] | File[] | null;
 type ModalMode = "create" | "edit";
 
 interface EditContext {
@@ -161,8 +161,13 @@ export default function DashboardClient({
       return;
     }
 
+    const nextDraftValues: Record<string, DashboardEditableValue> = {};
+    Object.entries(row).forEach(([key, value]) => {
+      nextDraftValues[key] = value as DashboardEditableValue;
+    });
+
     setEditContext({ mode: "edit", sectionKey, rowId });
-    setDraftValues({ ...(row as unknown as Record<string, DashboardEditableValue>) });
+    setDraftValues(nextDraftValues);
   };
 
   const openCreateModal = (sectionKey: DashboardSectionKey) => {
@@ -229,6 +234,13 @@ export default function DashboardClient({
     fields.forEach((field) => {
       const rawValue = draftValues[field.key];
 
+      if (field.type === "file") {
+        normalizedValues[field.key] = Array.isArray(rawValue)
+          ? rawValue.filter((file): file is File => file instanceof File)
+          : [];
+        return;
+      }
+
       if (field.key === "projectServiceIds") {
         normalizedValues[field.key] = Array.isArray(rawValue)
           ? rawValue.map((value) => String(value))
@@ -251,21 +263,38 @@ export default function DashboardClient({
     });
 
     if (editContext.mode === "create") {
-      const requestPayload =
-        editContext.sectionKey === "projects"
-          ? {
-              ...normalizedValues,
-              serviceIds: normalizedValues.projectServiceIds ?? [],
-            }
-          : normalizedValues;
+      const response = await (async () => {
+        if (editContext.sectionKey !== "projects") {
+          return fetch(`/api/dashboard/${editContext.sectionKey}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(normalizedValues),
+          });
+        }
 
-      const response = await fetch(`/api/dashboard/${editContext.sectionKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestPayload),
-      });
+        const formData = new FormData();
+        formData.set("name", String(normalizedValues.name ?? ""));
+        formData.set("type", String(normalizedValues.type ?? "Comercial"));
+        formData.set("location", String(normalizedValues.location ?? ""));
+        formData.set("description", String(normalizedValues.description ?? ""));
+        formData.set("isActive", String(Boolean(normalizedValues.isActive)));
+        formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
+
+        const imageFiles = Array.isArray(normalizedValues.imageFiles)
+          ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
+          : [];
+
+        imageFiles.forEach((file) => {
+          formData.append("images", file);
+        });
+
+        return fetch("/api/dashboard/projects", {
+          method: "POST",
+          body: formData,
+        });
+      })();
 
       if (!response.ok) {
         return;
@@ -285,17 +314,25 @@ export default function DashboardClient({
     }
 
     if (editContext.sectionKey === "projects") {
-      const requestPayload = {
-        ...normalizedValues,
-        serviceIds: normalizedValues.projectServiceIds ?? [],
-      };
+      const formData = new FormData();
+      formData.set("name", String(normalizedValues.name ?? ""));
+      formData.set("type", String(normalizedValues.type ?? "Comercial"));
+      formData.set("location", String(normalizedValues.location ?? ""));
+      formData.set("description", String(normalizedValues.description ?? ""));
+      formData.set("isActive", String(Boolean(normalizedValues.isActive)));
+      formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
+
+      const imageFiles = Array.isArray(normalizedValues.imageFiles)
+        ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
+        : [];
+
+      imageFiles.forEach((file) => {
+        formData.append("images", file);
+      });
 
       const response = await fetch(`/api/dashboard/projects/${editContext.rowId}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestPayload),
+        body: formData,
       });
 
       if (!response.ok) {

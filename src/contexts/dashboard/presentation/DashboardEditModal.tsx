@@ -12,9 +12,9 @@ interface DashboardEditModalProps {
   mode: "create" | "edit";
   singularLabel: string;
   fields: FieldConfig[];
-  values: Record<string, string | number | boolean | string[]>;
+  values: Record<string, string | number | boolean | string[] | File[] | null>;
   projectServiceOptions: { id: string; name: string; icon?: string }[];
-  onValueChange: (fieldKey: string, value: string | number | boolean | string[]) => void;
+  onValueChange: (fieldKey: string, value: string | number | boolean | string[] | File[] | null) => void;
   onClose: () => void;
   onSave: () => void;
 }
@@ -58,7 +58,7 @@ export default function DashboardEditModal({
         return;
       }
 
-      const payload = (await response.json()) as { icons?: unknown[] };
+      const payload = (await response.json()) as { icons?: string[] };
       const normalized = (payload.icons ?? [])
         .map((iconName) => String(iconName ?? "").trim())
         .filter((iconName) => iconName.length > 0);
@@ -358,6 +358,58 @@ export default function DashboardEditModal({
                   />
                   <span className="text-sm font-medium text-on-surface">{field.label}</span>
                 </div>
+              );
+            }
+
+            if (field.type === "file") {
+              const selectedFiles = Array.isArray(value)
+                ? value.filter((file): file is File => file instanceof File)
+                : [];
+              const currentImageUrl = String(values.imageUrl ?? "").trim();
+              const currentImageUrls = Array.isArray(values.imageUrls)
+                ? values.imageUrls.map((image) => String(image).trim()).filter(Boolean)
+                : currentImageUrl
+                  ? [currentImageUrl]
+                  : [];
+
+              return (
+                <label key={field.key} className="block">
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                    {field.label}
+                  </span>
+
+                  <div className="space-y-3 rounded-lg border border-border bg-surface-alt p-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(event) => {
+                        const nextFiles = event.target.files ? Array.from(event.target.files) : [];
+                        onValueChange(field.key, nextFiles);
+                      }}
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none file:mr-3 file:rounded-md file:border file:border-border file:bg-surface-alt file:px-3 file:py-1 file:text-sm file:font-medium file:text-on-surface"
+                    />
+
+                    <p className="text-xs text-on-surface-muted">
+                      {selectedFiles.length > 0
+                        ? `${selectedFiles.length} archivo${selectedFiles.length === 1 ? "" : "s"} seleccionado${selectedFiles.length === 1 ? "" : "s"}`
+                        : "No hay archivos seleccionados."}
+                    </p>
+
+                    {currentImageUrls.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-lg border border-border bg-surface p-2">
+                        {currentImageUrls.slice(0, 4).map((url, index) => (
+                          <img
+                            key={`${url}-${index}`}
+                            src={url}
+                            alt={`Vista previa ${index + 1}`}
+                            className="h-24 w-full rounded-md object-cover"
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </label>
               );
             }
 

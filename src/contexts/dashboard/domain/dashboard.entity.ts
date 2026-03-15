@@ -10,6 +10,8 @@ export interface DashboardProjectRow extends DashboardRowBase {
   description: string;
   type: string;
   location: string;
+  imageUrl: string;
+  imageUrls: string[];
   projectServiceIds: string[];
   projectServiceNames: string[];
   projectServicesSummary: string;

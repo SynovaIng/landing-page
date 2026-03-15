@@ -1,44 +1,37 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
-import { PROJECT_CATEGORIES } from "@/contexts/projects/domain/project.entity";
+import {
+  parseProjectMutationRequest,
+  toProjectApiResponse,
+} from "@/contexts/projects/app/project-api.schema";
 import { SupabaseProjectRepository } from "@/contexts/projects/infrastructure/supabase-project.repository";
+import { uploadProjectImages } from "@/contexts/projects/infrastructure/upload-project-image";
 import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-project.use-case";
 
-const createProjectSchema = z.object({
-  name: z.string().trim().min(1),
-  type: z.enum(PROJECT_CATEGORIES),
-  location: z.string().trim().min(1),
-  description: z.string().trim().optional().default(""),
-  serviceIds: z.array(z.string().trim().min(1)).default([]),
-  isActive: z.boolean().default(true),
-});
-
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = createProjectSchema.safeParse(body);
+  let parsedInput;
+  let imageFiles: File[] = [];
 
-  if (!parsed.success) {
+  try {
+    const parsedRequest = await parseProjectMutationRequest(request);
+    parsedInput = parsedRequest.payload;
+    imageFiles = parsedRequest.imageFiles;
+  } catch {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
+  const imageUrls = await uploadProjectImages(imageFiles);
+
   const useCase = new CreateProjectUseCase(new SupabaseProjectRepository());
   const created = await useCase.execute({
-    title: parsed.data.name,
-    location: parsed.data.location,
-    category: parsed.data.type,
-    description: parsed.data.description,
-    isPublished: parsed.data.isActive,
-    serviceIds: parsed.data.serviceIds,
+    title: parsedInput.name,
+    location: parsedInput.location,
+    category: parsedInput.type,
+    description: parsedInput.description,
+    isPublished: parsedInput.isActive,
+    serviceIds: parsedInput.serviceIds,
+    imageUrls,
   });
 
-  return NextResponse.json({
-    id: created.id,
-    name: created.title,
-    description: parsed.data.description,
-    type: created.category,
-    location: created.location,
-    projectServiceIds: created.serviceIds,
-    isActive: parsed.data.isActive,
-  });
+  return NextResponse.json(toProjectApiResponse(created, parsedInput));
 }

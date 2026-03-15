@@ -65,6 +65,14 @@ export default function ProjectImageCarousel({ gallery }: ProjectImageCarouselPr
     changeImage(nextIndex);
   };
 
+  if (gallery.length === 0) {
+    return (
+      <div className="flex h-[380px] w-full items-center justify-center bg-surface-alt text-on-surface-muted md:h-[520px] lg:h-[640px]">
+        Sin imágenes del proyecto
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       <div

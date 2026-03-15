@@ -12,6 +12,7 @@ export default async function ProyectosPage() {
     location: project.location,
     category: project.category,
     imageUrl: project.imageUrl,
+    imageUrls: project.imageUrls,
     serviceIds: project.serviceIds,
   }));
   const plainServices = services.map((service) => ({

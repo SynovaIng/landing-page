@@ -39,6 +39,8 @@ export function mapDashboardData({
       description: `Proyecto en ${project.location}`,
       type: project.category,
       location: project.location,
+      imageUrl: project.imageUrl,
+      imageUrls: project.imageUrls,
       isActive: true,
     })),
     services: services.map((service) => ({

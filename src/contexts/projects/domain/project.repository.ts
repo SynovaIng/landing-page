@@ -7,6 +7,7 @@ export interface CreateProjectInput {
   description?: string;
   isPublished: boolean;
   serviceIds: string[];
+  imageUrls?: string[];
 }
 
 export interface UpdateProjectInput {
@@ -17,6 +18,7 @@ export interface UpdateProjectInput {
   description?: string;
   isPublished: boolean;
   serviceIds: string[];
+  imageUrls?: string[];
 }
 
 export abstract class ProjectRepository {
