@@ -61,6 +61,38 @@ function createSelectedState(): Record<DashboardSectionKey, string[]> {
   };
 }
 
+interface RoundedCheckboxProps {
+  checked: boolean;
+  onChange: () => void;
+  ariaLabel: string;
+  className?: string;
+}
+
+function RoundedCheckbox({
+  checked,
+  onChange,
+  ariaLabel,
+  className = "",
+}: RoundedCheckboxProps) {
+  return (
+    <label
+      className={`relative inline-flex h-5 w-5 cursor-pointer items-center justify-center ${className}`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="peer sr-only"
+        aria-label={ariaLabel}
+      />
+      <span className="h-5 w-5 rounded-md border-2 border-border bg-surface shadow-sm transition-colors peer-checked:border-green-600 peer-checked:bg-green-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary/30" />
+      <span className="material-symbols-outlined pointer-events-none absolute text-[14px] leading-none text-white opacity-0 transition-opacity peer-checked:opacity-100">
+        check
+      </span>
+    </label>
+  );
+}
+
 export default function DashboardClient({
   projects,
   services,
@@ -200,12 +232,10 @@ export default function DashboardClient({
           <thead className="bg-surface-alt text-left">
             <tr>
               <th className="w-12 px-4 py-3">
-                <input
-                  type="checkbox"
+                <RoundedCheckbox
                   checked={allSelected}
                   onChange={toggleAll}
-                  className="h-4 w-4 rounded border-border accent-primary"
-                  aria-label="Seleccionar todos"
+                  ariaLabel="Seleccionar todos"
                 />
               </th>
 
@@ -241,15 +271,18 @@ export default function DashboardClient({
                 return (
                   <tr
                     key={row.id}
-                    className={`border-t border-border ${selected ? "bg-background-alt/60" : "bg-surface"}`}
+                    className={`border-t transition-colors ${
+                      selected
+                        ? "border-primary bg-background-alt/60 outline-1 -outline-offset-1 outline-primary"
+                        : "border-border bg-surface"
+                    }`}
                   >
                     <td className="px-4 py-3 align-top">
-                      <input
-                        type="checkbox"
+                      <RoundedCheckbox
                         checked={selected}
                         onChange={() => toggleOne(row.id)}
-                        className="mt-1 h-4 w-4 rounded border-border accent-primary"
-                        aria-label={`Seleccionar ${row.id}`}
+                        className="mt-1"
+                        ariaLabel={`Seleccionar ${row.id}`}
                       />
                     </td>
 
