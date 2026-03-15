@@ -29,7 +29,7 @@ export default function ProjectGalleryModal({ project, details, services, onClos
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-6xl max-h-[90vh] overflow-auto rounded-3xl bg-surface border border-border shadow-2xl"
+        className="relative w-full max-w-6xl lg:max-w-[90rem] xl:max-w-[100rem] max-h-[90vh] lg:max-h-[96vh] overflow-auto rounded-3xl bg-surface border border-border shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <button
