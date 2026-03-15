@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { PROJECT_CATEGORIES } from "@/contexts/projects/domain/project.entity";
 import { SupabaseProjectRepository } from "@/contexts/projects/infrastructure/supabase-project.repository";
 import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-project.use-case";
 
 const createProjectSchema = z.object({
   name: z.string().trim().min(1),
-  type: z.string().trim().min(1),
+  type: z.enum(PROJECT_CATEGORIES),
   location: z.string().trim().min(1),
   description: z.string().trim().optional().default(""),
   serviceIds: z.array(z.string().trim().min(1)).default([]),

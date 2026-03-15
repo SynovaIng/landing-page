@@ -1,4 +1,6 @@
-export type ProjectCategory = "Residencial" | "Comercial" | "Industrial";
+export const PROJECT_CATEGORIES = ["Comercial", "Residencial", "Industrial"] as const;
+
+export type ProjectCategory = (typeof PROJECT_CATEGORIES)[number];
 
 export interface ProjectProps {
   id: string;

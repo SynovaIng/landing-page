@@ -1,4 +1,5 @@
 import type { DashboardSectionKey } from "@/contexts/dashboard/domain/dashboard.entity";
+import { PROJECT_CATEGORIES } from "@/contexts/projects/domain/project.entity";
 
 export interface TableColumn {
   key: string;
@@ -8,7 +9,8 @@ export interface TableColumn {
 export interface FieldConfig {
   key: string;
   label: string;
-  type: "text" | "textarea" | "number" | "checkbox";
+  type: "text" | "textarea" | "number" | "checkbox" | "select";
+  options?: readonly string[];
   min?: number;
   max?: number;
   step?: number;
@@ -80,7 +82,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
   projects: [
     { key: "name", label: "Nombre", type: "text" },
     { key: "description", label: "Descripción", type: "textarea" },
-    { key: "type", label: "Tipo", type: "text" },
+    { key: "type", label: "Tipo", type: "select", options: PROJECT_CATEGORIES },
     { key: "location", label: "Ubicación", type: "text" },
     { key: "projectServiceIds", label: "Servicios", type: "text" },
     { key: "isActive", label: "Visible", type: "checkbox" },

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { type ReactElement, useMemo, useState } from "react";
 
 import {
   type FieldConfig,
@@ -350,37 +350,57 @@ export default function DashboardEditModal({
               );
             }
 
+            let inputElement: ReactElement;
+
+            if (field.type === "textarea") {
+              inputElement = (
+                <textarea
+                  value={String(value ?? "")}
+                  onChange={(event) => onValueChange(field.key, event.target.value)}
+                  rows={4}
+                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                />
+              );
+            } else if (field.type === "select") {
+              inputElement = (
+                <select
+                  value={String(value ?? "")}
+                  onChange={(event) => onValueChange(field.key, event.target.value)}
+                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                >
+                  {(field.options ?? []).map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              );
+            } else {
+              inputElement = (
+                <input
+                  type={field.type}
+                  min={field.type === "number" ? field.min : undefined}
+                  max={field.type === "number" ? field.max : undefined}
+                  step={field.type === "number" ? field.step : undefined}
+                  value={field.type === "number" ? Number(value ?? 0) : String(value ?? "")}
+                  onChange={(event) =>
+                    onValueChange(
+                      field.key,
+                      field.type === "number" ? Number(event.target.value || 0) : event.target.value,
+                    )
+                  }
+                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                />
+              );
+            }
+
             return (
               <label key={field.key} className="block">
                 <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
                   {field.label}
                 </span>
 
-                {field.type === "textarea" ? (
-                  <textarea
-                    value={String(value ?? "")}
-                    onChange={(event) => onValueChange(field.key, event.target.value)}
-                    rows={4}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
-                  />
-                ) : (
-                  <input
-                    type={field.type}
-                    min={field.type === "number" ? field.min : undefined}
-                    max={field.type === "number" ? field.max : undefined}
-                    step={field.type === "number" ? field.step : undefined}
-                    value={field.type === "number" ? Number(value ?? 0) : String(value ?? "")}
-                    onChange={(event) =>
-                      onValueChange(
-                        field.key,
-                        field.type === "number"
-                          ? Number(event.target.value || 0)
-                          : event.target.value,
-                      )
-                    }
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
-                  />
-                )}
+                {inputElement}
               </label>
             );
           })}
