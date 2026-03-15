@@ -5,6 +5,8 @@ export interface TestimonialProps {
   authorInitials: string;
   authorLocation: string;
   rating: number;
+  companyId?: string | null;
+  companyName?: string;
 }
 
 export class Testimonial {
@@ -14,6 +16,8 @@ export class Testimonial {
   public readonly authorInitials: string;
   public readonly authorLocation: string;
   public readonly rating: number;
+  public readonly companyId: string | null;
+  public readonly companyName: string;
 
   constructor(props: TestimonialProps) {
     this.id = props.id;
@@ -22,5 +26,7 @@ export class Testimonial {
     this.authorInitials = props.authorInitials;
     this.authorLocation = props.authorLocation;
     this.rating = props.rating;
+    this.companyId = props.companyId ?? null;
+    this.companyName = props.companyName ?? "";
   }
 }

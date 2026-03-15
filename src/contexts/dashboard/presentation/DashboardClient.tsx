@@ -25,6 +25,12 @@ interface EditContext {
   rowId?: string;
 }
 
+interface ClientOption {
+  id: string;
+  name: string;
+  location: string;
+}
+
 type DashboardClientProps = DashboardSectionData;
 
 function createSelectedState(): Record<DashboardSectionKey, string[]> {
@@ -51,6 +57,52 @@ export default function DashboardClient({
   >(createSelectedState());
   const [editContext, setEditContext] = useState<EditContext | null>(null);
   const [draftValues, setDraftValues] = useState<Record<string, DashboardEditableValue>>({});
+  const [clientOptions, setClientOptions] = useState<ClientOption[]>([]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadClientOptions = async () => {
+      try {
+        const response = await fetch("/api/dashboard/clients", { cache: "no-store" });
+
+        if (!response.ok) {
+          if (isActive) {
+            setClientOptions([]);
+          }
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          clients?: { id?: string; name?: string; location?: string }[];
+        };
+
+        if (!isActive) {
+          return;
+        }
+
+        setClientOptions(
+          (payload.clients ?? [])
+            .map((client) => ({
+              id: String(client.id ?? ""),
+              name: String(client.name ?? ""),
+              location: String(client.location ?? ""),
+            }))
+            .filter((client) => client.id.length > 0 && client.name.length > 0),
+        );
+      } catch {
+        if (isActive) {
+          setClientOptions([]);
+        }
+      }
+    };
+
+    void loadClientOptions();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!editContext) {
@@ -281,6 +333,14 @@ export default function DashboardClient({
     }
 
     if (editContext.mode === "create") {
+      const requestPayload =
+        editContext.sectionKey === "testimonials"
+          ? {
+              ...normalizedValues,
+              clientId: String(normalizedValues.clientId ?? "").trim() || null,
+            }
+          : normalizedValues;
+
       const response = await (async () => {
         if (editContext.sectionKey !== "projects") {
           return fetch(`/api/dashboard/${editContext.sectionKey}`, {
@@ -288,7 +348,7 @@ export default function DashboardClient({
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(normalizedValues),
+            body: JSON.stringify(requestPayload),
           });
         }
 
@@ -385,6 +445,34 @@ export default function DashboardClient({
 
       updateRowsForSection(editContext.sectionKey, (rows) =>
         rows.map((row) => (row.id === editContext.rowId ? (updatedProject as typeof row) : row)),
+      );
+
+      closeEditModal();
+      return;
+    }
+
+    if (editContext.sectionKey === "testimonials") {
+      const testimonialPayload = {
+        ...normalizedValues,
+        clientId: String(normalizedValues.clientId ?? "").trim() || null,
+      };
+
+      const response = await fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(testimonialPayload),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const updatedTestimonial = (await response.json()) as DashboardRowBase;
+
+      updateRowsForSection(editContext.sectionKey, (rows) =>
+        rows.map((row) => (row.id === editContext.rowId ? (updatedTestimonial as typeof row) : row)),
       );
 
       closeEditModal();
@@ -492,6 +580,7 @@ export default function DashboardClient({
         fields={editContext ? editFieldConfig[editContext.sectionKey] : []}
         values={draftValues}
         projectServiceOptions={projectServiceOptions}
+        clientOptions={clientOptions}
         onValueChange={updateDraftValue}
         onClose={closeEditModal}
         onSave={saveEdit}

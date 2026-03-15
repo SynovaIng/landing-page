@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { container } from "@/config/container";
-import { CreateTestimonialUseCase } from "@/contexts/testimonials/use-cases/create-testimonial.use-case";
+import { UpdateTestimonialUseCase } from "@/contexts/testimonials/use-cases/update-testimonial.use-case";
 
-const createTestimonialSchema = z.object({
+const updateTestimonialSchema = z.object({
   clientId: z.uuid().trim().optional().nullable(),
   clientName: z.string().trim().min(1),
   clientInitials: z.string().trim().min(1),
@@ -14,16 +14,21 @@ const createTestimonialSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export async function POST(request: Request) {
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
+export async function PATCH(request: Request, { params }: RouteParams) {
+  const { id } = await params;
   const body = await request.json();
-  const parsed = createTestimonialSchema.safeParse(body);
+  const parsed = updateTestimonialSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
-  const useCase = container.get(CreateTestimonialUseCase);
-  const created = await useCase.execute({
+  const useCase = container.get(UpdateTestimonialUseCase);
+  const updated = await useCase.execute(id, {
     text: parsed.data.message,
     authorName: parsed.data.clientName,
     authorInitials: parsed.data.clientInitials,
@@ -34,14 +39,14 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({
-    id: created.id,
-    clientId: created.companyId,
-    companyName: created.companyName,
-    clientName: created.authorName,
-    clientInitials: created.authorInitials,
-    clientLocation: created.authorLocation,
-    stars: created.rating,
-    message: created.text,
+    id: updated.id,
+    clientId: updated.companyId,
+    companyName: updated.companyName,
+    clientName: updated.authorName,
+    clientInitials: updated.authorInitials,
+    clientLocation: updated.authorLocation,
+    stars: updated.rating,
+    message: updated.text,
     isActive: parsed.data.isActive,
   });
 }

@@ -1,7 +1,10 @@
 import { Service } from "diod";
 
 import { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
-import type { CreateTestimonialInput } from "@/contexts/testimonials/domain/testimonial.repository";
+import type {
+  CreateTestimonialInput,
+  UpdateTestimonialInput,
+} from "@/contexts/testimonials/domain/testimonial.repository";
 import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -16,12 +19,25 @@ const toInitials = (name: string) => {
 
 @Service()
 export class SupabaseTestimonialRepository extends TestimonialRepository {
+  private getClientNameFromRelation(clientRelation: unknown): string {
+    if (Array.isArray(clientRelation)) {
+      const first = clientRelation[0] as { name?: unknown } | undefined;
+      return String(first?.name ?? "");
+    }
+
+    if (clientRelation && typeof clientRelation === "object") {
+      return String((clientRelation as { name?: unknown }).name ?? "");
+    }
+
+    return "";
+  }
+
   async getAll(): Promise<Testimonial[]> {
     const supabase = await createSupabaseServerClient();
 
     const { data, error } = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars")
+      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
       .order("created_at", { ascending: false });
 
     if (error || !data) {
@@ -35,6 +51,8 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: toInitials(String(review.client_name ?? "")),
       authorLocation: String(review.client_location ?? ""),
       rating: Number(review.stars ?? 0),
+      companyId: review.client_id ? String(review.client_id) : null,
+      companyName: this.getClientNameFromRelation((review as { clients?: unknown }).clients),
     }));
   }
 
@@ -43,7 +61,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const { data, error } = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars")
+      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
       .eq("id", id)
       .maybeSingle();
 
@@ -58,6 +76,8 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: toInitials(String(data.client_name ?? "")),
       authorLocation: String(data.client_location ?? ""),
       rating: Number(data.stars ?? 0),
+      companyId: data.client_id ? String(data.client_id) : null,
+      companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
     });
   }
 
@@ -72,8 +92,9 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         client_location: input.authorLocation,
         stars: input.rating,
         is_published: input.isPublished,
+        client_id: input.clientId ?? null,
       })
-      .select("id, message, client_name, client_location, stars")
+      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
       .single();
 
     if (error || !data) {
@@ -87,6 +108,41 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: input.authorInitials || toInitials(input.authorName),
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
+      companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
+      companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
+    });
+  }
+
+  async update(id: string, input: UpdateTestimonialInput): Promise<Testimonial> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .update({
+        message: input.text,
+        client_name: input.authorName,
+        client_location: input.authorLocation,
+        stars: input.rating,
+        is_published: input.isPublished,
+        client_id: input.clientId ?? null,
+      })
+      .eq("id", id)
+      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
+      .single();
+
+    if (error || !data) {
+      throw new Error("No se pudo actualizar la reseña");
+    }
+
+    return new Testimonial({
+      id: String(data.id),
+      text: String(data.message ?? input.text),
+      authorName: String(data.client_name ?? input.authorName),
+      authorInitials: input.authorInitials || toInitials(input.authorName),
+      authorLocation: String(data.client_location ?? input.authorLocation),
+      rating: Number(data.stars ?? input.rating),
+      companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
+      companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
     });
   }
 }

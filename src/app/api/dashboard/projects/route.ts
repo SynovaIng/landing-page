@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { container } from "@/config/container";
 import {
   parseProjectMutationRequest,
   toProjectApiResponse,
 } from "@/contexts/projects/app/project-api.schema";
-import { SupabaseProjectRepository } from "@/contexts/projects/infrastructure/supabase-project.repository";
 import { uploadProjectImages } from "@/contexts/projects/infrastructure/upload-project-image";
 import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-project.use-case";
 
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   const imageUrls = await uploadProjectImages(imageFiles);
 
-  const useCase = new CreateProjectUseCase(new SupabaseProjectRepository());
+  const useCase = container.get(CreateProjectUseCase);
   const created = await useCase.execute({
     title: parsedInput.name,
     location: parsedInput.location,

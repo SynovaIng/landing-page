@@ -118,6 +118,7 @@ interface DashboardEditModalProps {
   fields: FieldConfig[];
   values: Record<string, string | number | boolean | string[] | File[] | null>;
   projectServiceOptions: { id: string; name: string; icon?: string }[];
+  clientOptions: { id: string; name: string; location?: string }[];
   onValueChange: (fieldKey: string, value: string | number | boolean | string[] | File[] | null) => void;
   onClose: () => void;
   onSave: () => void;
@@ -130,6 +131,7 @@ export default function DashboardEditModal({
   fields,
   values,
   projectServiceOptions,
+  clientOptions,
   onValueChange,
   onClose,
   onSave,
@@ -479,6 +481,37 @@ export default function DashboardEditModal({
                   />
                   <span className="text-sm font-medium text-on-surface">{field.label}</span>
                 </div>
+              );
+            }
+
+            if (field.key === "clientId") {
+              const selectedClientId = String(value ?? "");
+
+              return (
+                <label key={field.key} className="block">
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                    {field.label}
+                  </span>
+
+                  <select
+                    value={selectedClientId}
+                    onChange={(event) => {
+                      const nextClientId = event.target.value;
+                      const selectedClient = clientOptions.find((client) => client.id === nextClientId);
+
+                      onValueChange(field.key, nextClientId);
+                      onValueChange("companyName", selectedClient?.name ?? "");
+                    }}
+                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                  >
+                    <option value="">Sin empresa</option>
+                    {clientOptions.map((clientOption) => (
+                      <option key={clientOption.id} value={clientOption.id}>
+                        {clientOption.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               );
             }
 

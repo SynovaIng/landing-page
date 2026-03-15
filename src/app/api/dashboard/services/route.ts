@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { SupabaseServiceRepository } from "@/contexts/services/infrastructure/supabase-service.repository";
+import { container } from "@/config/container";
 import { CreateServiceUseCase } from "@/contexts/services/use-cases/create-service.use-case";
 
 const createServiceSchema = z.object({
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     .map((item) => item.trim())
     .filter(Boolean);
 
-  const useCase = new CreateServiceUseCase(new SupabaseServiceRepository());
+  const useCase = container.get(CreateServiceUseCase);
   const created = await useCase.execute({
     title: parsed.data.name,
     slug: parsed.data.slug,

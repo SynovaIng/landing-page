@@ -55,6 +55,8 @@ export function mapDashboardData({
     })),
     testimonials: testimonials.map((testimonial) => ({
       id: testimonial.id,
+      clientId: testimonial.companyId ?? "",
+      companyName: testimonial.companyName,
       clientName: testimonial.authorName,
       clientInitials: testimonial.authorInitials,
       clientLocation: testimonial.authorLocation,

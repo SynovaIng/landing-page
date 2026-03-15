@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { container } from "@/config/container";
 import {
   parseProjectMutationRequest,
   toProjectApiResponse,
 } from "@/contexts/projects/app/project-api.schema";
-import { SupabaseProjectRepository } from "@/contexts/projects/infrastructure/supabase-project.repository";
 import { uploadProjectImages } from "@/contexts/projects/infrastructure/upload-project-image";
 import { UpdateProjectUseCase } from "@/contexts/projects/use-cases/update-project.use-case";
 
@@ -62,7 +62,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     ? orderedUrls
     : [...existingImageUrls, ...uploadedImageUrls];
 
-  const useCase = new UpdateProjectUseCase(new SupabaseProjectRepository());
+  const useCase = container.get(UpdateProjectUseCase);
   const updated = await useCase.execute({
     id,
     title: parsedInput.name,

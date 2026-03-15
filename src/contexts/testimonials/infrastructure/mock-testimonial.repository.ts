@@ -1,7 +1,10 @@
 import { Service } from "diod";
 
 import { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
-import type { CreateTestimonialInput } from "@/contexts/testimonials/domain/testimonial.repository";
+import type {
+  CreateTestimonialInput,
+  UpdateTestimonialInput,
+} from "@/contexts/testimonials/domain/testimonial.repository";
 import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
 
 const mockTestimonials: Testimonial[] = [
@@ -49,9 +52,31 @@ export class MockTestimonialRepository extends TestimonialRepository {
       authorInitials: input.authorInitials,
       authorLocation: input.authorLocation,
       rating: input.rating,
+      companyId: input.clientId ?? null,
     });
 
     mockTestimonials.unshift(created);
     return created;
+  }
+
+  async update(id: string, input: UpdateTestimonialInput): Promise<Testimonial> {
+    const index = mockTestimonials.findIndex((testimonial) => testimonial.id === id);
+
+    if (index === -1) {
+      throw new Error("No se encontró la reseña");
+    }
+
+    const updated = new Testimonial({
+      id,
+      text: input.text,
+      authorName: input.authorName,
+      authorInitials: input.authorInitials,
+      authorLocation: input.authorLocation,
+      rating: input.rating,
+      companyId: input.clientId ?? null,
+    });
+
+    mockTestimonials[index] = updated;
+    return updated;
   }
 }
