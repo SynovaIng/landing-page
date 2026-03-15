@@ -43,6 +43,7 @@ const whyUs = [
 
 export default async function HomePage() {
   const services = await container.get(GetAllServicesUseCase).execute();
+  const featuredServices = services.slice(0, 4);
   const testimonials = await container.get(GetAllTestimonialsUseCase).execute();
   return (
     <>
@@ -95,7 +96,7 @@ export default async function HomePage() {
             subtitle="Excelencia técnica y compromiso en cada proyecto eléctrico."
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((s) => (
+            {featuredServices.map((s) => (
               <ServiceCard key={s.id} service={s} />
             ))}
           </div>
