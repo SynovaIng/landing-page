@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
-import { services } from "@/shared/domain/data/services";
-import { testimonials } from "@/shared/domain/data/testimonials";
-import Button from "@/shared/presentation/Button";
-import SectionHeader from "@/shared/presentation/SectionHeader";
-import ServiceCard from "@/shared/presentation/ServiceCard";
-import StatsBar from "@/shared/presentation/StatsBar";
-import TestimonialCard from "@/shared/presentation/TestimonialCard";
+import { container } from "@/config/container";
+import ServiceCard from "@/contexts/services/presentation/ServiceCard";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import Button from "@/contexts/shared/presentation/Button";
+import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
+import StatsBar from "@/contexts/shared/presentation/StatsBar";
+import TestimonialCard from "@/contexts/testimonials/presentation/TestimonialCard";
+import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 
 export const metadata: Metadata = {
   title: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",
@@ -40,7 +41,9 @@ const whyUs = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const services = await container.get(GetAllServicesUseCase).execute();
+  const testimonials = await container.get(GetAllTestimonialsUseCase).execute();
   return (
     <>
       {/* ── Hero ── */}
