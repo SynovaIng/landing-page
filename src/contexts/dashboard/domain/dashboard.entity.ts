@@ -13,6 +13,7 @@ export interface DashboardProjectRow extends DashboardRowBase {
 }
 
 export interface DashboardServiceRow extends DashboardRowBase {
+  icon: string;
   name: string;
   slug: string;
   description: string;

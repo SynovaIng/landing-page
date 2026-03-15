@@ -7,11 +7,35 @@ import { ProjectRepository } from "@/contexts/projects/domain/project.repository
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const parseProjectCategory = (value: string): ProjectCategory => {
-  if (value === "Residencial" || value === "Comercial" || value === "Industrial") {
-    return value;
+  const normalized = value.toLowerCase();
+
+  if (normalized === "residencial") {
+    return "Residencial";
+  }
+
+  if (normalized === "industrial") {
+    return "Industrial";
+  }
+
+  if (normalized === "comercial") {
+    return "Comercial";
   }
 
   return "Comercial";
+};
+
+const toDbProjectCategory = (value: string): "residencial" | "industrial" | "comercial" => {
+  const normalized = value.toLowerCase();
+
+  if (normalized === "residencial") {
+    return "residencial";
+  }
+
+  if (normalized === "industrial") {
+    return "industrial";
+  }
+
+  return "comercial";
 };
 
 @Service()
@@ -65,7 +89,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
       .insert({
         name: input.title,
         description: input.description ?? input.location,
-        type: input.category,
+        type: toDbProjectCategory(input.category),
         is_published: input.isPublished,
       })
       .select("id, name, description, type")

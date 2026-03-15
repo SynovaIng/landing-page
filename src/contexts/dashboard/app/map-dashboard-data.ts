@@ -25,6 +25,7 @@ export function mapDashboardData({
     })),
     services: services.map((service) => ({
       id: service.id,
+      icon: service.icon,
       name: service.title,
       slug: service.id,
       description: service.description,

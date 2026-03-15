@@ -5,6 +5,7 @@ import { SupabaseServiceRepository } from "@/contexts/services/infrastructure/su
 import { CreateServiceUseCase } from "@/contexts/services/use-cases/create-service.use-case";
 
 const createServiceSchema = z.object({
+  icon: z.string().trim().min(1).default("engineering"),
   name: z.string().trim().min(1),
   slug: z.string().trim().min(1),
   description: z.string().trim().optional().default(""),
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   const featuresList = parsed.data.features
-    .split("·")
+    .split(/\n|·/)
     .map((item) => item.trim())
     .filter(Boolean);
 
@@ -33,12 +34,13 @@ export async function POST(request: Request) {
     description: parsed.data.description,
     ctaLabel: parsed.data.ctaLabel,
     features: featuresList,
-    icon: "engineering",
+    icon: parsed.data.icon,
     isPublished: parsed.data.isActive,
   });
 
   return NextResponse.json({
     id: created.id,
+    icon: created.icon,
     name: created.title,
     slug: parsed.data.slug,
     description: created.description,

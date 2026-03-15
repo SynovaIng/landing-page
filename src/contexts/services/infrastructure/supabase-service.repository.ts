@@ -105,7 +105,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
 
       const { error: pointsError } = await supabase.from("service_points").insert(pointsPayload);
       if (pointsError) {
-        throw new Error("No se pudieron guardar las características del servicio");
+        console.warn("No se pudieron guardar los service_points:", pointsError.message);
       }
     }
 

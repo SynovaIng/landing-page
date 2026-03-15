@@ -14,6 +14,29 @@ export interface FieldConfig {
   step?: number;
 }
 
+export const serviceIconOptions = [
+  "engineering",
+  "electric_bolt",
+  "verified_user",
+  "emergency_home",
+  "build",
+  "construction",
+  "electrical_services",
+  "lightbulb",
+  "settings",
+  "plumbing",
+  "handyman",
+  "home_repair_service",
+  "security",
+  "solar_power",
+  "power",
+  "bolt",
+  "monitoring",
+  "precision_manufacturing",
+  "support_agent",
+  "energy_savings_leaf",
+] as const;
+
 interface SectionConfig {
   label: string;
   singularLabel: string;
@@ -60,6 +83,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   services: [
+    { key: "icon", label: "Icono", type: "text" },
     { key: "name", label: "Nombre", type: "text" },
     { key: "slug", label: "Slug", type: "text" },
     { key: "description", label: "Descripción", type: "textarea" },
@@ -86,6 +110,7 @@ export const createFieldDefaults: Record<DashboardSectionKey, Record<string, str
     isActive: true,
   },
   services: {
+    icon: "engineering",
     name: "",
     slug: "",
     description: "",
