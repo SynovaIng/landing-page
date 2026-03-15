@@ -120,6 +120,8 @@ export const createFieldDefaults: Record<
     imageUrl: "",
     imageUrls: [],
     imageFiles: [],
+    imageFileKeys: [],
+    imageOrderRefs: [],
     isActive: true,
   },
   services: {

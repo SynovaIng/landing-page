@@ -65,7 +65,9 @@ const parseServiceIds = (value: FormDataEntryValue | null): string[] => {
 export const parseProjectMutationRequest = async (request: Request): Promise<{
   payload: ProjectMutationInput;
   imageFiles: File[];
+  imageKeys: string[];
   existingImageUrls: string[];
+  imageOrderRefs: string[];
 }> => {
   const contentType = request.headers.get("content-type") ?? "";
 
@@ -96,8 +98,16 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
     return {
       payload: parsed.data,
       imageFiles,
+      imageKeys: formData
+        .getAll("imageKeys")
+        .map((entry) => String(entry).trim())
+        .filter((entry) => entry.length > 0),
       existingImageUrls: formData
         .getAll("existingImageUrls")
+        .map((entry) => String(entry).trim())
+        .filter((entry) => entry.length > 0),
+      imageOrderRefs: formData
+        .getAll("imageOrderRefs")
         .map((entry) => String(entry).trim())
         .filter((entry) => entry.length > 0),
     };
@@ -113,7 +123,9 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
   return {
     payload: parsed.data,
     imageFiles: [],
+    imageKeys: [],
     existingImageUrls: [],
+    imageOrderRefs: [],
   };
 };
 

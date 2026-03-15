@@ -267,6 +267,14 @@ export default function DashboardClient({
         ? draftValues.imageUrls.map((value) => String(value)).filter((value) => value.length > 0)
         : [];
 
+      normalizedValues.imageFileKeys = Array.isArray(draftValues.imageFileKeys)
+        ? draftValues.imageFileKeys.map((value) => String(value)).filter((value) => value.length > 0)
+        : [];
+
+      normalizedValues.imageOrderRefs = Array.isArray(draftValues.imageOrderRefs)
+        ? draftValues.imageOrderRefs.map((value) => String(value)).filter((value) => value.length > 0)
+        : [];
+
       if (!Array.isArray(normalizedValues.imageFiles)) {
         normalizedValues.imageFiles = [];
       }
@@ -340,12 +348,28 @@ export default function DashboardClient({
         formData.append("images", file);
       });
 
+      const imageFileKeys = Array.isArray(normalizedValues.imageFileKeys)
+        ? normalizedValues.imageFileKeys.map((value) => String(value)).filter((value) => value.length > 0)
+        : [];
+
+      imageFileKeys.forEach((key) => {
+        formData.append("imageKeys", key);
+      });
+
       const existingImageUrls = Array.isArray(normalizedValues.imageUrls)
         ? normalizedValues.imageUrls.map((value) => String(value)).filter((value) => value.length > 0)
         : [];
 
       existingImageUrls.forEach((url) => {
         formData.append("existingImageUrls", url);
+      });
+
+      const imageOrderRefs = Array.isArray(normalizedValues.imageOrderRefs)
+        ? normalizedValues.imageOrderRefs.map((value) => String(value)).filter((value) => value.length > 0)
+        : [];
+
+      imageOrderRefs.forEach((ref) => {
+        formData.append("imageOrderRefs", ref);
       });
 
       const response = await fetch(`/api/dashboard/projects/${editContext.rowId}`, {

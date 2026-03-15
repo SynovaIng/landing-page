@@ -1,5 +1,20 @@
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
-import { type ReactElement, useMemo, useState } from "react";
+import { type ReactElement, useEffect, useMemo, useState } from "react";
 
 import {
   type FieldConfig,
@@ -7,6 +22,94 @@ import {
 } from "@/contexts/dashboard/presentation/dashboard.config";
 
 import RoundedCheckbox from "./RoundedCheckbox";
+
+interface GalleryItem {
+  id: string;
+  kind: "existing" | "new";
+  url?: string;
+  file?: File;
+  key?: string;
+}
+
+interface SortableGalleryRowProps {
+  item: GalleryItem;
+  index: number;
+  previewUrl?: string;
+  isCover: boolean;
+  onDelete: () => void;
+}
+
+function SortableGalleryRow({ item, index, previewUrl, isCover, onDelete }: SortableGalleryRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.75 : 1,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 rounded-md border border-border bg-surface-alt p-2"
+    >
+      <button
+        type="button"
+        className="inline-flex h-7 w-7 items-center justify-center text-on-surface-muted"
+        aria-label={`Mover imagen ${index + 1}`}
+        {...attributes}
+        {...listeners}
+      >
+        <span className="material-symbols-outlined">drag_indicator</span>
+      </button>
+
+      {previewUrl ? (
+        <Image
+          src={previewUrl}
+          alt={`Imagen ${index + 1}`}
+          width={80}
+          height={56}
+          unoptimized
+          className="h-14 w-20 rounded object-cover"
+        />
+      ) : (
+        <div className="flex h-14 w-20 items-center justify-center rounded bg-surface text-xs text-on-surface-muted">
+          Sin preview
+        </div>
+      )}
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm text-on-surface">
+          {item.kind === "existing" ? `Imagen ${index + 1}` : item.file?.name ?? `Nueva imagen ${index + 1}`}
+        </p>
+        {isCover && (
+          <p className="text-xs font-medium text-secondary">Portada</p>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onDelete();
+        }}
+        className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-on-surface-muted hover:text-red-600"
+        aria-label={`Eliminar imagen ${index + 1}`}
+      >
+        <span className="material-symbols-outlined text-[18px]">delete</span>
+      </button>
+    </li>
+  );
+}
 
 interface DashboardEditModalProps {
   isOpen: boolean;
@@ -36,30 +139,23 @@ export default function DashboardEditModal({
   const [remoteIconSuggestions, setRemoteIconSuggestions] = useState<string[]>([]);
   const [isSearchingIcons, setIsSearchingIcons] = useState(false);
   const [isProjectServicesOpen, setIsProjectServicesOpen] = useState(false);
-  const [draggingExistingImageIndex, setDraggingExistingImageIndex] = useState<number | null>(null);
-  const [draggingNewFileIndex, setDraggingNewFileIndex] = useState<number | null>(null);
+  const sensors = useSensors(useSensor(PointerSensor));
 
-  const moveItem = <T,>(items: T[], fromIndex: number, toIndex: number): T[] => {
-    if (
-      fromIndex < 0
-      || toIndex < 0
-      || fromIndex >= items.length
-      || toIndex >= items.length
-      || fromIndex === toIndex
-    ) {
-      return items;
-    }
+  const imagePreviewUrls = useMemo(() => {
+    const imageFiles = Array.isArray(values.imageFiles)
+      ? values.imageFiles.filter((file): file is File => file instanceof File)
+      : [];
 
-    const nextItems = [...items];
-    const [movedItem] = nextItems.splice(fromIndex, 1);
+    return imageFiles.map((file) => URL.createObjectURL(file));
+  }, [values.imageFiles]);
 
-    if (typeof movedItem === "undefined") {
-      return items;
-    }
-
-    nextItems.splice(toIndex, 0, movedItem);
-    return nextItems;
-  };
+  useEffect(() => {
+    return () => {
+      imagePreviewUrls.forEach((previewUrl) => {
+        URL.revokeObjectURL(previewUrl);
+      });
+    };
+  }, [imagePreviewUrls]);
 
   const selectedIcon = String(values.icon ?? "").trim();
 
@@ -391,6 +487,20 @@ export default function DashboardEditModal({
               const selectedFiles = Array.isArray(value)
                 ? value.filter((file): file is File => file instanceof File)
                 : [];
+              const imageFileKeys = Array.isArray(values.imageFileKeys)
+                ? values.imageFileKeys.map((entry) => String(entry))
+                : selectedFiles.map((_, index) => `new-${index}`);
+
+              const normalizedImageFileKeys = selectedFiles.map((file, index) => {
+                const key = imageFileKeys[index];
+
+                if (key && key.trim().length > 0) {
+                  return key;
+                }
+
+                return `new-${file.name}-${file.lastModified}-${file.size}-${index}`;
+              });
+
               const currentImageUrl = String(values.imageUrl ?? "").trim();
               const currentImageUrls = Array.isArray(values.imageUrls)
                 ? values.imageUrls.map((image) => String(image).trim()).filter(Boolean)
@@ -399,6 +509,79 @@ export default function DashboardEditModal({
               if (currentImageUrls.length === 0 && currentImageUrl) {
                 currentImageUrls.push(currentImageUrl);
               }
+
+              const existingItems: GalleryItem[] = currentImageUrls.map((url) => ({
+                id: `existing:${url}`,
+                kind: "existing",
+                url,
+              }));
+
+              const newItems: GalleryItem[] = selectedFiles.map((file, index) => ({
+                id: `new:${normalizedImageFileKeys[index]}`,
+                kind: "new",
+                file,
+                key: normalizedImageFileKeys[index],
+              }));
+
+              const allItems = [...existingItems, ...newItems];
+
+              const existingItemMap = new Map(existingItems.map((item) => [item.id, item]));
+              const newItemMap = new Map(newItems.map((item) => [item.id, item]));
+
+              const defaultOrder = allItems.map((item) => item.id);
+              const persistedOrder = Array.isArray(values.imageOrderRefs)
+                ? values.imageOrderRefs.map((entry) => String(entry))
+                : [];
+
+              const orderedIds = persistedOrder.length > 0
+                ? [
+                    ...persistedOrder.filter((id) => existingItemMap.has(id) || newItemMap.has(id)),
+                    ...defaultOrder.filter((id) => !persistedOrder.includes(id)),
+                  ]
+                : defaultOrder;
+
+              const orderedItems = orderedIds
+                .map((id) => existingItemMap.get(id) ?? newItemMap.get(id))
+                .filter((item): item is GalleryItem => Boolean(item));
+
+              const syncImageStateFromOrder = (items: GalleryItem[]) => {
+                const nextExistingImageUrls = items
+                  .filter((item) => item.kind === "existing")
+                  .map((item) => String(item.url ?? ""))
+                  .filter((url) => url.length > 0);
+
+                const nextNewItems = items.filter((item) => item.kind === "new");
+                const nextImageFiles = nextNewItems
+                  .map((item) => item.file)
+                  .filter((file): file is File => Boolean(file));
+                const nextImageFileKeys = nextNewItems
+                  .map((item) => item.key)
+                  .filter((key): key is string => Boolean(key));
+                const nextOrderRefs = items.map((item) => item.id);
+
+                onValueChange("imageUrls", nextExistingImageUrls);
+                onValueChange("imageFiles", nextImageFiles);
+                onValueChange("imageFileKeys", nextImageFileKeys);
+                onValueChange("imageOrderRefs", nextOrderRefs);
+              };
+
+              const handleDragEnd = (event: DragEndEvent) => {
+                const { active, over } = event;
+
+                if (!over || active.id === over.id) {
+                  return;
+                }
+
+                const fromIndex = orderedItems.findIndex((item) => item.id === String(active.id));
+                const toIndex = orderedItems.findIndex((item) => item.id === String(over.id));
+
+                if (fromIndex === -1 || toIndex === -1) {
+                  return;
+                }
+
+                const reorderedItems = arrayMove(orderedItems, fromIndex, toIndex);
+                syncImageStateFromOrder(reorderedItems);
+              };
 
               return (
                 <div key={field.key} className="block">
@@ -413,8 +596,36 @@ export default function DashboardEditModal({
                       accept="image/*"
                       multiple
                       onChange={(event) => {
-                        const nextFiles = event.target.files ? Array.from(event.target.files) : [];
-                        onValueChange(field.key, nextFiles);
+                        const pickedFiles = event.target.files ? Array.from(event.target.files) : [];
+                        const nextKeys = pickedFiles.map(
+                          (file, index) => `new-${file.name}-${file.lastModified}-${file.size}-${index}-${crypto.randomUUID()}`,
+                        );
+
+                        const appendedNewItems: GalleryItem[] = [
+                          ...selectedFiles.map((file, index) => ({
+                            id: `new:${normalizedImageFileKeys[index]}`,
+                            kind: "new" as const,
+                            file,
+                            key: normalizedImageFileKeys[index],
+                          })),
+                          ...pickedFiles.map((file, index) => ({
+                            id: `new:${nextKeys[index]}`,
+                            kind: "new" as const,
+                            file,
+                            key: nextKeys[index],
+                          })),
+                        ];
+
+                        const mergedItems: GalleryItem[] = [
+                          ...currentImageUrls.map((url) => ({
+                            id: `existing:${url}`,
+                            kind: "existing" as const,
+                            url,
+                          })),
+                          ...appendedNewItems,
+                        ];
+
+                        syncImageStateFromOrder(mergedItems);
                       }}
                       className="sr-only"
                     />
@@ -432,119 +643,40 @@ export default function DashboardEditModal({
                         : "No hay archivos seleccionados."}
                     </p>
 
-                    {currentImageUrls.length > 0 ? (
+                    {orderedItems.length > 0 ? (
                       <div className="rounded-lg border border-border bg-surface p-2">
                         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
-                          Imágenes actuales (arrastra para ordenar)
+                          Imágenes del proyecto (arrastra para ordenar)
                         </p>
-                        <ul className="space-y-2">
-                          {currentImageUrls.map((url, index) => (
-                            <li
-                              key={url}
-                              draggable
-                              onDragStart={() => setDraggingExistingImageIndex(index)}
-                              onDragEnd={() => setDraggingExistingImageIndex(null)}
-                              onDragOver={(event) => event.preventDefault()}
-                              onDrop={() => {
-                                if (draggingExistingImageIndex === null) {
-                                  return;
-                                }
-
-                                const reordered = moveItem(
-                                  currentImageUrls,
-                                  draggingExistingImageIndex,
-                                  index,
-                                );
-
-                                onValueChange("imageUrls", reordered);
-                                setDraggingExistingImageIndex(null);
-                              }}
-                              className="flex items-center gap-3 rounded-md border border-border bg-surface-alt p-2"
-                            >
-                              <span className="material-symbols-outlined text-on-surface-muted">drag_indicator</span>
-                              <Image
-                                src={url}
-                                alt={`Imagen actual ${index + 1}`}
-                                width={80}
-                                height={56}
-                                unoptimized
-                                className="h-14 w-20 rounded object-cover"
-                              />
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm text-on-surface">Imagen {index + 1}</p>
-                                {index === 0 && (
-                                  <p className="text-xs font-medium text-secondary">Portada</p>
-                                )}
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  event.stopPropagation();
-                                  onValueChange(
-                                    "imageUrls",
-                                    currentImageUrls.filter((_, imageIndex) => imageIndex !== index),
-                                  );
-                                }}
-                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-on-surface-muted hover:text-red-600"
-                                aria-label={`Eliminar imagen actual ${index + 1}`}
-                              >
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
-
-                    {selectedFiles.length > 0 ? (
-                      <div className="rounded-lg border border-border bg-surface p-2">
-                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
-                          Nuevas imágenes (arrastra para ordenar)
-                        </p>
-                        <ul className="space-y-2">
-                          {selectedFiles.map((file, index) => (
-                            <li
-                              key={`${file.name}-${file.lastModified}-${file.size}`}
-                              draggable
-                              onDragStart={() => setDraggingNewFileIndex(index)}
-                              onDragEnd={() => setDraggingNewFileIndex(null)}
-                              onDragOver={(event) => event.preventDefault()}
-                              onDrop={() => {
-                                if (draggingNewFileIndex === null) {
-                                  return;
-                                }
-
-                                const reordered = moveItem(selectedFiles, draggingNewFileIndex, index);
-                                onValueChange(field.key, reordered);
-                                setDraggingNewFileIndex(null);
-                              }}
-                              className="flex items-center gap-3 rounded-md border border-border bg-surface-alt p-2"
-                            >
-                              <span className="material-symbols-outlined text-on-surface-muted">drag_indicator</span>
-                              <span className="material-symbols-outlined text-secondary">image</span>
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm text-on-surface">{file.name}</p>
-                                <p className="text-xs text-on-surface-muted">Nueva imagen {index + 1}</p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  event.stopPropagation();
-                                  onValueChange(
-                                    field.key,
-                                    selectedFiles.filter((_, fileIndex) => fileIndex !== index),
-                                  );
-                                }}
-                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-on-surface-muted hover:text-red-600"
-                                aria-label={`Eliminar nueva imagen ${index + 1}`}
-                              >
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
+                        <DndContext
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={handleDragEnd}
+                        >
+                          <SortableContext items={orderedItems.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+                            <ul className="space-y-2">
+                              {orderedItems.map((item, index) => (
+                                <SortableGalleryRow
+                                  key={item.id}
+                                  item={item}
+                                  index={index}
+                                  isCover={index === 0}
+                                  previewUrl={
+                                    item.kind === "existing"
+                                      ? item.url
+                                      : imagePreviewUrls[
+                                          normalizedImageFileKeys.findIndex((key) => key === item.key)
+                                        ]
+                                  }
+                                  onDelete={() => {
+                                    const remainingItems = orderedItems.filter((candidate) => candidate.id !== item.id);
+                                    syncImageStateFromOrder(remainingItems);
+                                  }}
+                                />
+                              ))}
+                            </ul>
+                          </SortableContext>
+                        </DndContext>
                       </div>
                     ) : null}
                   </div>
