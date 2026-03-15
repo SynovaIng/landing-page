@@ -205,7 +205,9 @@ export default function Navbar() {
                   title="Abrir perfil"
                   className="w-10 h-10 rounded-full bg-primary text-white text-xs font-bold tracking-wide hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center"
                 >
-                  {user?.getInitials() ?? "US"}
+                  <span className="material-symbols-outlined text-[24px] leading-none">
+                    account_circle
+                  </span>
                 </button>
 
                 {profileOpen && (
@@ -215,7 +217,7 @@ export default function Navbar() {
                         Usuario
                       </p>
                       <p className="mt-1 text-sm font-semibold text-[var(--color-header-text)] truncate">
-                        {user?.fullName ?? "Usuario"}
+                        {user?.email ?? "Usuario"}
                       </p>
                     </div>
                     <div className="p-3">
@@ -339,10 +341,12 @@ export default function Navbar() {
             <div className="mt-3 p-3 rounded-lg border border-border-light bg-surface-alt space-y-3">
               <div className="flex items-center gap-3">
                 <span className="w-9 h-9 rounded-full bg-primary text-white text-xs font-bold tracking-wide flex items-center justify-center">
-                  {user?.getInitials() ?? "US"}
+                  <span className="material-symbols-outlined text-[22px] leading-none">
+                    account_circle
+                  </span>
                 </span>
                 <span className="text-sm font-semibold text-[var(--color-header-text)] truncate">
-                  {user?.fullName ?? "Usuario"}
+                  {user?.email ?? "Usuario"}
                 </span>
               </div>
               <button
