@@ -1,10 +1,11 @@
 import { Service as DiodService } from "diod";
 
-import type { Service } from "@/contexts/services/domain/service.entity";
+import { Service } from "@/contexts/services/domain/service.entity";
+import type { CreateServiceInput } from "@/contexts/services/domain/service.repository";
 import { ServiceRepository } from "@/contexts/services/domain/service.repository";
 
 const mockServices: Service[] = [
-  {
+  new Service({
     id: "instalaciones",
     icon: "electric_bolt",
     title: "Instalaciones Eléctricas",
@@ -16,8 +17,8 @@ const mockServices: Service[] = [
       "Iluminación LED y puntos de red",
     ],
     ctaLabel: "Cotizar Proyecto",
-  },
-  {
+  }),
+  new Service({
     id: "certificaciones",
     icon: "verified_user",
     title: "Certificaciones SEC",
@@ -29,8 +30,8 @@ const mockServices: Service[] = [
       "Planos y memorias explicativas",
     ],
     ctaLabel: "Gestionar Certificación",
-  },
-  {
+  }),
+  new Service({
     id: "emergencias",
     icon: "emergency_home",
     title: "Emergencias 24/7",
@@ -42,8 +43,8 @@ const mockServices: Service[] = [
       "Diagnóstico de fallas críticas",
     ],
     ctaLabel: "Llamar Urgencia",
-  },
-  {
+  }),
+  new Service({
     id: "mantencion",
     icon: "engineering",
     title: "Mantención Preventiva",
@@ -55,7 +56,7 @@ const mockServices: Service[] = [
       "Informes técnicos detallados",
     ],
     ctaLabel: "Solicitar Plan",
-  },
+  }),
 ];
 
 @DiodService()
@@ -66,5 +67,19 @@ export class MockServiceRepository extends ServiceRepository {
 
   async getById(id: string): Promise<Service | null> {
     return mockServices.find((s) => s.id === id) ?? null;
+  }
+
+  async create(input: CreateServiceInput): Promise<Service> {
+    const created = new Service({
+      id: input.slug || `service-${Date.now()}`,
+      icon: input.icon,
+      title: input.title,
+      description: input.description ?? "",
+      features: input.features,
+      ctaLabel: input.ctaLabel,
+    });
+
+    mockServices.unshift(created);
+    return created;
   }
 }

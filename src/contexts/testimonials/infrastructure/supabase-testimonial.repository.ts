@@ -1,0 +1,92 @@
+import { Service } from "diod";
+
+import { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
+import type { CreateTestimonialInput } from "@/contexts/testimonials/domain/testimonial.repository";
+import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+const toInitials = (name: string) => {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("") || "CL";
+};
+
+@Service()
+export class SupabaseTestimonialRepository extends TestimonialRepository {
+  async getAll(): Promise<Testimonial[]> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("id, message, client_name, client_location, stars")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data.map((review) => new Testimonial({
+      id: String(review.id),
+      text: String(review.message ?? ""),
+      authorName: String(review.client_name ?? ""),
+      authorInitials: toInitials(String(review.client_name ?? "")),
+      authorLocation: String(review.client_location ?? ""),
+      rating: Number(review.stars ?? 0),
+    }));
+  }
+
+  async getById(id: string): Promise<Testimonial | null> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("id, message, client_name, client_location, stars")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return new Testimonial({
+      id: String(data.id),
+      text: String(data.message ?? ""),
+      authorName: String(data.client_name ?? ""),
+      authorInitials: toInitials(String(data.client_name ?? "")),
+      authorLocation: String(data.client_location ?? ""),
+      rating: Number(data.stars ?? 0),
+    });
+  }
+
+  async create(input: CreateTestimonialInput): Promise<Testimonial> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .insert({
+        message: input.text,
+        client_name: input.authorName,
+        client_location: input.authorLocation,
+        stars: input.rating,
+        is_published: input.isPublished,
+      })
+      .select("id, message, client_name, client_location, stars")
+      .single();
+
+    if (error || !data) {
+      throw new Error("No se pudo crear la reseña");
+    }
+
+    return new Testimonial({
+      id: String(data.id),
+      text: String(data.message ?? input.text),
+      authorName: String(data.client_name ?? input.authorName),
+      authorInitials: input.authorInitials || toInitials(input.authorName),
+      authorLocation: String(data.client_location ?? input.authorLocation),
+      rating: Number(data.stars ?? input.rating),
+    });
+  }
+}

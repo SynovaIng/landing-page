@@ -8,15 +8,21 @@ import type {
   DashboardSectionKey,
 } from "@/contexts/dashboard/domain/dashboard.entity";
 
-import { editFieldConfig, sectionConfig } from "./dashboard.config";
+import {
+  createFieldDefaults,
+  editFieldConfig,
+  sectionConfig,
+} from "./dashboard.config";
 import DashboardEditModal from "./DashboardEditModal";
 import DashboardTable from "./DashboardTable";
 
 type DashboardEditableValue = string | number | boolean;
+type ModalMode = "create" | "edit";
 
 interface EditContext {
+  mode: ModalMode;
   sectionKey: DashboardSectionKey;
-  rowId: string;
+  rowId?: string;
 }
 
 type DashboardClientProps = DashboardSectionData;
@@ -79,7 +85,7 @@ export default function DashboardClient({
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
   const allSelected = currentRows.length > 0 && selectedIds.length === currentRows.length;
   const editingRow = useMemo(() => {
-    if (!editContext) {
+    if (!editContext || editContext.mode !== "edit" || !editContext.rowId) {
       return null;
     }
 
@@ -146,8 +152,13 @@ export default function DashboardClient({
       return;
     }
 
-    setEditContext({ sectionKey, rowId });
+    setEditContext({ mode: "edit", sectionKey, rowId });
     setDraftValues({ ...(row as unknown as Record<string, DashboardEditableValue>) });
+  };
+
+  const openCreateModal = (sectionKey: DashboardSectionKey) => {
+    setEditContext({ mode: "create", sectionKey });
+    setDraftValues({ ...createFieldDefaults[sectionKey] });
   };
 
   const closeEditModal = () => {
@@ -162,8 +173,8 @@ export default function DashboardClient({
     }));
   };
 
-  const saveEdit = () => {
-    if (!editContext || !editingRow) {
+  const saveEdit = async () => {
+    if (!editContext) {
       return;
     }
 
@@ -186,6 +197,29 @@ export default function DashboardClient({
 
       normalizedValues[field.key] = String(rawValue ?? "");
     });
+
+    if (editContext.mode === "create") {
+      const response = await fetch(`/api/dashboard/${editContext.sectionKey}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(normalizedValues),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const createdRow = (await response.json()) as DashboardRowBase;
+      updateRowsForSection(editContext.sectionKey, (rows) => [createdRow, ...rows]);
+      closeEditModal();
+      return;
+    }
+
+    if (!editingRow || !editContext.rowId) {
+      return;
+    }
 
     const updatedRow = {
       ...editingRow,
@@ -260,6 +294,7 @@ export default function DashboardClient({
           </button>
           <button
             type="button"
+            onClick={() => openCreateModal(activeSection)}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90 sm:w-auto"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
@@ -280,7 +315,8 @@ export default function DashboardClient({
       />
 
       <DashboardEditModal
-        isOpen={Boolean(editContext && editingRow)}
+        isOpen={Boolean(editContext && (editContext.mode === "create" || editingRow))}
+        mode={editContext?.mode ?? "edit"}
         singularLabel={editContext ? sectionConfig[editContext.sectionKey].singularLabel : "registro"}
         fields={editContext ? editFieldConfig[editContext.sectionKey] : []}
         values={draftValues}

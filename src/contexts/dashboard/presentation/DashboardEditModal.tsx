@@ -4,6 +4,7 @@ import RoundedCheckbox from "./RoundedCheckbox";
 
 interface DashboardEditModalProps {
   isOpen: boolean;
+  mode: "create" | "edit";
   singularLabel: string;
   fields: FieldConfig[];
   values: Record<string, string | number | boolean>;
@@ -14,6 +15,7 @@ interface DashboardEditModalProps {
 
 export default function DashboardEditModal({
   isOpen,
+  mode,
   singularLabel,
   fields,
   values,
@@ -30,8 +32,14 @@ export default function DashboardEditModal({
       <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
           <div>
-            <h3 className="text-xl font-bold text-navy">Editar registro</h3>
-            <p className="text-sm text-on-surface-muted">Actualiza los campos de {singularLabel}.</p>
+            <h3 className="text-xl font-bold text-navy">
+              {mode === "create" ? "Nuevo registro" : "Editar registro"}
+            </h3>
+            <p className="text-sm text-on-surface-muted">
+              {mode === "create"
+                ? `Completa los campos para crear ${singularLabel}.`
+                : `Actualiza los campos de ${singularLabel}.`}
+            </p>
           </div>
           <button
             type="button"
@@ -109,7 +117,7 @@ export default function DashboardEditModal({
             onClick={onSave}
             className="rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
-            Guardar cambios
+            {mode === "create" ? "Crear" : "Guardar cambios"}
           </button>
         </div>
       </div>

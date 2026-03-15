@@ -53,7 +53,6 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
 
 export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
   projects: [
-    { key: "id", label: "ID", type: "text" },
     { key: "name", label: "Nombre", type: "text" },
     { key: "description", label: "Descripción", type: "textarea" },
     { key: "type", label: "Tipo", type: "text" },
@@ -61,7 +60,6 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   services: [
-    { key: "id", label: "ID", type: "text" },
     { key: "name", label: "Nombre", type: "text" },
     { key: "slug", label: "Slug", type: "text" },
     { key: "description", label: "Descripción", type: "textarea" },
@@ -70,7 +68,6 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   testimonials: [
-    { key: "id", label: "ID", type: "text" },
     { key: "clientName", label: "Nombre cliente", type: "text" },
     { key: "clientInitials", label: "Iniciales", type: "text" },
     { key: "clientLocation", label: "Ubicación", type: "text" },
@@ -78,4 +75,30 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "message", label: "Comentario", type: "textarea" },
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
+};
+
+export const createFieldDefaults: Record<DashboardSectionKey, Record<string, string | number | boolean>> = {
+  projects: {
+    name: "",
+    description: "",
+    type: "Comercial",
+    location: "",
+    isActive: true,
+  },
+  services: {
+    name: "",
+    slug: "",
+    description: "",
+    ctaLabel: "Cotizar",
+    features: "",
+    isActive: true,
+  },
+  testimonials: {
+    clientName: "",
+    clientInitials: "",
+    clientLocation: "",
+    stars: 5,
+    message: "",
+    isActive: true,
+  },
 };
