@@ -31,26 +31,30 @@ export default async function AdminDashboardPage() {
 
   const projectRows: DashboardProjectRow[] = projects.map((project) => ({
     id: project.id,
-    title: project.title,
+    name: project.title,
+    description: `Proyecto en ${project.location}`,
+    type: project.category,
     location: project.location,
-    category: project.category,
     isActive: true,
   }));
 
   const serviceRows: DashboardServiceRow[] = services.map((service) => ({
     id: service.id,
-    title: service.title,
+    name: service.title,
+    slug: service.id,
     description: service.description,
+    ctaLabel: service.ctaLabel,
     features: service.features.join(" · "),
     isActive: true,
   }));
 
   const testimonialRows: DashboardTestimonialRow[] = testimonials.map((testimonial) => ({
     id: testimonial.id,
-    authorName: testimonial.authorName,
-    authorLocation: testimonial.authorLocation,
-    rating: testimonial.rating,
-    text: testimonial.text,
+    clientName: testimonial.authorName,
+    clientInitials: testimonial.authorInitials,
+    clientLocation: testimonial.authorLocation,
+    stars: testimonial.rating,
+    message: testimonial.text,
     isActive: true,
   }));
 

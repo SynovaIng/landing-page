@@ -13,6 +13,22 @@ interface TableColumn {
   label: string;
 }
 
+type DashboardEditableValue = string | number | boolean;
+
+interface EditContext {
+  sectionKey: DashboardSectionKey;
+  rowId: string;
+}
+
+interface FieldConfig {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "number" | "checkbox";
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
 type DashboardClientProps = DashboardSectionData;
 
 const sectionConfig: Record<
@@ -27,30 +43,59 @@ const sectionConfig: Record<
     label: "Proyectos",
     singularLabel: "proyecto",
     columns: [
-      { key: "title", label: "Título" },
+      { key: "name", label: "Nombre" },
+      { key: "type", label: "Tipo" },
       { key: "location", label: "Ubicación" },
-      { key: "category", label: "Categoría" },
     ],
   },
   services: {
     label: "Servicios",
     singularLabel: "servicio",
     columns: [
-      { key: "title", label: "Título" },
-      { key: "description", label: "Descripción" },
-      { key: "features", label: "Características" },
+      { key: "name", label: "Nombre" },
+      { key: "slug", label: "Slug" },
+      { key: "ctaLabel", label: "CTA" },
     ],
   },
   testimonials: {
     label: "Reseñas",
     singularLabel: "reseña",
     columns: [
-      { key: "authorName", label: "Autor" },
-      { key: "authorLocation", label: "Ubicación" },
-      { key: "rating", label: "Calificación" },
-      { key: "text", label: "Comentario" },
+      { key: "clientName", label: "Cliente" },
+      { key: "stars", label: "Estrellas" },
+      { key: "clientLocation", label: "Ubicación" },
+      { key: "message", label: "Comentario" },
     ],
   },
+};
+
+const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
+  projects: [
+    { key: "id", label: "ID", type: "text" },
+    { key: "name", label: "Nombre", type: "text" },
+    { key: "description", label: "Descripción", type: "textarea" },
+    { key: "type", label: "Tipo", type: "text" },
+    { key: "location", label: "Ubicación", type: "text" },
+    { key: "isActive", label: "Visible", type: "checkbox" },
+  ],
+  services: [
+    { key: "id", label: "ID", type: "text" },
+    { key: "name", label: "Nombre", type: "text" },
+    { key: "slug", label: "Slug", type: "text" },
+    { key: "description", label: "Descripción", type: "textarea" },
+    { key: "ctaLabel", label: "Texto CTA", type: "text" },
+    { key: "features", label: "Características", type: "textarea" },
+    { key: "isActive", label: "Visible", type: "checkbox" },
+  ],
+  testimonials: [
+    { key: "id", label: "ID", type: "text" },
+    { key: "clientName", label: "Nombre cliente", type: "text" },
+    { key: "clientInitials", label: "Iniciales", type: "text" },
+    { key: "clientLocation", label: "Ubicación", type: "text" },
+    { key: "stars", label: "Estrellas", type: "number", min: 0, max: 5, step: 0.5 },
+    { key: "message", label: "Comentario", type: "textarea" },
+    { key: "isActive", label: "Visible", type: "checkbox" },
+  ],
 };
 
 function createSelectedState(): Record<DashboardSectionKey, string[]> {
@@ -107,6 +152,8 @@ export default function DashboardClient({
   const [selectedBySection, setSelectedBySection] = useState<
     Record<DashboardSectionKey, string[]>
   >(createSelectedState());
+  const [editContext, setEditContext] = useState<EditContext | null>(null);
+  const [draftValues, setDraftValues] = useState<Record<string, DashboardEditableValue>>({});
 
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
@@ -114,6 +161,15 @@ export default function DashboardClient({
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
   const allSelected = currentRows.length > 0 && selectedIds.length === currentRows.length;
+  const editingRow = useMemo(() => {
+    if (!editContext) {
+      return null;
+    }
+
+    return (
+      rowsBySection[editContext.sectionKey].find((row) => row.id === editContext.rowId) ?? null
+    );
+  }, [editContext, rowsBySection]);
 
   const updateRowsForSection = (
     sectionKey: DashboardSectionKey,
@@ -165,6 +221,74 @@ export default function DashboardClient({
     updateRowsForSection(activeSection, (rows) =>
       rows.map((row) => (row.id === id ? { ...row, isActive: !row.isActive } : row)),
     );
+  };
+
+  const openEditModal = (sectionKey: DashboardSectionKey, rowId: string) => {
+    const row = rowsBySection[sectionKey].find((item) => item.id === rowId);
+    if (!row) {
+      return;
+    }
+
+    setEditContext({ sectionKey, rowId });
+    setDraftValues({ ...(row as unknown as Record<string, DashboardEditableValue>) });
+  };
+
+  const closeEditModal = () => {
+    setEditContext(null);
+    setDraftValues({});
+  };
+
+  const updateDraftValue = (fieldKey: string, value: DashboardEditableValue) => {
+    setDraftValues((prev) => ({
+      ...prev,
+      [fieldKey]: value,
+    }));
+  };
+
+  const saveEdit = () => {
+    if (!editContext || !editingRow) {
+      return;
+    }
+
+    const fields = editFieldConfig[editContext.sectionKey];
+    const normalizedValues: Record<string, DashboardEditableValue> = {};
+
+    fields.forEach((field) => {
+      const rawValue = draftValues[field.key];
+
+      if (field.type === "checkbox") {
+        normalizedValues[field.key] = Boolean(rawValue);
+        return;
+      }
+
+      if (field.type === "number") {
+        const nextValue = typeof rawValue === "number" ? rawValue : Number(rawValue ?? 0);
+        normalizedValues[field.key] = Number.isFinite(nextValue) ? nextValue : 0;
+        return;
+      }
+
+      normalizedValues[field.key] = String(rawValue ?? "");
+    });
+
+    const updatedRow = {
+      ...editingRow,
+      ...normalizedValues,
+    } as DashboardRowBase;
+
+    updateRowsForSection(editContext.sectionKey, (rows) =>
+      rows.map((row) => (row.id === editContext.rowId ? updatedRow : row)),
+    );
+
+    if (String(updatedRow.id) !== editContext.rowId) {
+      setSelectedBySection((prev) => ({
+        ...prev,
+        [editContext.sectionKey]: prev[editContext.sectionKey].map((id) =>
+          id === editContext.rowId ? String(updatedRow.id) : id,
+        ),
+      }));
+    }
+
+    closeEditModal();
   };
 
   return (
@@ -251,6 +375,9 @@ export default function DashboardClient({
               <th className="w-40 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
                 Visible
               </th>
+              <th className="w-28 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                Editar
+              </th>
             </tr>
           </thead>
 
@@ -258,7 +385,7 @@ export default function DashboardClient({
             {currentRows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={section.columns.length + 2}
+                  colSpan={section.columns.length + 3}
                   className="px-4 py-10 text-center text-sm text-on-surface-muted"
                 >
                   No hay elementos en esta sección.
@@ -267,7 +394,7 @@ export default function DashboardClient({
             ) : (
               currentRows.map((row, index) => {
                 const selected = selectedSet.has(row.id);
-                const stripedBackground = index % 2 === 0 ? "bg-surface" : "bg-surface-alt/70";
+                const stripedBackground = index % 2 === 0 ? "bg-surface" : "bg-surface-alt";
 
                 return (
                   <tr
@@ -310,6 +437,17 @@ export default function DashboardClient({
                         />
                       </button>
                     </td>
+
+                    <td className="px-4 py-3 align-top">
+                      <button
+                        type="button"
+                        onClick={() => openEditModal(activeSection, row.id)}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-on-surface-muted transition-colors hover:bg-surface-alt hover:text-secondary"
+                        aria-label={`Editar ${row.id}`}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+                    </td>
                   </tr>
                 );
               })
@@ -317,6 +455,99 @@ export default function DashboardClient({
           </tbody>
         </table>
       </div>
+
+      {editContext && editingRow ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/40 px-4 py-8">
+          <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface shadow-2xl">
+            <div className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
+              <div>
+                <h3 className="text-xl font-bold text-navy">Editar registro</h3>
+                <p className="text-sm text-on-surface-muted">
+                  Actualiza los campos de {sectionConfig[editContext.sectionKey].singularLabel}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeEditModal}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-muted hover:bg-surface-alt"
+                aria-label="Cerrar modal"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <div className="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5">
+              {editFieldConfig[editContext.sectionKey].map((field) => {
+                const value = draftValues[field.key];
+
+                if (field.type === "checkbox") {
+                  return (
+                    <div key={field.key} className="flex items-center gap-3">
+                      <RoundedCheckbox
+                        checked={Boolean(value)}
+                        onChange={() => updateDraftValue(field.key, !Boolean(value))}
+                        ariaLabel={`Editar ${field.label}`}
+                      />
+                      <span className="text-sm font-medium text-on-surface">{field.label}</span>
+                    </div>
+                  );
+                }
+
+                return (
+                  <label key={field.key} className="block">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                      {field.label}
+                    </span>
+
+                    {field.type === "textarea" ? (
+                      <textarea
+                        value={String(value ?? "")}
+                        onChange={(event) => updateDraftValue(field.key, event.target.value)}
+                        rows={4}
+                        className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                      />
+                    ) : (
+                      <input
+                        type={field.type}
+                        min={field.type === "number" ? field.min : undefined}
+                        max={field.type === "number" ? field.max : undefined}
+                        step={field.type === "number" ? field.step : undefined}
+                        value={field.type === "number" ? Number(value ?? 0) : String(value ?? "")}
+                        onChange={(event) =>
+                          updateDraftValue(
+                            field.key,
+                            field.type === "number"
+                              ? Number(event.target.value || 0)
+                              : event.target.value,
+                          )
+                        }
+                        className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                      />
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
+              <button
+                type="button"
+                onClick={closeEditModal}
+                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={saveEdit}
+                className="rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+              >
+                Guardar cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

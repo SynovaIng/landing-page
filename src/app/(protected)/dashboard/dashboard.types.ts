@@ -6,22 +6,26 @@ export interface DashboardRowBase {
 }
 
 export interface DashboardProjectRow extends DashboardRowBase {
-  title: string;
+  name: string;
+  description: string;
+  type: string;
   location: string;
-  category: string;
 }
 
 export interface DashboardServiceRow extends DashboardRowBase {
-  title: string;
+  name: string;
+  slug: string;
   description: string;
+  ctaLabel: string;
   features: string;
 }
 
 export interface DashboardTestimonialRow extends DashboardRowBase {
-  authorName: string;
-  authorLocation: string;
-  rating: number;
-  text: string;
+  clientName: string;
+  clientInitials: string;
+  clientLocation: string;
+  stars: number;
+  message: string;
 }
 
 export interface DashboardSectionData {
