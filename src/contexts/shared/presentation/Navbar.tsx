@@ -338,25 +338,32 @@ export default function Navbar() {
             Contacto
           </Link>
           {showAuthenticatedUi && (
-            <div className="mt-3 p-3 rounded-lg border border-border-light bg-surface-alt space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="w-9 h-9 rounded-full bg-primary text-white text-xs font-bold tracking-wide flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[22px] leading-none">
-                    account_circle
+            <div className="mt-3 rounded-xl bg-[var(--color-header-bg)] border border-border-light shadow-sm overflow-hidden">
+              <div className="px-4 py-3 border-b border-border-light">
+                <p className="text-xs font-semibold text-[var(--color-header-text)]/70 uppercase tracking-widest">
+                  Usuario
+                </p>
+                <div className="mt-2 flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-full bg-primary text-white text-xs font-bold tracking-wide flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[22px] leading-none">
+                      account_circle
+                    </span>
                   </span>
-                </span>
-                <span className="text-sm font-semibold text-[var(--color-header-text)] truncate">
-                  {user?.email ?? "Usuario"}
-                </span>
+                  <span className="text-sm font-semibold text-[var(--color-header-text)] truncate">
+                    {user?.email ?? "Usuario"}
+                  </span>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="w-full px-3 py-2.5 rounded-md bg-[var(--color-header-bg)] text-sm font-semibold text-red-600 border border-red-200 hover:text-red-700 hover:border-red-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
-              </button>
+              <div className="p-3">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="w-full px-3 py-2.5 rounded-md bg-[var(--color-header-bg)] text-sm font-semibold text-red-600 border border-red-200 hover:text-red-700 hover:border-red-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                </button>
+              </div>
             </div>
           )}
         </div>
