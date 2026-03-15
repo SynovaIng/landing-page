@@ -10,6 +10,14 @@ export interface DashboardProjectRow extends DashboardRowBase {
   description: string;
   type: string;
   location: string;
+  projectServiceIds: string[];
+  projectServiceNames: string[];
+  projectServicesSummary: string;
+  projectServices: {
+    id: string;
+    name: string;
+    icon: string;
+  }[];
 }
 
 export interface DashboardServiceRow extends DashboardRowBase {

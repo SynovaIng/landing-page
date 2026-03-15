@@ -1,8 +1,12 @@
+import { useState } from "react";
+
 import type { DashboardRowBase } from "@/contexts/dashboard/domain/dashboard.entity";
+import type { DashboardSectionKey } from "@/contexts/dashboard/domain/dashboard.entity";
 import type { TableColumn } from "@/contexts/dashboard/presentation/dashboard.config";
 import RoundedCheckbox from "@/contexts/dashboard/presentation/RoundedCheckbox";
 
 interface DashboardTableProps {
+  sectionKey: DashboardSectionKey;
   columns: TableColumn[];
   rows: DashboardRowBase[];
   allSelected: boolean;
@@ -14,6 +18,7 @@ interface DashboardTableProps {
 }
 
 export default function DashboardTable({
+  sectionKey,
   columns,
   rows,
   allSelected,
@@ -23,6 +28,15 @@ export default function DashboardTable({
   onToggleActive,
   onEdit,
 }: DashboardTableProps) {
+  const [openServiceListByRow, setOpenServiceListByRow] = useState<Record<string, boolean>>({});
+
+  const toggleServiceList = (rowId: string) => {
+    setOpenServiceListByRow((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full">
@@ -89,17 +103,58 @@ export default function DashboardTable({
 
                   {columns.map((column) => (
                     <td key={column.key} className="px-4 py-3 text-sm text-on-surface align-top">
-                      {column.key === "icon" ? (
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-alt text-secondary">
-                          <span className="material-symbols-outlined text-[20px]">
-                            {String(row[column.key as keyof typeof row] ?? "help")}
-                          </span>
-                        </span>
-                      ) : (
+                      {(() => {
+                        if (column.key === "icon") {
+                          return (
+                            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-alt text-secondary">
+                              <span className="material-symbols-outlined text-[20px]">
+                                {String(row[column.key as keyof typeof row] ?? "help")}
+                              </span>
+                            </span>
+                          );
+                        }
+
+                        if (sectionKey === "projects" && column.key === "projectServicesSummary") {
+                          return (
+                            <div className="relative inline-flex flex-col gap-2">
+                              <button
+                                type="button"
+                                onClick={() => toggleServiceList(row.id)}
+                                className="inline-flex items-center gap-2 rounded-md border border-border bg-surface-alt px-2.5 py-1.5 text-xs font-medium text-on-surface hover:bg-surface"
+                              >
+                                <span>{String(row[column.key as keyof typeof row] ?? "Sin servicios")}</span>
+                                <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                              </button>
+
+                              {openServiceListByRow[row.id] ? (
+                                <div className="absolute left-0 top-9 z-20 min-w-52 rounded-lg border border-border bg-surface p-2 shadow-lg">
+                                  {(row as DashboardRowBase & { projectServices?: { id: string; name: string; icon: string }[] }).projectServices
+                                    ?.length ? (
+                                      <ul className="space-y-1">
+                                        {(row as DashboardRowBase & { projectServices: { id: string; name: string; icon: string }[] }).projectServices.map((serviceItem) => (
+                                          <li key={serviceItem.id} className="flex items-center gap-2 rounded-md bg-surface-alt px-2 py-1 text-xs text-on-surface">
+                                            <span className="material-symbols-outlined text-[16px] text-secondary">
+                                              {serviceItem.icon}
+                                            </span>
+                                            <span>{serviceItem.name}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    ) : (
+                                      <p className="px-1 py-1 text-xs text-on-surface-muted">Sin servicios asociados.</p>
+                                    )}
+                                </div>
+                              ) : null}
+                            </div>
+                          );
+                        }
+
+                        return (
                         <span className="line-clamp-2">
                           {String(row[column.key as keyof typeof row] ?? "—")}
                         </span>
-                      )}
+                        );
+                      })()}
                     </td>
                   ))}
 

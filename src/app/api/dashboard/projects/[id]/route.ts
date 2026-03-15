@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { SupabaseProjectRepository } from "@/contexts/projects/infrastructure/supabase-project.repository";
-import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-project.use-case";
+import { UpdateProjectUseCase } from "@/contexts/projects/use-cases/update-project.use-case";
 
-const createProjectSchema = z.object({
+const updateProjectSchema = z.object({
   name: z.string().trim().min(1),
   type: z.string().trim().min(1),
   location: z.string().trim().min(1),
@@ -13,16 +13,22 @@ const createProjectSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export async function POST(request: Request) {
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
+export async function PATCH(request: Request, { params }: RouteParams) {
+  const { id } = await params;
   const body = await request.json();
-  const parsed = createProjectSchema.safeParse(body);
+  const parsed = updateProjectSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
-  const useCase = new CreateProjectUseCase(new SupabaseProjectRepository());
-  const created = await useCase.execute({
+  const useCase = new UpdateProjectUseCase(new SupabaseProjectRepository());
+  const updated = await useCase.execute({
+    id,
     title: parsed.data.name,
     location: parsed.data.location,
     category: parsed.data.type,
@@ -32,12 +38,12 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({
-    id: created.id,
-    name: created.title,
+    id: updated.id,
+    name: updated.title,
     description: parsed.data.description,
-    type: created.category,
-    location: created.location,
-    projectServiceIds: created.serviceIds,
+    type: updated.category,
+    location: updated.location,
+    projectServiceIds: updated.serviceIds,
     isActive: parsed.data.isActive,
   });
 }

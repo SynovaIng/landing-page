@@ -12,8 +12,9 @@ interface DashboardEditModalProps {
   mode: "create" | "edit";
   singularLabel: string;
   fields: FieldConfig[];
-  values: Record<string, string | number | boolean>;
-  onValueChange: (fieldKey: string, value: string | number | boolean) => void;
+  values: Record<string, string | number | boolean | string[]>;
+  projectServiceOptions: { id: string; name: string }[];
+  onValueChange: (fieldKey: string, value: string | number | boolean | string[]) => void;
   onClose: () => void;
   onSave: () => void;
 }
@@ -24,6 +25,7 @@ export default function DashboardEditModal({
   singularLabel,
   fields,
   values,
+  projectServiceOptions,
   onValueChange,
   onClose,
   onSave,
@@ -267,6 +269,45 @@ export default function DashboardEditModal({
                         Agregar
                       </button>
                     </div>
+                  </div>
+                </div>
+              );
+            }
+
+            if (field.key === "projectServiceIds") {
+              const selectedServiceIds = Array.isArray(value)
+                ? value.map((item) => String(item))
+                : [];
+
+              const toggleService = (serviceId: string) => {
+                const exists = selectedServiceIds.includes(serviceId);
+                const nextValue = exists
+                  ? selectedServiceIds.filter((id) => id !== serviceId)
+                  : [...selectedServiceIds, serviceId];
+
+                onValueChange(field.key, nextValue);
+              };
+
+              return (
+                <div key={field.key} className="space-y-2">
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                    {field.label}
+                  </span>
+                  <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border border-border bg-surface-alt p-3">
+                    {projectServiceOptions.length === 0 ? (
+                      <p className="text-sm text-on-surface-muted">No hay servicios disponibles.</p>
+                    ) : (
+                      projectServiceOptions.map((serviceOption) => (
+                        <label key={serviceOption.id} className="flex cursor-pointer items-center gap-3">
+                          <RoundedCheckbox
+                            checked={selectedServiceIds.includes(serviceOption.id)}
+                            onChange={() => toggleService(serviceOption.id)}
+                            ariaLabel={`Seleccionar ${serviceOption.name}`}
+                          />
+                          <span className="text-sm text-on-surface">{serviceOption.name}</span>
+                        </label>
+                      ))
+                    )}
                   </div>
                 </div>
               );

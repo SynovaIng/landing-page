@@ -51,6 +51,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
       { key: "name", label: "Nombre" },
       { key: "type", label: "Tipo" },
       { key: "location", label: "Ubicación" },
+      { key: "projectServicesSummary", label: "Servicios" },
     ],
   },
   services: {
@@ -81,6 +82,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "description", label: "Descripción", type: "textarea" },
     { key: "type", label: "Tipo", type: "text" },
     { key: "location", label: "Ubicación", type: "text" },
+    { key: "projectServiceIds", label: "Servicios", type: "text" },
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   services: [
@@ -102,12 +104,16 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
   ],
 };
 
-export const createFieldDefaults: Record<DashboardSectionKey, Record<string, string | number | boolean>> = {
+export const createFieldDefaults: Record<
+  DashboardSectionKey,
+  Record<string, string | number | boolean | string[]>
+> = {
   projects: {
     name: "",
     description: "",
     type: "Comercial",
     location: "",
+    projectServiceIds: [],
     isActive: true,
   },
   services: {

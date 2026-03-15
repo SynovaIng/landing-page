@@ -6,10 +6,22 @@ export interface CreateProjectInput {
   category: string;
   description?: string;
   isPublished: boolean;
+  serviceIds: string[];
+}
+
+export interface UpdateProjectInput {
+  id: string;
+  title: string;
+  location: string;
+  category: string;
+  description?: string;
+  isPublished: boolean;
+  serviceIds: string[];
 }
 
 export abstract class ProjectRepository {
   abstract getAll(): Promise<Project[]>;
   abstract getById(id: string): Promise<Project | null>;
   abstract create(input: CreateProjectInput): Promise<Project>;
+  abstract update(input: UpdateProjectInput): Promise<Project>;
 }

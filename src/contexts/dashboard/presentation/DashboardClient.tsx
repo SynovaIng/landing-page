@@ -16,7 +16,7 @@ import {
 import DashboardEditModal from "./DashboardEditModal";
 import DashboardTable from "./DashboardTable";
 
-type DashboardEditableValue = string | number | boolean;
+type DashboardEditableValue = string | number | boolean | string[];
 type ModalMode = "create" | "edit";
 
 interface EditContext {
@@ -81,6 +81,15 @@ export default function DashboardClient({
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
   const selectedIds = selectedBySection[activeSection];
+  const projectServiceOptions = useMemo(
+    () =>
+      rowsBySection.services.map((serviceRow) => ({
+        id: serviceRow.id,
+        name: serviceRow.name,
+        icon: serviceRow.icon,
+      })),
+    [rowsBySection.services],
+  );
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
   const allSelected = currentRows.length > 0 && selectedIds.length === currentRows.length;
@@ -173,6 +182,42 @@ export default function DashboardClient({
     }));
   };
 
+  const enrichProjectRow = (row: DashboardRowBase) => {
+    const projectRow = row as DashboardRowBase & {
+      projectServiceIds?: string[];
+      projectServiceNames?: string[];
+      projectServicesSummary?: string;
+      projectServices?: { id: string; name: string; icon: string }[];
+    };
+
+    const serviceIds = Array.isArray(projectRow.projectServiceIds)
+      ? projectRow.projectServiceIds.map((id) => String(id))
+      : [];
+
+    const serviceItems = serviceIds.map((serviceId) => {
+      const serviceOption = projectServiceOptions.find((candidate) => candidate.id === serviceId);
+
+      return {
+        id: serviceId,
+        name: serviceOption?.name ?? serviceId,
+        icon: serviceOption?.icon ?? "engineering",
+      };
+    });
+
+    const serviceNames = serviceItems.map((serviceItem) => serviceItem.name);
+
+    return {
+      ...projectRow,
+      projectServices: serviceItems,
+      projectServiceIds: serviceIds,
+      projectServiceNames: serviceNames,
+      projectServicesSummary:
+        serviceIds.length === 0
+          ? "Sin servicios"
+          : `${serviceIds.length} servicio${serviceIds.length === 1 ? "" : "s"}`,
+    } as DashboardRowBase;
+  };
+
   const saveEdit = async () => {
     if (!editContext) {
       return;
@@ -183,6 +228,13 @@ export default function DashboardClient({
 
     fields.forEach((field) => {
       const rawValue = draftValues[field.key];
+
+      if (field.key === "projectServiceIds") {
+        normalizedValues[field.key] = Array.isArray(rawValue)
+          ? rawValue.map((value) => String(value))
+          : [];
+        return;
+      }
 
       if (field.type === "checkbox") {
         normalizedValues[field.key] = Boolean(rawValue);
@@ -199,12 +251,20 @@ export default function DashboardClient({
     });
 
     if (editContext.mode === "create") {
+      const requestPayload =
+        editContext.sectionKey === "projects"
+          ? {
+              ...normalizedValues,
+              serviceIds: normalizedValues.projectServiceIds ?? [],
+            }
+          : normalizedValues;
+
       const response = await fetch(`/api/dashboard/${editContext.sectionKey}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(normalizedValues),
+        body: JSON.stringify(requestPayload),
       });
 
       if (!response.ok) {
@@ -212,12 +272,43 @@ export default function DashboardClient({
       }
 
       const createdRow = (await response.json()) as DashboardRowBase;
-      updateRowsForSection(editContext.sectionKey, (rows) => [createdRow, ...rows]);
+      const normalizedCreatedRow =
+        editContext.sectionKey === "projects" ? enrichProjectRow(createdRow) : createdRow;
+
+      updateRowsForSection(editContext.sectionKey, (rows) => [normalizedCreatedRow, ...rows]);
       closeEditModal();
       return;
     }
 
     if (!editingRow || !editContext.rowId) {
+      return;
+    }
+
+    if (editContext.sectionKey === "projects") {
+      const requestPayload = {
+        ...normalizedValues,
+        serviceIds: normalizedValues.projectServiceIds ?? [],
+      };
+
+      const response = await fetch(`/api/dashboard/projects/${editContext.rowId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestPayload),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const updatedProject = enrichProjectRow((await response.json()) as DashboardRowBase);
+
+      updateRowsForSection(editContext.sectionKey, (rows) =>
+        rows.map((row) => (row.id === editContext.rowId ? (updatedProject as typeof row) : row)),
+      );
+
+      closeEditModal();
       return;
     }
 
@@ -304,6 +395,7 @@ export default function DashboardClient({
       </div>
 
       <DashboardTable
+        sectionKey={activeSection}
         columns={section.columns}
         rows={currentRows}
         allSelected={allSelected}
@@ -320,6 +412,7 @@ export default function DashboardClient({
         singularLabel={editContext ? sectionConfig[editContext.sectionKey].singularLabel : "registro"}
         fields={editContext ? editFieldConfig[editContext.sectionKey] : []}
         values={draftValues}
+        projectServiceOptions={projectServiceOptions}
         onValueChange={updateDraftValue}
         onClose={closeEditModal}
         onSave={saveEdit}

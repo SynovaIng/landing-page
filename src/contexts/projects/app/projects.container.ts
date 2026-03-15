@@ -5,6 +5,7 @@ import { MockProjectRepository } from "@/contexts/projects/infrastructure/mock-p
 import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-project.use-case";
 import { GetAllProjectsUseCase } from "@/contexts/projects/use-cases/get-all-projects.use-case";
 import { GetProjectByIdUseCase } from "@/contexts/projects/use-cases/get-project-by-id.use-case";
+import { UpdateProjectUseCase } from "@/contexts/projects/use-cases/update-project.use-case";
 
 export const registerProjectsContainer = (builder: ContainerBuilder): void => {
   // Domain & Infrastructure
@@ -14,4 +15,5 @@ export const registerProjectsContainer = (builder: ContainerBuilder): void => {
   builder.registerAndUse(CreateProjectUseCase);
   builder.registerAndUse(GetAllProjectsUseCase);
   builder.registerAndUse(GetProjectByIdUseCase);
+  builder.registerAndUse(UpdateProjectUseCase);
 };

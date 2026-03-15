@@ -14,8 +14,26 @@ export function mapDashboardData({
   services,
   testimonials,
 }: MapDashboardDataInput): DashboardSectionData {
+  const serviceNamesById = new Map<string, string>(
+    services.map((service) => [service.id, service.title]),
+  );
+  const serviceIconsById = new Map<string, string>(
+    services.map((service) => [service.id, service.icon]),
+  );
+
   return {
     projects: projects.map((project) => ({
+      projectServices: project.serviceIds.map((serviceId) => ({
+        id: serviceId,
+        name: serviceNamesById.get(serviceId) ?? serviceId,
+        icon: serviceIconsById.get(serviceId) ?? "engineering",
+      })),
+      projectServiceIds: project.serviceIds,
+      projectServiceNames: project.serviceIds.map((serviceId) => serviceNamesById.get(serviceId) ?? serviceId),
+      projectServicesSummary:
+        project.serviceIds.length === 0
+          ? "Sin servicios"
+          : `${project.serviceIds.length} servicio${project.serviceIds.length === 1 ? "" : "s"}`,
       id: project.id,
       name: project.title,
       description: `Proyecto en ${project.location}`,

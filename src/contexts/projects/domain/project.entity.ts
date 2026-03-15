@@ -6,6 +6,7 @@ export interface ProjectProps {
   location: string;
   category: ProjectCategory;
   imageUrl: string;
+  serviceIds: string[];
 }
 
 export class Project {
@@ -14,6 +15,7 @@ export class Project {
   public readonly location: string;
   public readonly category: ProjectCategory;
   public readonly imageUrl: string;
+  public readonly serviceIds: string[];
 
   constructor(props: ProjectProps) {
     this.id = props.id;
@@ -21,5 +23,6 @@ export class Project {
     this.location = props.location;
     this.category = props.category;
     this.imageUrl = props.imageUrl;
+    this.serviceIds = props.serviceIds;
   }
 }
