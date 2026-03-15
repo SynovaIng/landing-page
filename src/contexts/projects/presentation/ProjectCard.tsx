@@ -2,6 +2,7 @@ import type { Project } from "@/contexts/projects/domain/project.entity";
 
 interface ProjectCardProps {
   project: Project;
+  onClick?: () => void;
 }
 
 const categoryColors: Record<string, string> = {
@@ -10,9 +11,13 @@ const categoryColors: Record<string, string> = {
   Industrial: "bg-category-industrial",
 };
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-surface cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-border-light">
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative w-full overflow-hidden rounded-2xl bg-surface cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-border-light text-left"
+    >
       {/* Image */}
       <div className="aspect-4/3 w-full overflow-hidden relative">
         <div
@@ -45,6 +50,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           {project.location}
         </p>
       </div>
-    </div>
+    </button>
   );
 }
