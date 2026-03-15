@@ -163,6 +163,17 @@ export default function DashboardEditModal({
                     <p className="mt-2 text-xs text-on-surface-muted">
                       Seleccionado: {selectedIcon || "ninguno"}
                     </p>
+                    <p className="mt-1 text-xs text-on-surface-muted">
+                      Encuentra más iconos aquí:{" "}
+                      <a
+                        href="https://fonts.google.com/icons"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-secondary hover:underline"
+                      >
+                        Google Material Icons
+                      </a>
+                    </p>
 
                     <div className="mt-2 max-h-44 overflow-y-auto rounded-lg border border-border bg-surface">
                       {filteredServiceIcons.length === 0 ? (
