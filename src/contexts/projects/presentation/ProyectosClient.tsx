@@ -24,11 +24,18 @@ const stats = [
   { value: "RM", label: "Cobertura Total" },
 ];
 
-interface ProyectosClientProps {
-  projects: Project[];
+interface ProjectServiceSummary {
+  id: string;
+  title: string;
+  icon: string;
 }
 
-export default function ProyectosClient({ projects }: ProyectosClientProps) {
+interface ProyectosClientProps {
+  projects: Project[];
+  services: ProjectServiceSummary[];
+}
+
+export default function ProyectosClient({ projects, services }: ProyectosClientProps) {
   const [active, setActive] = useState<ProjectCategory | "Todos">("Todos");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
@@ -41,6 +48,16 @@ export default function ProyectosClient({ projects }: ProyectosClientProps) {
 
     return getProjectGalleryDetails(selectedProject);
   }, [selectedProject]);
+
+  const selectedProjectServices = useMemo(() => {
+    if (!selectedProject) {
+      return [];
+    }
+
+    return selectedProject.serviceIds
+      .map((serviceId) => services.find((service) => service.id === serviceId))
+      .filter((service): service is ProjectServiceSummary => Boolean(service));
+  }, [selectedProject, services]);
 
   useEffect(() => {
     document.body.style.overflow = selectedProject ? "hidden" : "";
@@ -119,6 +136,7 @@ export default function ProyectosClient({ projects }: ProyectosClientProps) {
       <ProjectGalleryModal
         project={selectedProject}
         details={selectedProjectDetails}
+        services={selectedProjectServices}
         onClose={() => setSelectedProject(null)}
       />
     </div>

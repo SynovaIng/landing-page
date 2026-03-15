@@ -5,13 +5,20 @@ import type { Project } from "@/contexts/projects/domain/project.entity";
 import type { ProjectGalleryDetails } from "./project-details";
 import ProjectImageCarousel from "./ProjectImageCarousel";
 
+interface ProjectServiceSummary {
+  id: string;
+  title: string;
+  icon: string;
+}
+
 interface ProjectGalleryModalProps {
   project: Project | null;
   details: ProjectGalleryDetails | null;
+  services: ProjectServiceSummary[];
   onClose: () => void;
 }
 
-export default function ProjectGalleryModal({ project, details, onClose }: ProjectGalleryModalProps) {
+export default function ProjectGalleryModal({ project, details, services, onClose }: ProjectGalleryModalProps) {
   if (!project || !details) {
     return null;
   }
@@ -45,6 +52,27 @@ export default function ProjectGalleryModal({ project, details, onClose }: Proje
               {project.title}
             </h2>
             <p className="text-muted text-base md:text-lg leading-relaxed mb-5">{details.description}</p>
+
+            {services.length > 0 && (
+              <div className="mb-6">
+                <p className="text-sm font-semibold text-navy mb-3">Servicios ofrecidos</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  {services.map((service) => (
+                    <div key={service.id} className="relative group">
+                      <div
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-primary"
+                        aria-label={service.title}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">{service.icon}</span>
+                      </div>
+                      <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-navy px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                        {service.title}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="rounded-2xl border border-border bg-background-light px-4 py-3 inline-flex items-center gap-2 text-muted">
               <span className="material-symbols-outlined text-primary">location_on</span>
