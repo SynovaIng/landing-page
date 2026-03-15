@@ -89,9 +89,17 @@ export default function DashboardTable({
 
                   {columns.map((column) => (
                     <td key={column.key} className="px-4 py-3 text-sm text-on-surface align-top">
-                      <span className="line-clamp-2">
-                        {String(row[column.key as keyof typeof row] ?? "—")}
-                      </span>
+                      {column.key === "icon" ? (
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-alt text-secondary">
+                          <span className="material-symbols-outlined text-[20px]">
+                            {String(row[column.key as keyof typeof row] ?? "help")}
+                          </span>
+                        </span>
+                      ) : (
+                        <span className="line-clamp-2">
+                          {String(row[column.key as keyof typeof row] ?? "—")}
+                        </span>
+                      )}
                     </td>
                   ))}
 

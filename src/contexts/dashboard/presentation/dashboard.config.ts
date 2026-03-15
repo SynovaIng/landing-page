@@ -57,6 +57,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     label: "Servicios",
     singularLabel: "servicio",
     columns: [
+      { key: "icon", label: "Icono" },
       { key: "name", label: "Nombre" },
       { key: "slug", label: "Slug" },
       { key: "ctaLabel", label: "Texto del botón" },
