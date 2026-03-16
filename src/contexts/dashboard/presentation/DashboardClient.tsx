@@ -31,6 +31,11 @@ interface ClientOption {
   location: string;
 }
 
+interface ProjectOption {
+  id: string;
+  name: string;
+}
+
 type DashboardClientProps = DashboardSectionData;
 
 function createSelectedState(): Record<DashboardSectionKey, string[]> {
@@ -141,6 +146,14 @@ export default function DashboardClient({
         icon: serviceRow.icon,
       })),
     [rowsBySection.services],
+  );
+  const projectOptions = useMemo<ProjectOption[]>(
+    () =>
+      rowsBySection.projects.map((projectRow) => ({
+        id: projectRow.id,
+        name: projectRow.name,
+      })),
+    [rowsBySection.projects],
   );
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
@@ -338,6 +351,7 @@ export default function DashboardClient({
           ? {
               ...normalizedValues,
               clientId: String(normalizedValues.clientId ?? "").trim() || null,
+              projectId: String(normalizedValues.projectId ?? "").trim() || null,
               companyName: String(draftValues.companyName ?? "").trim(),
               createCompany: Boolean(draftValues.createCompany),
               companyLocation: String(draftValues.companyLocation ?? "").trim(),
@@ -458,6 +472,7 @@ export default function DashboardClient({
       const testimonialPayload = {
         ...normalizedValues,
         clientId: String(normalizedValues.clientId ?? "").trim() || null,
+        projectId: String(normalizedValues.projectId ?? "").trim() || null,
         companyName: String(draftValues.companyName ?? "").trim(),
         createCompany: Boolean(draftValues.createCompany),
         companyLocation: String(draftValues.companyLocation ?? "").trim(),
@@ -586,6 +601,7 @@ export default function DashboardClient({
         fields={editContext ? editFieldConfig[editContext.sectionKey] : []}
         values={draftValues}
         projectServiceOptions={projectServiceOptions}
+        projectOptions={projectOptions}
         clientOptions={clientOptions}
         onValueChange={updateDraftValue}
         onClose={closeEditModal}

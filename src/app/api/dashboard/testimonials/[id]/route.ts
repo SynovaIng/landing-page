@@ -9,6 +9,7 @@ import { resolveReviewCompany } from "../company-resolver";
 
 const updateTestimonialSchema = z.object({
   clientId: z.uuid().trim().optional().nullable(),
+  projectId: z.uuid().trim().optional().nullable(),
   companyName: z.string().trim().optional().default(""),
   createCompany: z.boolean().optional().default(false),
   companyLocation: z.string().trim().optional().default(""),
@@ -59,11 +60,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     rating: parsed.data.stars,
     isPublished: parsed.data.isActive,
     clientId: resolvedCompany.clientId,
+    projectId: parsed.data.projectId ?? null,
   });
 
   return NextResponse.json({
     id: updated.id,
     clientId: updated.companyId,
+    projectId: updated.projectId,
     companyName: updated.companyName || resolvedCompany.companyName,
     clientName: updated.authorName,
     clientInitials: updated.authorInitials,

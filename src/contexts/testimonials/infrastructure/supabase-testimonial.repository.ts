@@ -37,7 +37,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const { data, error } = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
       .order("created_at", { ascending: false });
 
     if (error || !data) {
@@ -52,6 +52,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(review.client_location ?? ""),
       rating: Number(review.stars ?? 0),
       companyId: review.client_id ? String(review.client_id) : null,
+      projectId: review.project_id ? String(review.project_id) : null,
       companyName: this.getClientNameFromRelation((review as { clients?: unknown }).clients),
     }));
   }
@@ -61,7 +62,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const { data, error } = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
       .eq("id", id)
       .maybeSingle();
 
@@ -77,6 +78,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? ""),
       rating: Number(data.stars ?? 0),
       companyId: data.client_id ? String(data.client_id) : null,
+      projectId: data.project_id ? String(data.project_id) : null,
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
     });
   }
@@ -93,8 +95,9 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         stars: input.rating,
         is_published: input.isPublished,
         client_id: input.clientId ?? null,
+        project_id: input.projectId ?? null,
       })
-      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
       .single();
 
     if (error || !data) {
@@ -109,6 +112,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
       companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
+      projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
     });
   }
@@ -125,9 +129,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         stars: input.rating,
         is_published: input.isPublished,
         client_id: input.clientId ?? null,
+        project_id: input.projectId ?? null,
       })
       .eq("id", id)
-      .select("id, message, client_name, client_location, stars, client_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
       .single();
 
     if (error || !data) {
@@ -142,6 +147,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
       companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
+      projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
     });
   }

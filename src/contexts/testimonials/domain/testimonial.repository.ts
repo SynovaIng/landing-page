@@ -8,6 +8,7 @@ export interface CreateTestimonialInput {
   rating: number;
   isPublished: boolean;
   clientId?: string | null;
+  projectId?: string | null;
 }
 
 export interface UpdateTestimonialInput {
@@ -18,6 +19,7 @@ export interface UpdateTestimonialInput {
   rating: number;
   isPublished: boolean;
   clientId?: string | null;
+  projectId?: string | null;
 }
 
 export abstract class TestimonialRepository {

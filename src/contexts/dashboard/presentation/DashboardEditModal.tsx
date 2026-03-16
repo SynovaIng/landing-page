@@ -118,6 +118,7 @@ interface DashboardEditModalProps {
   fields: FieldConfig[];
   values: Record<string, string | number | boolean | string[] | File[] | null>;
   projectServiceOptions: { id: string; name: string; icon?: string }[];
+  projectOptions: { id: string; name: string }[];
   clientOptions: { id: string; name: string; location?: string }[];
   onValueChange: (fieldKey: string, value: string | number | boolean | string[] | File[] | null) => void;
   onClose: () => void;
@@ -131,6 +132,7 @@ export default function DashboardEditModal({
   fields,
   values,
   projectServiceOptions,
+  projectOptions,
   clientOptions,
   onValueChange,
   onClose,
@@ -138,6 +140,7 @@ export default function DashboardEditModal({
 }: DashboardEditModalProps) {
   const [newServicePoint, setNewServicePoint] = useState("");
   const [iconSearchTerm, setIconSearchTerm] = useState("");
+  const [projectSearchTerm, setProjectSearchTerm] = useState("");
   const [remoteIconSuggestions, setRemoteIconSuggestions] = useState<string[]>([]);
   const [isSearchingIcons, setIsSearchingIcons] = useState(false);
   const [isProjectServicesOpen, setIsProjectServicesOpen] = useState(false);
@@ -158,6 +161,23 @@ export default function DashboardEditModal({
       });
     };
   }, [imagePreviewUrls]);
+
+  useEffect(() => {
+    const selectedProjectId = String(values.projectId ?? "").trim();
+
+    if (!selectedProjectId) {
+      return;
+    }
+
+    const selectedProject = projectOptions.find((projectOption) => projectOption.id === selectedProjectId);
+    setProjectSearchTerm(selectedProject?.name ?? "");
+  }, [isOpen, projectOptions, values.projectId]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setProjectSearchTerm("");
+    }
+  }, [isOpen]);
 
   const selectedIcon = String(values.icon ?? "").trim();
 
@@ -609,6 +629,70 @@ export default function DashboardEditModal({
                         Solo se aceptan empresas existentes mientras el switch esté desactivado.
                       </p>
                     )}
+                  </div>
+                </div>
+              );
+            }
+
+            if (field.key === "projectId") {
+              const selectedProjectId = String(value ?? "").trim();
+              const normalizedSearch = projectSearchTerm.trim().toLowerCase();
+              const filteredProjects = projectOptions
+                .filter((projectOption) => projectOption.name.toLowerCase().includes(normalizedSearch))
+                .slice(0, 10);
+
+              return (
+                <div key={field.key} className="space-y-2">
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                    {field.label}
+                  </span>
+
+                  <div className="space-y-2 rounded-lg border border-border bg-surface-alt p-3">
+                    <input
+                      type="text"
+                      value={projectSearchTerm}
+                      onChange={(event) => {
+                        const nextSearch = event.target.value;
+                        setProjectSearchTerm(nextSearch);
+
+                        const exactMatch = projectOptions.find(
+                          (projectOption) =>
+                            projectOption.name.trim().toLowerCase() === nextSearch.trim().toLowerCase(),
+                        );
+
+                        onValueChange(field.key, exactMatch?.id ?? "");
+                      }}
+                      placeholder="Buscar proyecto"
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                    />
+
+                    <div className="max-h-40 overflow-y-auto rounded-lg border border-border bg-surface">
+                      {filteredProjects.length === 0 ? (
+                        <p className="px-3 py-2 text-xs text-on-surface-muted">
+                          No hay proyectos que coincidan.
+                        </p>
+                      ) : (
+                        <ul className="py-1">
+                          {filteredProjects.map((projectOption) => (
+                            <li key={projectOption.id}>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  onValueChange(field.key, projectOption.id);
+                                  setProjectSearchTerm(projectOption.name);
+                                }}
+                                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left hover:bg-surface-alt"
+                              >
+                                <span className="text-sm text-on-surface">{projectOption.name}</span>
+                                {selectedProjectId === projectOption.id ? (
+                                  <span className="material-symbols-outlined text-[18px] text-secondary">check</span>
+                                ) : null}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

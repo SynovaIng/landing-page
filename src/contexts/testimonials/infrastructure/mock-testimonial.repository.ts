@@ -53,6 +53,7 @@ export class MockTestimonialRepository extends TestimonialRepository {
       authorLocation: input.authorLocation,
       rating: input.rating,
       companyId: input.clientId ?? null,
+      projectId: input.projectId ?? null,
     });
 
     mockTestimonials.unshift(created);
@@ -74,6 +75,7 @@ export class MockTestimonialRepository extends TestimonialRepository {
       authorLocation: input.authorLocation,
       rating: input.rating,
       companyId: input.clientId ?? null,
+      projectId: input.projectId ?? null,
     });
 
     mockTestimonials[index] = updated;

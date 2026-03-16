@@ -100,6 +100,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
   ],
   testimonials: [
     { key: "clientId", label: "Empresa", type: "select" },
+    { key: "projectId", label: "Proyecto", type: "select" },
     { key: "clientName", label: "Nombre cliente", type: "text" },
     { key: "clientInitials", label: "Iniciales", type: "text" },
     { key: "clientLocation", label: "Ubicación", type: "text" },
@@ -137,6 +138,7 @@ export const createFieldDefaults: Record<
   },
   testimonials: {
     clientId: "",
+    projectId: "",
     companyName: "",
     createCompany: false,
     companyLocation: "",
