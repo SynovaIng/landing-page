@@ -15,6 +15,7 @@ const mockTestimonials: Testimonial[] = [
     authorInitials: "RF",
     authorLocation: "Providencia",
     rating: 5,
+    orderIndex: 0,
   }),
   new Testimonial({
     id: "camila-s",
@@ -23,6 +24,7 @@ const mockTestimonials: Testimonial[] = [
     authorInitials: "CS",
     authorLocation: "Las Condes",
     rating: 5,
+    orderIndex: 1,
   }),
   new Testimonial({
     id: "andres-v",
@@ -31,6 +33,7 @@ const mockTestimonials: Testimonial[] = [
     authorInitials: "AV",
     authorLocation: "Vitacura",
     rating: 5,
+    orderIndex: 2,
   }),
 ];
 
@@ -54,6 +57,7 @@ export class MockTestimonialRepository extends TestimonialRepository {
       rating: input.rating,
       companyId: input.clientId ?? null,
       projectId: input.projectId ?? null,
+      orderIndex: mockTestimonials.length,
     });
 
     mockTestimonials.unshift(created);
@@ -76,9 +80,39 @@ export class MockTestimonialRepository extends TestimonialRepository {
       rating: input.rating,
       companyId: input.clientId ?? null,
       projectId: input.projectId ?? null,
+      orderIndex: mockTestimonials[index].orderIndex,
     });
 
     mockTestimonials[index] = updated;
     return updated;
+  }
+
+  async reorder(ids: string[]): Promise<void> {
+    const testimonialById = new Map(mockTestimonials.map((testimonial) => [testimonial.id, testimonial]));
+    const reordered = ids
+      .map((id, index) => {
+        const testimonial = testimonialById.get(id);
+
+        if (!testimonial) {
+          return null;
+        }
+
+        return new Testimonial({
+          id: testimonial.id,
+          text: testimonial.text,
+          authorName: testimonial.authorName,
+          authorInitials: testimonial.authorInitials,
+          authorLocation: testimonial.authorLocation,
+          rating: testimonial.rating,
+          companyId: testimonial.companyId,
+          projectId: testimonial.projectId,
+          companyName: testimonial.companyName,
+          projectName: testimonial.projectName,
+          orderIndex: index,
+        });
+      })
+      .filter((testimonial): testimonial is Testimonial => testimonial !== null);
+
+    mockTestimonials.splice(0, mockTestimonials.length, ...reordered);
   }
 }

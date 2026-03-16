@@ -14,4 +14,5 @@ export abstract class ServiceRepository {
   abstract getAll(): Promise<Service[]>;
   abstract getById(id: string): Promise<Service | null>;
   abstract create(input: CreateServiceInput): Promise<Service>;
+  abstract reorder(ids: string[]): Promise<void>;
 }

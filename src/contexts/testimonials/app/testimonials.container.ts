@@ -5,6 +5,7 @@ import { SupabaseTestimonialRepository } from "@/contexts/testimonials/infrastru
 import { CreateTestimonialUseCase } from "@/contexts/testimonials/use-cases/create-testimonial.use-case";
 import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 import { GetTestimonialByIdUseCase } from "@/contexts/testimonials/use-cases/get-testimonial-by-id.use-case";
+import { ReorderTestimonialsUseCase } from "@/contexts/testimonials/use-cases/reorder-testimonials.use-case";
 import { UpdateTestimonialUseCase } from "@/contexts/testimonials/use-cases/update-testimonial.use-case";
 
 export const registerTestimonialsContainer = (builder: ContainerBuilder): void => {
@@ -15,5 +16,6 @@ export const registerTestimonialsContainer = (builder: ContainerBuilder): void =
   builder.registerAndUse(CreateTestimonialUseCase);
   builder.registerAndUse(GetAllTestimonialsUseCase);
   builder.registerAndUse(GetTestimonialByIdUseCase);
+  builder.registerAndUse(ReorderTestimonialsUseCase);
   builder.registerAndUse(UpdateTestimonialUseCase);
 };

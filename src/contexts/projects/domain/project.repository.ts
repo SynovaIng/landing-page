@@ -26,4 +26,5 @@ export abstract class ProjectRepository {
   abstract getById(id: string): Promise<Project | null>;
   abstract create(input: CreateProjectInput): Promise<Project>;
   abstract update(input: UpdateProjectInput): Promise<Project>;
+  abstract reorder(ids: string[]): Promise<void>;
 }

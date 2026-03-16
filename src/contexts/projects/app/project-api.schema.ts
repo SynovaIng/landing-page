@@ -22,6 +22,7 @@ export const projectApiResponseSchema = z.object({
   imageUrl: z.string().trim().min(1),
   imageUrls: z.array(z.string().trim().min(1)).min(1),
   projectServiceIds: z.array(z.string().trim().min(1)),
+  orderIndex: z.number().int().min(0),
   isActive: z.boolean(),
 });
 
@@ -142,6 +143,7 @@ export const toProjectApiResponse = (
     imageUrl: project.imageUrl,
     imageUrls: project.imageUrls,
     projectServiceIds: project.serviceIds,
+    orderIndex: project.orderIndex,
     isActive: input.isActive,
   });
 };

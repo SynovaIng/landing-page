@@ -46,6 +46,29 @@ function createSelectedState(): Record<DashboardSectionKey, string[]> {
   };
 }
 
+function createOrderDirtyState(): Record<DashboardSectionKey, boolean> {
+  return {
+    projects: false,
+    services: false,
+    testimonials: false,
+  };
+}
+
+function createOrderSavingState(): Record<DashboardSectionKey, boolean> {
+  return {
+    projects: false,
+    services: false,
+    testimonials: false,
+  };
+}
+
+function normalizeOrderRows(rows: DashboardRowBase[]): DashboardRowBase[] {
+  return rows.map((row, index) => ({
+    ...row,
+    orderIndex: index,
+  }));
+}
+
 export default function DashboardClient({
   projects,
   services,
@@ -63,6 +86,12 @@ export default function DashboardClient({
   const [editContext, setEditContext] = useState<EditContext | null>(null);
   const [draftValues, setDraftValues] = useState<Record<string, DashboardEditableValue>>({});
   const [clientOptions, setClientOptions] = useState<ClientOption[]>([]);
+  const [hasPendingOrderChanges, setHasPendingOrderChanges] = useState<
+    Record<DashboardSectionKey, boolean>
+  >(createOrderDirtyState());
+  const [isSavingOrder, setIsSavingOrder] = useState<Record<DashboardSectionKey, boolean>>(
+    createOrderSavingState(),
+  );
 
   useEffect(() => {
     let isActive = true;
@@ -205,8 +234,13 @@ export default function DashboardClient({
     }
 
     updateRowsForSection(activeSection, (rows) =>
-      rows.filter((row) => !selectedSet.has(row.id)),
+      normalizeOrderRows(rows.filter((row) => !selectedSet.has(row.id))),
     );
+
+    setHasPendingOrderChanges((prev) => ({
+      ...prev,
+      [activeSection]: true,
+    }));
 
     setSelectedBySection((prev) => ({
       ...prev,
@@ -218,6 +252,58 @@ export default function DashboardClient({
     updateRowsForSection(activeSection, (rows) =>
       rows.map((row) => (row.id === id ? { ...row, isActive: !row.isActive } : row)),
     );
+  };
+
+  const reorderRows = (sectionKey: DashboardSectionKey, orderedIds: string[]) => {
+    updateRowsForSection(sectionKey, (rows) => {
+      const rowById = new Map(rows.map((row) => [row.id, row]));
+      const orderedRows = orderedIds
+        .map((id) => rowById.get(id))
+        .filter((row): row is DashboardRowBase => row !== undefined);
+
+      return normalizeOrderRows(orderedRows);
+    });
+
+    setHasPendingOrderChanges((prev) => ({
+      ...prev,
+      [sectionKey]: true,
+    }));
+  };
+
+  const saveOrder = async () => {
+    const sectionKey = activeSection;
+    const ids = rowsBySection[sectionKey].map((row) => row.id);
+
+    if (ids.length === 0 || !hasPendingOrderChanges[sectionKey]) {
+      return;
+    }
+
+    setIsSavingOrder((prev) => ({
+      ...prev,
+      [sectionKey]: true,
+    }));
+
+    const response = await fetch(`/api/dashboard/${sectionKey}/reorder`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids }),
+    });
+
+    setIsSavingOrder((prev) => ({
+      ...prev,
+      [sectionKey]: false,
+    }));
+
+    if (!response.ok) {
+      return;
+    }
+
+    setHasPendingOrderChanges((prev) => ({
+      ...prev,
+      [sectionKey]: false,
+    }));
   };
 
   const openEditModal = (sectionKey: DashboardSectionKey, rowId: string) => {
@@ -420,7 +506,9 @@ export default function DashboardClient({
         normalizedCreatedRow = enrichTestimonialRow(createdRow);
       }
 
-      updateRowsForSection(editContext.sectionKey, (rows) => [normalizedCreatedRow, ...rows]);
+      updateRowsForSection(editContext.sectionKey, (rows) =>
+        normalizeOrderRows([...rows, normalizedCreatedRow]),
+      );
       closeEditModal();
       return;
     }
@@ -588,6 +676,15 @@ export default function DashboardClient({
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           <button
             type="button"
+            onClick={saveOrder}
+            disabled={!hasPendingOrderChanges[activeSection] || isSavingOrder[activeSection]}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-on-surface disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-alt sm:w-auto"
+          >
+            <span className="material-symbols-outlined text-[18px]">save</span>
+            {isSavingOrder[activeSection] ? "Guardando orden..." : "Guardar orden"}
+          </button>
+          <button
+            type="button"
             onClick={removeSelected}
             disabled={selectedIds.length === 0}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-on-surface disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-alt sm:w-auto"
@@ -616,6 +713,7 @@ export default function DashboardClient({
         onToggleOne={toggleOne}
         onToggleActive={toggleActive}
         onEdit={(rowId) => openEditModal(activeSection, rowId)}
+        onReorder={(orderedIds) => reorderRows(activeSection, orderedIds)}
       />
 
       <DashboardEditModal

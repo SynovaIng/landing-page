@@ -68,6 +68,7 @@ export async function POST(request: Request) {
     clientLocation: created.authorLocation,
     stars: created.rating,
     message: created.text,
+    orderIndex: created.orderIndex,
     isActive: parsed.data.isActive,
   });
 }

@@ -3,6 +3,7 @@ export type DashboardSectionKey = "projects" | "services" | "testimonials";
 export interface DashboardRowBase {
   id: string;
   isActive: boolean;
+  orderIndex: number;
 }
 
 export interface DashboardProjectRow extends DashboardRowBase {

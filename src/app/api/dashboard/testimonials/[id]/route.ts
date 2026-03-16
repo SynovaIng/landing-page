@@ -73,6 +73,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     clientLocation: updated.authorLocation,
     stars: updated.rating,
     message: updated.text,
+    orderIndex: updated.orderIndex,
     isActive: parsed.data.isActive,
   });
 }

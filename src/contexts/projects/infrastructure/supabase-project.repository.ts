@@ -48,15 +48,36 @@ const toDbProjectCategory = (value: string): "residencial" | "industrial" | "com
   return "comercial";
 };
 
+const isMissingOrderIndexError = (error: { code?: string; message?: string } | null): boolean => {
+  if (!error) {
+    return false;
+  }
+
+  if (error.code === "42703") {
+    return true;
+  }
+
+  return String(error.message ?? "").toLowerCase().includes("order_index");
+};
+
 @Service()
 export class SupabaseProjectRepository extends ProjectRepository {
   async getAll(): Promise<Project[]> {
     const supabase = await createSupabaseServerClient();
-    const [{ data, error }, { data: projectServicesData }, { data: projectImagesData }] = await Promise.all([
-      supabase
-        .from("projects")
-        .select("id, name, description, type")
-        .order("created_at", { ascending: false }),
+    const projectQueryWithOrder = await supabase
+      .from("projects")
+      .select("id, name, description, type, order_index")
+      .order("order_index", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
+      ? await supabase
+          .from("projects")
+          .select("id, name, description, type")
+          .order("created_at", { ascending: false })
+      : projectQueryWithOrder;
+
+    const [projectServicesResult, projectImagesResult] = await Promise.all([
       supabase.from("project_services").select("project_id, service_id"),
       supabase
         .from("project_images")
@@ -65,6 +86,11 @@ export class SupabaseProjectRepository extends ProjectRepository {
         .order("order_index", { ascending: true })
         .order("created_at", { ascending: true }),
     ]);
+
+    const data = projectQuery.data;
+    const error = projectQuery.error;
+    const projectServicesData = projectServicesResult.data;
+    const projectImagesData = projectImagesResult.data;
 
     if (error || !data) {
       return [];
@@ -101,17 +127,27 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: coverImageByProject.get(String(row.id)) ?? PROJECT_IMAGE_PLACEHOLDER,
       imageUrls: imageUrlsByProject.get(String(row.id)) ?? [PROJECT_IMAGE_PLACEHOLDER],
       serviceIds: serviceIdsByProject.get(String(row.id)) ?? [],
+      orderIndex: Number((row as { order_index?: number }).order_index ?? 0),
     }));
   }
 
   async getById(id: string): Promise<Project | null> {
     const supabase = await createSupabaseServerClient();
-    const [{ data, error }, { data: projectServicesData }, { data: projectImagesData }] = await Promise.all([
-      supabase
-        .from("projects")
-        .select("id, name, description, type")
-        .eq("id", id)
-        .maybeSingle(),
+    const projectQueryWithOrder = await supabase
+      .from("projects")
+      .select("id, name, description, type, order_index")
+      .eq("id", id)
+      .maybeSingle();
+
+    const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
+      ? await supabase
+          .from("projects")
+          .select("id, name, description, type")
+          .eq("id", id)
+          .maybeSingle()
+      : projectQueryWithOrder;
+
+    const [projectServicesResult, projectImagesResult] = await Promise.all([
       supabase
         .from("project_services")
         .select("service_id")
@@ -125,6 +161,11 @@ export class SupabaseProjectRepository extends ProjectRepository {
         .order("created_at", { ascending: true }),
     ]);
 
+    const data = projectQuery.data;
+    const error = projectQuery.error;
+    const projectServicesData = projectServicesResult.data;
+    const projectImagesData = projectImagesResult.data;
+
     if (error || !data) {
       return null;
     }
@@ -137,11 +178,20 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: String(projectImagesData?.[0]?.url ?? PROJECT_IMAGE_PLACEHOLDER),
       imageUrls: (projectImagesData ?? []).map((item) => String(item.url)),
       serviceIds: (projectServicesData ?? []).map((item) => String(item.service_id)),
+      orderIndex: Number((data as { order_index?: number }).order_index ?? 0),
     });
   }
 
   async create(input: CreateProjectInput): Promise<Project> {
     const supabase = await createSupabaseServerClient();
+    const { data: maxOrderProject } = await supabase
+      .from("projects")
+      .select("order_index")
+      .order("order_index", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const nextOrderIndex = Number(maxOrderProject?.order_index ?? -1) + 1;
 
     const { data, error } = await supabase
       .from("projects")
@@ -150,8 +200,9 @@ export class SupabaseProjectRepository extends ProjectRepository {
         description: input.description ?? input.location,
         type: toDbProjectCategory(input.category),
         is_published: input.isPublished,
+        order_index: nextOrderIndex,
       })
-      .select("id, name, description, type")
+      .select("id, name, description, type, order_index")
       .single();
 
     if (error || !data) {
@@ -198,6 +249,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: imageUrls[0] ?? PROJECT_IMAGE_PLACEHOLDER,
       imageUrls: imageUrls.length > 0 ? imageUrls : [PROJECT_IMAGE_PLACEHOLDER],
       serviceIds: uniqueServiceIds,
+      orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
   }
 
@@ -213,7 +265,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
         is_published: input.isPublished,
       })
       .eq("id", input.id)
-      .select("id, name, description, type")
+      .select("id, name, description, type, order_index")
       .single();
 
     if (error || !data) {
@@ -312,6 +364,25 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: String(updatedCoverData?.[0]?.url ?? PROJECT_IMAGE_PLACEHOLDER),
       imageUrls: (updatedCoverData ?? []).map((item) => String(item.url)),
       serviceIds: uniqueServiceIds,
+      orderIndex: Number(data.order_index ?? 0),
     });
+  }
+
+  async reorder(ids: string[]): Promise<void> {
+    const supabase = await createSupabaseServerClient();
+
+    const updates = ids.map((id, index) =>
+      supabase
+        .from("projects")
+        .update({ order_index: index })
+        .eq("id", id),
+    );
+
+    const results = await Promise.all(updates);
+    const hasError = results.some((result) => Boolean(result.error));
+
+    if (hasError) {
+      throw new Error("No se pudo actualizar el orden de proyectos");
+    }
   }
 }

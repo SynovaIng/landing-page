@@ -50,6 +50,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     label: "Proyectos",
     singularLabel: "proyecto",
     columns: [
+      { key: "orderIndex", label: "Orden" },
       { key: "name", label: "Nombre" },
       { key: "type", label: "Tipo" },
       { key: "location", label: "Ubicación" },
@@ -60,6 +61,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     label: "Servicios",
     singularLabel: "servicio",
     columns: [
+      { key: "orderIndex", label: "Orden" },
       { key: "icon", label: "Icono" },
       { key: "name", label: "Nombre" },
       { key: "slug", label: "Slug" },
@@ -70,6 +72,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     label: "Reseñas",
     singularLabel: "reseña",
     columns: [
+      { key: "orderIndex", label: "Orden" },
       { key: "clientName", label: "Cliente" },
       { key: "companyName", label: "Empresa" },
       { key: "stars", label: "Estrellas" },

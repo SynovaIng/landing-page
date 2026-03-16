@@ -14,7 +14,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       await Promise.all([
         supabase
           .from("services")
-          .select("id, name, description, cta_label, slug, icon")
+          .select("id, name, description, cta_label, slug, icon, order_index")
           .order("order_index", { ascending: true }),
         supabase
           .from("service_points")
@@ -41,6 +41,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       description: String(service.description ?? ""),
       features: pointsByService.get(String(service.id)) ?? [],
       ctaLabel: String(service.cta_label ?? "Cotizar"),
+      orderIndex: Number(service.order_index ?? 0),
     }));
   }
 
@@ -51,7 +52,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       await Promise.all([
         supabase
           .from("services")
-          .select("id, name, description, cta_label, icon")
+          .select("id, name, description, cta_label, icon, order_index")
           .eq("id", id)
           .maybeSingle(),
         supabase
@@ -72,11 +73,20 @@ export class SupabaseServiceRepository extends ServiceRepository {
       description: String(serviceData.description ?? ""),
       features: (pointsData ?? []).map((point) => String(point.label)),
       ctaLabel: String(serviceData.cta_label ?? "Cotizar"),
+      orderIndex: Number(serviceData.order_index ?? 0),
     });
   }
 
   async create(input: CreateServiceInput): Promise<Service> {
     const supabase = await createSupabaseServerClient();
+    const { data: maxOrderService } = await supabase
+      .from("services")
+      .select("order_index")
+      .order("order_index", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const nextOrderIndex = Number(maxOrderService?.order_index ?? -1) + 1;
 
     const { data, error } = await supabase
       .from("services")
@@ -87,8 +97,9 @@ export class SupabaseServiceRepository extends ServiceRepository {
         icon: input.icon,
         cta_label: input.ctaLabel,
         is_published: input.isPublished,
+        order_index: nextOrderIndex,
       })
-      .select("id, name, description, cta_label, icon")
+      .select("id, name, description, cta_label, icon, order_index")
       .single();
 
     if (error || !data) {
@@ -117,6 +128,25 @@ export class SupabaseServiceRepository extends ServiceRepository {
       description: String(data.description ?? input.description ?? ""),
       features,
       ctaLabel: String(data.cta_label ?? input.ctaLabel),
+      orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
+  }
+
+  async reorder(ids: string[]): Promise<void> {
+    const supabase = await createSupabaseServerClient();
+
+    const updates = ids.map((id, index) =>
+      supabase
+        .from("services")
+        .update({ order_index: index })
+        .eq("id", id),
+    );
+
+    const results = await Promise.all(updates);
+    const hasError = results.some((result) => Boolean(result.error));
+
+    if (hasError) {
+      throw new Error("No se pudo actualizar el orden de servicios");
+    }
   }
 }

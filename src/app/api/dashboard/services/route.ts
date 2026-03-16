@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     description: created.description,
     ctaLabel: created.ctaLabel,
     features: created.features.join(" · "),
+    orderIndex: created.orderIndex,
     isActive: parsed.data.isActive,
   });
 }

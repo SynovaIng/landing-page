@@ -9,6 +9,7 @@ export interface TestimonialProps {
   projectId?: string | null;
   companyName?: string;
   projectName?: string;
+  orderIndex?: number;
 }
 
 export class Testimonial {
@@ -22,6 +23,7 @@ export class Testimonial {
   public readonly projectId: string | null;
   public readonly companyName: string;
   public readonly projectName: string;
+  public readonly orderIndex: number;
 
   constructor(props: TestimonialProps) {
     this.id = props.id;
@@ -34,5 +36,6 @@ export class Testimonial {
     this.projectId = props.projectId ?? null;
     this.companyName = props.companyName ?? "";
     this.projectName = props.projectName ?? "";
+    this.orderIndex = props.orderIndex ?? 0;
   }
 }

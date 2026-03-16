@@ -17,6 +17,7 @@ const mockServices: Service[] = [
       "Iluminación LED y puntos de red",
     ],
     ctaLabel: "Cotizar Proyecto",
+    orderIndex: 0,
   }),
   new Service({
     id: "certificaciones",
@@ -30,6 +31,7 @@ const mockServices: Service[] = [
       "Planos y memorias explicativas",
     ],
     ctaLabel: "Gestionar Certificación",
+    orderIndex: 1,
   }),
   new Service({
     id: "emergencias",
@@ -43,6 +45,7 @@ const mockServices: Service[] = [
       "Diagnóstico de fallas críticas",
     ],
     ctaLabel: "Llamar Urgencia",
+    orderIndex: 2,
   }),
   new Service({
     id: "mantencion",
@@ -56,6 +59,7 @@ const mockServices: Service[] = [
       "Informes técnicos detallados",
     ],
     ctaLabel: "Solicitar Plan",
+    orderIndex: 3,
   }),
 ];
 
@@ -77,9 +81,35 @@ export class MockServiceRepository extends ServiceRepository {
       description: input.description ?? "",
       features: input.features,
       ctaLabel: input.ctaLabel,
+      orderIndex: mockServices.length,
     });
 
     mockServices.unshift(created);
     return created;
+  }
+
+  async reorder(ids: string[]): Promise<void> {
+    const serviceById = new Map(mockServices.map((service) => [service.id, service]));
+    const reordered = ids
+      .map((id, index) => {
+        const service = serviceById.get(id);
+
+        if (!service) {
+          return null;
+        }
+
+        return new Service({
+          id: service.id,
+          icon: service.icon,
+          title: service.title,
+          description: service.description,
+          features: service.features,
+          ctaLabel: service.ctaLabel,
+          orderIndex: index,
+        });
+      })
+      .filter((service): service is Service => service !== null);
+
+    mockServices.splice(0, mockServices.length, ...reordered);
   }
 }

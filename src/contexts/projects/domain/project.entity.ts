@@ -11,6 +11,7 @@ export interface ProjectProps {
   imageUrl: string;
   imageUrls?: string[];
   serviceIds: string[];
+  orderIndex?: number;
 }
 
 export class Project {
@@ -21,6 +22,7 @@ export class Project {
   public readonly imageUrl: string;
   public readonly imageUrls: string[];
   public readonly serviceIds: string[];
+  public readonly orderIndex: number;
 
   constructor(props: ProjectProps) {
     const normalizedImageUrls = Array.from(new Set((props.imageUrls ?? [props.imageUrl]).filter(Boolean)));
@@ -34,5 +36,6 @@ export class Project {
       : [PROJECT_IMAGE_PLACEHOLDER];
     this.imageUrl = this.imageUrls[0] ?? PROJECT_IMAGE_PLACEHOLDER;
     this.serviceIds = props.serviceIds;
+    this.orderIndex = props.orderIndex ?? 0;
   }
 }

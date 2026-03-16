@@ -6,6 +6,7 @@ export interface ServiceProps {
   description: string;
   features: string[];
   ctaLabel: string;
+  orderIndex?: number;
 }
 
 export class Service {
@@ -15,6 +16,7 @@ export class Service {
   public readonly description: string;
   public readonly features: string[];
   public readonly ctaLabel: string;
+  public readonly orderIndex: number;
 
   constructor(props: ServiceProps) {
     this.id = props.id;
@@ -23,5 +25,6 @@ export class Service {
     this.description = props.description;
     this.features = props.features;
     this.ctaLabel = props.ctaLabel;
+    this.orderIndex = props.orderIndex ?? 0;
   }
 }

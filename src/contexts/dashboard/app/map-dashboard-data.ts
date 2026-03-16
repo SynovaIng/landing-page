@@ -44,6 +44,7 @@ export function mapDashboardData({
       location: project.location,
       imageUrl: project.imageUrl,
       imageUrls: project.imageUrls,
+      orderIndex: project.orderIndex,
       isActive: true,
     })),
     services: services.map((service) => ({
@@ -54,6 +55,7 @@ export function mapDashboardData({
       description: service.description,
       ctaLabel: service.ctaLabel,
       features: service.features.join(" · "),
+      orderIndex: service.orderIndex,
       isActive: true,
     })),
     testimonials: testimonials.map((testimonial) => ({
@@ -70,6 +72,7 @@ export function mapDashboardData({
       clientLocation: testimonial.authorLocation,
       stars: testimonial.rating,
       message: testimonial.text,
+      orderIndex: testimonial.orderIndex,
       isActive: true,
     })),
   };

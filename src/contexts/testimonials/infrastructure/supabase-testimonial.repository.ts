@@ -17,6 +17,18 @@ const toInitials = (name: string) => {
     .join("") || "CL";
 };
 
+const isMissingOrderIndexError = (error: { code?: string; message?: string } | null): boolean => {
+  if (!error) {
+    return false;
+  }
+
+  if (error.code === "42703") {
+    return true;
+  }
+
+  return String(error.message ?? "").toLowerCase().includes("order_index");
+};
+
 @Service()
 export class SupabaseTestimonialRepository extends TestimonialRepository {
   private getClientNameFromRelation(clientRelation: unknown): string {
@@ -48,10 +60,20 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
   async getAll(): Promise<Testimonial[]> {
     const supabase = await createSupabaseServerClient();
 
-    const { data, error } = await supabase
+    const queryWithOrder = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
+      .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
+
+    const query = isMissingOrderIndexError(queryWithOrder.error)
+      ? await supabase
+          .from("reviews")
+          .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+          .order("created_at", { ascending: false })
+      : queryWithOrder;
+
+    const { data, error } = query;
 
     if (error || !data) {
       return [];
@@ -68,17 +90,28 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       projectId: review.project_id ? String(review.project_id) : null,
       companyName: this.getClientNameFromRelation((review as { clients?: unknown }).clients),
       projectName: this.getProjectNameFromRelation((review as { projects?: unknown }).projects),
+      orderIndex: Number((review as { order_index?: number }).order_index ?? 0),
     }));
   }
 
   async getById(id: string): Promise<Testimonial | null> {
     const supabase = await createSupabaseServerClient();
 
-    const { data, error } = await supabase
+    const queryWithOrder = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
       .eq("id", id)
       .maybeSingle();
+
+    const query = isMissingOrderIndexError(queryWithOrder.error)
+      ? await supabase
+          .from("reviews")
+          .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+          .eq("id", id)
+          .maybeSingle()
+      : queryWithOrder;
+
+    const { data, error } = query;
 
     if (error || !data) {
       return null;
@@ -95,11 +128,20 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       projectId: data.project_id ? String(data.project_id) : null,
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
+      orderIndex: Number((data as { order_index?: number }).order_index ?? 0),
     });
   }
 
   async create(input: CreateTestimonialInput): Promise<Testimonial> {
     const supabase = await createSupabaseServerClient();
+    const { data: maxOrderReview } = await supabase
+      .from("reviews")
+      .select("order_index")
+      .order("order_index", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const nextOrderIndex = Number(maxOrderReview?.order_index ?? -1) + 1;
 
     const { data, error } = await supabase
       .from("reviews")
@@ -111,8 +153,9 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         is_published: input.isPublished,
         client_id: input.clientId ?? null,
         project_id: input.projectId ?? null,
+        order_index: nextOrderIndex,
       })
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
       .single();
 
     if (error || !data) {
@@ -130,6 +173,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
+      orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
   }
 
@@ -148,7 +192,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         project_id: input.projectId ?? null,
       })
       .eq("id", id)
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
       .single();
 
     if (error || !data) {
@@ -166,6 +210,25 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
+      orderIndex: Number(data.order_index ?? 0),
     });
+  }
+
+  async reorder(ids: string[]): Promise<void> {
+    const supabase = await createSupabaseServerClient();
+
+    const updates = ids.map((id, index) =>
+      supabase
+        .from("reviews")
+        .update({ order_index: index })
+        .eq("id", id),
+    );
+
+    const results = await Promise.all(updates);
+    const hasError = results.some((result) => Boolean(result.error));
+
+    if (hasError) {
+      throw new Error("No se pudo actualizar el orden de reseñas");
+    }
   }
 }
