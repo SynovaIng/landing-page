@@ -11,6 +11,12 @@ export const metadata: Metadata = {
     "Contáctanos para cotizar tu proyecto eléctrico. Respondemos en menos de 24 horas. Atención de emergencias 24/7.",
 };
 
+const CONTACT_INFO = {
+  email: "contacto@synova.cl",
+  whatsappNumber: "+56976210953",
+  phoneNumbers: ["+56912345678"],
+};
+
 export default async function ContactoPage({
   searchParams,
 }: {
@@ -199,12 +205,17 @@ export default async function ContactoPage({
                 hoverBorderColor="hover:border-secondary/30"
                 icon={<span className="material-symbols-outlined text-2xl">phone_in_talk</span>}
                 action={
-                  <a
-                    href="tel:+56912345678"
-                    className="mt-3 inline-block text-xl font-bold text-secondary hover:text-primary transition-colors"
-                  >
-                    +56 9 1234 5678
-                  </a>
+                  <div className="mt-3 flex flex-col gap-1">
+                    {CONTACT_INFO.phoneNumbers.map((phoneNumber) => (
+                      <a
+                        key={phoneNumber}
+                        href={`tel:${phoneNumber}`}
+                        className="inline-block text-xl font-bold text-secondary hover:text-primary transition-colors"
+                      >
+                        {phoneNumber}
+                      </a>
+                    ))}
+                  </div>
                 }
               />
 
@@ -226,7 +237,8 @@ export default async function ContactoPage({
                 }
                 action={
                   <a
-                    href="#"
+                    href={`https://wa.me/${CONTACT_INFO.whatsappNumber.replace(/\D/g, "")}`}
+                    target="_blank"
                     className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-[#1eb853]"
                   >
                     <span>Iniciar chat</span>
@@ -242,7 +254,7 @@ export default async function ContactoPage({
                 iconGradient="from-secondary to-primary"
                 hoverBorderColor="hover:border-secondary/30"
                 icon={<span className="material-symbols-outlined text-2xl">mail</span>}
-                action={<CopyEmailButton email="contacto@synova.cl" />}
+                action={<CopyEmailButton email={CONTACT_INFO.email} />}
               />
               {/* Horarios */}
               <ContactCard
