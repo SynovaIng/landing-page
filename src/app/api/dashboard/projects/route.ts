@@ -27,15 +27,11 @@ export async function POST(request: Request) {
     title: parsedInput.name,
     location: parsedInput.location,
     category: parsedInput.type,
-    description: parsedInput.location,
+    description: parsedInput.description,
     isPublished: parsedInput.isActive,
     serviceIds: parsedInput.serviceIds,
     imageUrls,
   });
 
-  return NextResponse.json(
-    toProjectApiResponse(created, {
-      description: parsedInput.location,
-    }),
-  );
+  return NextResponse.json(toProjectApiResponse(created));
 }

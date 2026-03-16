@@ -69,7 +69,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
 
     const baseProjectQueryWithOrder = supabase
       .from("projects")
-      .select("id, name, description, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index")
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -81,11 +81,11 @@ export class SupabaseProjectRepository extends ProjectRepository {
       ? await (includeUnpublished
           ? supabase
               .from("projects")
-              .select("id, name, description, type, is_published")
+              .select("id, name, description, location, type, is_published")
               .order("created_at", { ascending: false })
           : supabase
               .from("projects")
-              .select("id, name, description, type, is_published")
+              .select("id, name, description, location, type, is_published")
               .eq("is_published", true)
               .order("created_at", { ascending: false }))
       : projectQueryWithOrder;
@@ -135,7 +135,8 @@ export class SupabaseProjectRepository extends ProjectRepository {
     return data.map((row) => new Project({
       id: String(row.id),
       title: String(row.name ?? ""),
-      location: String(row.description ?? "Sin ubicación"),
+      location: String((row as { location?: string | null }).location ?? "Sin ubicación"),
+      description: String(row.description ?? ""),
       category: parseProjectCategory(String(row.type ?? "Comercial")),
       imageUrl: coverImageByProject.get(String(row.id)) ?? PROJECT_IMAGE_PLACEHOLDER,
       imageUrls: imageUrlsByProject.get(String(row.id)) ?? [PROJECT_IMAGE_PLACEHOLDER],
@@ -149,14 +150,14 @@ export class SupabaseProjectRepository extends ProjectRepository {
     const supabase = await createSupabaseServerClient();
     const projectQueryWithOrder = await supabase
       .from("projects")
-      .select("id, name, description, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index")
       .eq("id", id)
       .maybeSingle();
 
     const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
       ? await supabase
           .from("projects")
-          .select("id, name, description, type, is_published")
+          .select("id, name, description, location, type, is_published")
           .eq("id", id)
           .maybeSingle()
       : projectQueryWithOrder;
@@ -187,7 +188,8 @@ export class SupabaseProjectRepository extends ProjectRepository {
     return new Project({
       id: String(data.id),
       title: String(data.name ?? ""),
-      location: String(data.description ?? "Sin ubicación"),
+      location: String((data as { location?: string | null }).location ?? "Sin ubicación"),
+      description: String(data.description ?? ""),
       category: parseProjectCategory(String(data.type ?? "Comercial")),
       imageUrl: String(projectImagesData?.[0]?.url ?? PROJECT_IMAGE_PLACEHOLDER),
       imageUrls: (projectImagesData ?? []).map((item) => String(item.url)),
@@ -212,12 +214,13 @@ export class SupabaseProjectRepository extends ProjectRepository {
       .from("projects")
       .insert({
         name: input.title,
-        description: input.description ?? input.location,
+        description: input.description ?? "",
+        location: input.location,
         type: toDbProjectCategory(input.category),
         is_published: input.isPublished,
         order_index: nextOrderIndex,
       })
-      .select("id, name, description, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index")
       .single();
 
     if (error || !data) {
@@ -259,7 +262,8 @@ export class SupabaseProjectRepository extends ProjectRepository {
     return new Project({
       id: String(data.id),
       title: String(data.name ?? input.title),
-      location: input.location,
+      location: String((data as { location?: string | null }).location ?? input.location),
+      description: String(data.description ?? input.description ?? ""),
       category: parseProjectCategory(String(data.type ?? input.category)),
       imageUrl: imageUrls[0] ?? PROJECT_IMAGE_PLACEHOLDER,
       imageUrls: imageUrls.length > 0 ? imageUrls : [PROJECT_IMAGE_PLACEHOLDER],
@@ -276,12 +280,13 @@ export class SupabaseProjectRepository extends ProjectRepository {
       .from("projects")
       .update({
         name: input.title,
-        description: input.description ?? input.location,
+        description: input.description ?? "",
+        location: input.location,
         type: toDbProjectCategory(input.category),
         is_published: input.isPublished,
       })
       .eq("id", input.id)
-      .select("id, name, description, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index")
       .single();
 
     if (error || !data) {
@@ -375,7 +380,8 @@ export class SupabaseProjectRepository extends ProjectRepository {
     return new Project({
       id: String(data.id),
       title: String(data.name ?? input.title),
-      location: input.location,
+      location: String((data as { location?: string | null }).location ?? input.location),
+      description: String(data.description ?? input.description ?? ""),
       category: parseProjectCategory(String(data.type ?? input.category)),
       imageUrl: String(updatedCoverData?.[0]?.url ?? PROJECT_IMAGE_PLACEHOLDER),
       imageUrls: (updatedCoverData ?? []).map((item) => String(item.url)),
