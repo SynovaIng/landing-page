@@ -43,6 +43,10 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const filtered = active === "Todos" ? projects : projects.filter((project) => project.category === active);
+  const emptyMessage =
+    active === "Todos"
+      ? "Actualmente no hay proyectos disponibles."
+      : `No existen proyectos de tipo ${active}.`;
 
   const selectedProjectDetails = useMemo(() => {
     if (!selectedProject) {
@@ -115,11 +119,17 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-            {filtered.map((project) => (
-              <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
-            ))}
-          </div>
+          {filtered.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+              {filtered.map((project) => (
+                <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+              ))}
+            </div>
+          ) : (
+            <div className="mb-24 rounded-2xl border border-border bg-surface p-10 text-center">
+              <p className="text-lg md:text-xl font-medium text-navy">{emptyMessage}</p>
+            </div>
+          )}
         </div>
 
         <div className="bg-surface border-y border-border py-16">
