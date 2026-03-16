@@ -75,6 +75,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
       { key: "stars", label: "Estrellas" },
       { key: "clientLocation", label: "Ubicación" },
       { key: "message", label: "Comentario" },
+      { key: "projectName", label: "Proyecto" },
     ],
   },
 };

@@ -17,6 +17,9 @@ export function mapDashboardData({
   const serviceNamesById = new Map<string, string>(
     services.map((service) => [service.id, service.title]),
   );
+  const projectNamesById = new Map<string, string>(
+    projects.map((project) => [project.id, project.title]),
+  );
   const serviceIconsById = new Map<string, string>(
     services.map((service) => [service.id, service.icon]),
   );
@@ -54,9 +57,13 @@ export function mapDashboardData({
       isActive: true,
     })),
     testimonials: testimonials.map((testimonial) => ({
+      projectId: testimonial.projectId ?? "",
+      projectName:
+        testimonial.projectId && testimonial.projectId.length > 0
+          ? (projectNamesById.get(testimonial.projectId) ?? "—")
+          : "—",
       id: testimonial.id,
       clientId: testimonial.companyId ?? "",
-      projectId: testimonial.projectId ?? "",
       companyName: testimonial.companyName || "-",
       clientName: testimonial.authorName,
       clientInitials: testimonial.authorInitials,

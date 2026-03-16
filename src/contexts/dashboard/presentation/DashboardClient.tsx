@@ -288,6 +288,22 @@ export default function DashboardClient({
     } as DashboardRowBase;
   };
 
+  const enrichTestimonialRow = (row: DashboardRowBase) => {
+    const testimonialRow = row as DashboardRowBase & {
+      projectId?: string;
+      projectName?: string;
+    };
+
+    const projectId = String(testimonialRow.projectId ?? "").trim();
+    const matchedProject = projectOptions.find((projectOption) => projectOption.id === projectId);
+
+    return {
+      ...testimonialRow,
+      projectId,
+      projectName: matchedProject?.name ?? testimonialRow.projectName ?? "—",
+    } as DashboardRowBase;
+  };
+
   const saveEdit = async () => {
     if (!editContext) {
       return;
@@ -396,8 +412,13 @@ export default function DashboardClient({
       }
 
       const createdRow = (await response.json()) as DashboardRowBase;
-      const normalizedCreatedRow =
-        editContext.sectionKey === "projects" ? enrichProjectRow(createdRow) : createdRow;
+      let normalizedCreatedRow = createdRow;
+
+      if (editContext.sectionKey === "projects") {
+        normalizedCreatedRow = enrichProjectRow(createdRow);
+      } else if (editContext.sectionKey === "testimonials") {
+        normalizedCreatedRow = enrichTestimonialRow(createdRow);
+      }
 
       updateRowsForSection(editContext.sectionKey, (rows) => [normalizedCreatedRow, ...rows]);
       closeEditModal();
@@ -491,9 +512,12 @@ export default function DashboardClient({
       }
 
       const updatedTestimonial = (await response.json()) as DashboardRowBase;
+      const normalizedUpdatedTestimonial = enrichTestimonialRow(updatedTestimonial);
 
       updateRowsForSection(editContext.sectionKey, (rows) =>
-        rows.map((row) => (row.id === editContext.rowId ? (updatedTestimonial as typeof row) : row)),
+        rows.map((row) =>
+          row.id === editContext.rowId ? (normalizedUpdatedTestimonial as typeof row) : row
+        ),
       );
 
       closeEditModal();

@@ -34,6 +34,7 @@ export interface DashboardServiceRow extends DashboardRowBase {
 export interface DashboardTestimonialRow extends DashboardRowBase {
   clientId: string;
   projectId: string;
+  projectName: string;
   companyName: string;
   clientName: string;
   clientInitials: string;
