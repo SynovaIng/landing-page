@@ -3,9 +3,15 @@ import { z } from "zod";
 
 import { container } from "@/config/container";
 import { UpdateTestimonialUseCase } from "@/contexts/testimonials/use-cases/update-testimonial.use-case";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+import { resolveReviewCompany } from "../company-resolver";
 
 const updateTestimonialSchema = z.object({
   clientId: z.uuid().trim().optional().nullable(),
+  companyName: z.string().trim().optional().default(""),
+  createCompany: z.boolean().optional().default(false),
+  companyLocation: z.string().trim().optional().default(""),
   clientName: z.string().trim().min(1),
   clientInitials: z.string().trim().min(1),
   clientLocation: z.string().trim().min(1),
@@ -27,6 +33,23 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
+  const supabase = await createSupabaseServerClient();
+
+  let resolvedCompany: { clientId: string | null; companyName: string };
+
+  try {
+    resolvedCompany = await resolveReviewCompany({
+      supabase,
+      clientId: parsed.data.clientId ?? null,
+      companyName: parsed.data.companyName,
+      createCompany: parsed.data.createCompany,
+      companyLocation: parsed.data.companyLocation,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "No se pudo resolver la empresa.";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
   const useCase = container.get(UpdateTestimonialUseCase);
   const updated = await useCase.execute(id, {
     text: parsed.data.message,
@@ -35,13 +58,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     authorLocation: parsed.data.clientLocation,
     rating: parsed.data.stars,
     isPublished: parsed.data.isActive,
-    clientId: parsed.data.clientId ?? null,
+    clientId: resolvedCompany.clientId,
   });
 
   return NextResponse.json({
     id: updated.id,
     clientId: updated.companyId,
-    companyName: updated.companyName,
+    companyName: updated.companyName || resolvedCompany.companyName,
     clientName: updated.authorName,
     clientInitials: updated.authorInitials,
     clientLocation: updated.authorLocation,

@@ -70,8 +70,8 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     label: "Reseñas",
     singularLabel: "reseña",
     columns: [
-      { key: "companyName", label: "Empresa" },
       { key: "clientName", label: "Cliente" },
+      { key: "companyName", label: "Empresa" },
       { key: "stars", label: "Estrellas" },
       { key: "clientLocation", label: "Ubicación" },
       { key: "message", label: "Comentario" },
@@ -138,6 +138,8 @@ export const createFieldDefaults: Record<
   testimonials: {
     clientId: "",
     companyName: "",
+    createCompany: false,
+    companyLocation: "",
     clientName: "",
     clientInitials: "",
     clientLocation: "",

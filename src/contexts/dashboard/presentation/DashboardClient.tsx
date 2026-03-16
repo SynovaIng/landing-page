@@ -338,6 +338,9 @@ export default function DashboardClient({
           ? {
               ...normalizedValues,
               clientId: String(normalizedValues.clientId ?? "").trim() || null,
+              companyName: String(draftValues.companyName ?? "").trim(),
+              createCompany: Boolean(draftValues.createCompany),
+              companyLocation: String(draftValues.companyLocation ?? "").trim(),
             }
           : normalizedValues;
 
@@ -455,6 +458,9 @@ export default function DashboardClient({
       const testimonialPayload = {
         ...normalizedValues,
         clientId: String(normalizedValues.clientId ?? "").trim() || null,
+        companyName: String(draftValues.companyName ?? "").trim(),
+        createCompany: Boolean(draftValues.createCompany),
+        companyLocation: String(draftValues.companyLocation ?? "").trim(),
       };
 
       const response = await fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {

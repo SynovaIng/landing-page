@@ -486,32 +486,131 @@ export default function DashboardEditModal({
 
             if (field.key === "clientId") {
               const selectedClientId = String(value ?? "");
+              const companyName = String(values.companyName ?? "");
+              const isCreatingCompany = Boolean(values.createCompany);
+              const companyLocation = String(values.companyLocation ?? "");
+
+              const filteredClients = clientOptions
+                .filter((clientOption) =>
+                  clientOption.name.toLowerCase().includes(companyName.trim().toLowerCase()),
+                )
+                .slice(0, 6);
+
+              const hasCompanySearch = companyName.trim().length > 0;
+
+              const updateFromCompanyName = (nextCompanyName: string) => {
+                onValueChange("companyName", nextCompanyName);
+
+                if (isCreatingCompany) {
+                  return;
+                }
+
+                const exactMatch = clientOptions.find(
+                  (clientOption) =>
+                    clientOption.name.trim().toLowerCase() === nextCompanyName.trim().toLowerCase(),
+                );
+
+                onValueChange(field.key, exactMatch?.id ?? "");
+              };
 
               return (
-                <label key={field.key} className="block">
+                <div key={field.key} className="space-y-2">
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
                     {field.label}
                   </span>
 
-                  <select
-                    value={selectedClientId}
-                    onChange={(event) => {
-                      const nextClientId = event.target.value;
-                      const selectedClient = clientOptions.find((client) => client.id === nextClientId);
+                  <div className="space-y-3 rounded-lg border border-border bg-surface-alt p-3">
+                    <input
+                      type="text"
+                      value={companyName}
+                      onChange={(event) => updateFromCompanyName(event.target.value)}
+                      placeholder={
+                        isCreatingCompany
+                          ? "Escribe el nombre de la nueva empresa"
+                          : "Escribe y selecciona una empresa existente"
+                      }
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                    />
 
-                      onValueChange(field.key, nextClientId);
-                      onValueChange("companyName", selectedClient?.name ?? "");
-                    }}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
-                  >
-                    <option value="">Sin empresa</option>
-                    {clientOptions.map((clientOption) => (
-                      <option key={clientOption.id} value={clientOption.id}>
-                        {clientOption.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    {!isCreatingCompany && hasCompanySearch ? (
+                      <div className="max-h-36 overflow-y-auto rounded-lg border border-border bg-surface">
+                        {filteredClients.length === 0 ? (
+                          <p className="px-3 py-2 text-xs text-on-surface-muted">
+                            No hay coincidencias. Activa el switch para crear una empresa.
+                          </p>
+                        ) : (
+                          <ul className="py-1">
+                            {filteredClients.map((clientOption) => (
+                              <li key={clientOption.id}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    onValueChange(field.key, clientOption.id);
+                                    onValueChange("companyName", clientOption.name);
+                                  }}
+                                  className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left hover:bg-surface-alt"
+                                >
+                                  <span className="text-sm text-on-surface">{clientOption.name}</span>
+                                  {selectedClientId === clientOption.id ? (
+                                    <span className="material-symbols-outlined text-[18px] text-secondary">check</span>
+                                  ) : null}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ) : null}
+
+                    <div className="flex items-center justify-between rounded-lg border border-border bg-surface px-3 py-2">
+                      <span className="text-sm text-on-surface">Agregar nueva empresa</span>
+                      <label className="relative inline-flex cursor-pointer items-center">
+                        <input
+                          type="checkbox"
+                          className="peer sr-only"
+                          checked={isCreatingCompany}
+                          onChange={() => {
+                            const nextCreateValue = !isCreatingCompany;
+                            onValueChange("createCompany", nextCreateValue);
+
+                            if (nextCreateValue) {
+                              onValueChange(field.key, "");
+                              return;
+                            }
+
+                            const exactMatch = clientOptions.find(
+                              (clientOption) =>
+                                clientOption.name.trim().toLowerCase() === companyName.trim().toLowerCase(),
+                            );
+
+                            onValueChange(field.key, exactMatch?.id ?? "");
+                          }}
+                        />
+                        <span className="h-6 w-11 rounded-full bg-border transition-colors peer-checked:bg-secondary" />
+                        <span className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-surface shadow-sm transition-transform peer-checked:translate-x-5" />
+                      </label>
+                    </div>
+
+                    {isCreatingCompany ? (
+                      <label className="block">
+                        <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+                          Dirección empresa (opcional)
+                        </span>
+                        <input
+                          type="text"
+                          value={companyLocation}
+                          onChange={(event) => onValueChange("companyLocation", event.target.value)}
+                          placeholder="Ej: Las Condes, Santiago"
+                          className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
+                        />
+                      </label>
+                    ) : (
+                      <p className="text-xs text-on-surface-muted">
+                        Solo se aceptan empresas existentes mientras el switch esté desactivado.
+                      </p>
+                    )}
+                  </div>
+                </div>
               );
             }
 
