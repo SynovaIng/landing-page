@@ -1,9 +1,16 @@
 import Link from "next/link";
 
-import type { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
-
 interface TestimonialCardProps {
-  testimonial: Testimonial;
+  testimonial: {
+    id: string;
+    text: string;
+    authorName: string;
+    authorInitials: string;
+    authorLocation: string;
+    rating: number;
+    projectId: string | null;
+    projectName: string;
+  };
 }
 
 export default function TestimonialCard({ testimonial }: TestimonialCardProps) {

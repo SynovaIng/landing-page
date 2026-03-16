@@ -7,7 +7,7 @@ import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-ser
 import Button from "@/contexts/shared/presentation/Button";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 import StatsBar from "@/contexts/shared/presentation/StatsBar";
-import TestimonialCard from "@/contexts/testimonials/presentation/TestimonialCard";
+import TestimonialCarousel from "@/contexts/testimonials/presentation/TestimonialCarousel";
 import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 
 export const metadata: Metadata = {
@@ -45,6 +45,16 @@ export default async function HomePage() {
   const services = await container.get(GetAllServicesUseCase).execute();
   const featuredServices = services.slice(0, 4);
   const testimonials = await container.get(GetAllTestimonialsUseCase).execute();
+  const testimonialItems = testimonials.map((testimonial) => ({
+    id: testimonial.id,
+    text: testimonial.text,
+    authorName: testimonial.authorName,
+    authorInitials: testimonial.authorInitials,
+    authorLocation: testimonial.authorLocation,
+    rating: testimonial.rating,
+    projectId: testimonial.projectId,
+    projectName: testimonial.projectName,
+  }));
   return (
     <>
       {/* ── Hero ── */}
@@ -153,11 +163,7 @@ export default async function HomePage() {
       <section className="py-24 bg-background-alt relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Lo que dicen nuestros clientes" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t) => (
-              <TestimonialCard key={t.id} testimonial={t} />
-            ))}
-          </div>
+          <TestimonialCarousel testimonials={testimonialItems} />
         </div>
       </section>
 
