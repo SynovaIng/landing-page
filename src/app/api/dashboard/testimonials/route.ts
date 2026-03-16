@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { container } from "@/config/container";
 import { CreateTestimonialUseCase } from "@/contexts/testimonials/use-cases/create-testimonial.use-case";
+import { DeleteTestimonialsUseCase } from "@/contexts/testimonials/use-cases/delete-testimonials.use-case";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 import { resolveReviewCompany } from "./company-resolver";
@@ -71,4 +72,20 @@ export async function POST(request: Request) {
     orderIndex: created.orderIndex,
     isActive: created.isPublished,
   });
+}
+
+export async function DELETE(request: Request) {
+  const body = await request.json().catch(() => null);
+  const ids = Array.isArray(body?.ids)
+    ? body.ids.map((value: unknown) => String(value).trim()).filter((value: string) => value.length > 0)
+    : [];
+
+  if (ids.length === 0) {
+    return NextResponse.json({ error: "Debes indicar al menos un ID para eliminar." }, { status: 400 });
+  }
+
+  const useCase = container.get(DeleteTestimonialsUseCase);
+  await useCase.execute(ids);
+
+  return NextResponse.json({ ok: true });
 }

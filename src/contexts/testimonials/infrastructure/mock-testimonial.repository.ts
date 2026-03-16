@@ -150,4 +150,31 @@ export class MockTestimonialRepository extends TestimonialRepository {
     mockTestimonials[index] = updated;
     return updated;
   }
+
+  async deleteMany(ids: string[]): Promise<void> {
+    const targetIds = new Set(ids.map((id) => id.trim()).filter(Boolean));
+
+    if (targetIds.size === 0) {
+      return;
+    }
+
+    const remaining = mockTestimonials.filter((testimonial) => !targetIds.has(testimonial.id));
+
+    const normalized = remaining.map((testimonial, index) => new Testimonial({
+      id: testimonial.id,
+      text: testimonial.text,
+      authorName: testimonial.authorName,
+      authorInitials: testimonial.authorInitials,
+      authorLocation: testimonial.authorLocation,
+      rating: testimonial.rating,
+      isPublished: testimonial.isPublished,
+      companyId: testimonial.companyId,
+      projectId: testimonial.projectId,
+      companyName: testimonial.companyName,
+      projectName: testimonial.projectName,
+      orderIndex: index,
+    }));
+
+    mockTestimonials.splice(0, mockTestimonials.length, ...normalized);
+  }
 }

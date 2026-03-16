@@ -3,6 +3,7 @@ import type { ContainerBuilder } from "diod";
 import { ServiceRepository } from "@/contexts/services/domain/service.repository";
 import { SupabaseServiceRepository } from "@/contexts/services/infrastructure/supabase-service.repository";
 import { CreateServiceUseCase } from "@/contexts/services/use-cases/create-service.use-case";
+import { DeleteServicesUseCase } from "@/contexts/services/use-cases/delete-services.use-case";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import { GetServiceByIdUseCase } from "@/contexts/services/use-cases/get-service-by-id.use-case";
 import { ReorderServicesUseCase } from "@/contexts/services/use-cases/reorder-services.use-case";
@@ -14,6 +15,7 @@ export const registerServicesContainer = (builder: ContainerBuilder): void => {
 
   // Use Cases
   builder.registerAndUse(CreateServiceUseCase);
+  builder.registerAndUse(DeleteServicesUseCase);
   builder.registerAndUse(GetAllServicesUseCase);
   builder.registerAndUse(GetServiceByIdUseCase);
   builder.registerAndUse(ReorderServicesUseCase);

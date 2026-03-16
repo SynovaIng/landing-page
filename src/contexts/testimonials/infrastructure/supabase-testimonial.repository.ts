@@ -253,6 +253,24 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
     return updated;
   }
 
+  async deleteMany(ids: string[]): Promise<void> {
+    const targetIds = Array.from(new Set(ids.map((id) => id.trim()).filter(Boolean)));
+
+    if (targetIds.length === 0) {
+      return;
+    }
+
+    const supabase = await createSupabaseServerClient();
+    const { error } = await supabase
+      .from("reviews")
+      .delete()
+      .in("id", targetIds);
+
+    if (error) {
+      throw new Error("No se pudieron eliminar las reseñas seleccionadas");
+    }
+  }
+
   async reorder(ids: string[]): Promise<void> {
     const supabase = await createSupabaseServerClient();
 

@@ -177,4 +177,29 @@ export class MockProjectRepository extends ProjectRepository {
     mockProjects[index] = updated;
     return updated;
   }
+
+  async deleteMany(ids: string[]): Promise<void> {
+    const targetIds = new Set(ids.map((id) => id.trim()).filter(Boolean));
+
+    if (targetIds.size === 0) {
+      return;
+    }
+
+    const remaining = mockProjects.filter((project) => !targetIds.has(project.id));
+
+    const normalized = remaining.map((project, index) => new Project({
+      id: project.id,
+      title: project.title,
+      location: project.location,
+      description: project.description,
+      category: project.category,
+      imageUrl: project.imageUrl,
+      imageUrls: project.imageUrls,
+      serviceIds: project.serviceIds,
+      isPublished: project.isPublished,
+      orderIndex: index,
+    }));
+
+    mockProjects.splice(0, mockProjects.length, ...normalized);
+  }
 }

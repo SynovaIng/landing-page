@@ -141,4 +141,27 @@ export class MockServiceRepository extends ServiceRepository {
     mockServices[index] = updated;
     return updated;
   }
+
+  async deleteMany(ids: string[]): Promise<void> {
+    const targetIds = new Set(ids.map((id) => id.trim()).filter(Boolean));
+
+    if (targetIds.size === 0) {
+      return;
+    }
+
+    const remaining = mockServices.filter((service) => !targetIds.has(service.id));
+
+    const normalized = remaining.map((service, index) => new Service({
+      id: service.id,
+      icon: service.icon,
+      title: service.title,
+      description: service.description,
+      features: service.features,
+      ctaLabel: service.ctaLabel,
+      isPublished: service.isPublished,
+      orderIndex: index,
+    }));
+
+    mockServices.splice(0, mockServices.length, ...normalized);
+  }
 }
