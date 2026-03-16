@@ -7,6 +7,7 @@ export interface ProjectProps {
   id: string;
   title: string;
   location: string;
+  description?: string;
   category: ProjectCategory;
   imageUrl: string;
   imageUrls?: string[];
@@ -19,6 +20,7 @@ export class Project {
   public readonly id: string;
   public readonly title: string;
   public readonly location: string;
+  public readonly description: string;
   public readonly category: ProjectCategory;
   public readonly imageUrl: string;
   public readonly imageUrls: string[];
@@ -32,6 +34,7 @@ export class Project {
     this.id = props.id;
     this.title = props.title;
     this.location = props.location;
+    this.description = props.description ?? "";
     this.category = props.category;
     this.imageUrls = normalizedImageUrls.length > 0
       ? normalizedImageUrls

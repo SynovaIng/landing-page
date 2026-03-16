@@ -130,14 +130,11 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
   };
 };
 
-export const toProjectApiResponse = (
-  project: Project,
-  input: Pick<ProjectMutationInput, "description">,
-): ProjectApiResponse => {
+export const toProjectApiResponse = (project: Project): ProjectApiResponse => {
   return projectApiResponseSchema.parse({
     id: project.id,
     name: project.title,
-    description: input.description,
+    description: project.description,
     type: project.category,
     location: project.location,
     imageUrl: project.imageUrl,

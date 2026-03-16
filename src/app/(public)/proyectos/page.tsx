@@ -10,6 +10,7 @@ export default async function ProyectosPage() {
     id: project.id,
     title: project.title,
     location: project.location,
+    description: project.description,
     category: project.category,
     imageUrl: project.imageUrl,
     imageUrls: project.imageUrls,

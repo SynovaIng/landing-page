@@ -56,9 +56,9 @@ const team = [
       "/Freddy.jpg",
   },
   {
-    name: "Moto moto",
-    role: "Jefe de Proyectos",
-    bio: "No se cual es su apellido :V",
+    name: "Isaac Yañez",
+    role: "Co-fundador & Jefe de Proyectos",
+    bio: "Responsable de la planificación y ejecución de proyectos, asegurando calidad y cumplimiento de plazos.",
     imgSrc:
       "/Isaac.jpg",
   },
