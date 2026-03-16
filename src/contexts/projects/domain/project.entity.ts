@@ -1,9 +1,44 @@
-export type ProjectCategory = "Residencial" | "Comercial" | "Industrial";
+export const PROJECT_CATEGORIES = ["Comercial", "Residencial", "Industrial"] as const;
+export const PROJECT_IMAGE_PLACEHOLDER = "/synova-al-lado-amarillo-blanco.svg";
 
-export interface Project {
+export type ProjectCategory = (typeof PROJECT_CATEGORIES)[number];
+
+export interface ProjectProps {
   id: string;
   title: string;
   location: string;
   category: ProjectCategory;
   imageUrl: string;
+  imageUrls?: string[];
+  serviceIds: string[];
+  isPublished?: boolean;
+  orderIndex?: number;
+}
+
+export class Project {
+  public readonly id: string;
+  public readonly title: string;
+  public readonly location: string;
+  public readonly category: ProjectCategory;
+  public readonly imageUrl: string;
+  public readonly imageUrls: string[];
+  public readonly serviceIds: string[];
+  public readonly isPublished: boolean;
+  public readonly orderIndex: number;
+
+  constructor(props: ProjectProps) {
+    const normalizedImageUrls = Array.from(new Set((props.imageUrls ?? [props.imageUrl]).filter(Boolean)));
+
+    this.id = props.id;
+    this.title = props.title;
+    this.location = props.location;
+    this.category = props.category;
+    this.imageUrls = normalizedImageUrls.length > 0
+      ? normalizedImageUrls
+      : [PROJECT_IMAGE_PLACEHOLDER];
+    this.imageUrl = this.imageUrls[0] ?? PROJECT_IMAGE_PLACEHOLDER;
+    this.serviceIds = props.serviceIds;
+    this.isPublished = props.isPublished ?? true;
+    this.orderIndex = props.orderIndex ?? 0;
+  }
 }

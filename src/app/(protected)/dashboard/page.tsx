@@ -4,16 +4,16 @@ import Link from "next/link";
 import { logoutAction } from "@/app/(protected)/actions";
 import { container } from "@/config/container";
 import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
-import { GetAllProjectsUseCase } from "@/contexts/projects/use-cases/get-all-projects.use-case";
-import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
-import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
-
+import { mapDashboardData } from "@/contexts/dashboard/app/map-dashboard-data";
 import type {
   DashboardProjectRow,
   DashboardServiceRow,
   DashboardTestimonialRow,
-} from "./dashboard.types";
-import DashboardClient from "./DashboardClient";
+} from "@/contexts/dashboard/domain/dashboard.entity";
+import DashboardClient from "@/contexts/dashboard/presentation/DashboardClient";
+import { GetAllProjectsUseCase } from "@/contexts/projects/use-cases/get-all-projects.use-case";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 
 export const metadata: Metadata = {
   title: "Dashboard — SYNOVA Admin",
@@ -24,39 +24,16 @@ export default async function AdminDashboardPage() {
   const user = await getAuthenticatedUserUseCase.execute();
 
   const [projects, services, testimonials] = await Promise.all([
-    container.get(GetAllProjectsUseCase).execute(),
-    container.get(GetAllServicesUseCase).execute(),
-    container.get(GetAllTestimonialsUseCase).execute(),
+    container.get(GetAllProjectsUseCase).execute({ includeUnpublished: true }),
+    container.get(GetAllServicesUseCase).execute({ includeUnpublished: true }),
+    container.get(GetAllTestimonialsUseCase).execute({ includeUnpublished: true }),
   ]);
 
-  const projectRows: DashboardProjectRow[] = projects.map((project) => ({
-    id: project.id,
-    name: project.title,
-    description: `Proyecto en ${project.location}`,
-    type: project.category,
-    location: project.location,
-    isActive: true,
-  }));
+  const mappedData = mapDashboardData({ projects, services, testimonials });
 
-  const serviceRows: DashboardServiceRow[] = services.map((service) => ({
-    id: service.id,
-    name: service.title,
-    slug: service.id,
-    description: service.description,
-    ctaLabel: service.ctaLabel,
-    features: service.features.join(" · "),
-    isActive: true,
-  }));
-
-  const testimonialRows: DashboardTestimonialRow[] = testimonials.map((testimonial) => ({
-    id: testimonial.id,
-    clientName: testimonial.authorName,
-    clientInitials: testimonial.authorInitials,
-    clientLocation: testimonial.authorLocation,
-    stars: testimonial.rating,
-    message: testimonial.text,
-    isActive: true,
-  }));
+  const projectRows: DashboardProjectRow[] = mappedData.projects;
+  const serviceRows: DashboardServiceRow[] = mappedData.services;
+  const testimonialRows: DashboardTestimonialRow[] = mappedData.testimonials;
 
   return (
     <div className="min-h-screen flex flex-col p-8">

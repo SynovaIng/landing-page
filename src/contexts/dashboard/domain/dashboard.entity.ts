@@ -3,6 +3,7 @@ export type DashboardSectionKey = "projects" | "services" | "testimonials";
 export interface DashboardRowBase {
   id: string;
   isActive: boolean;
+  orderIndex: number;
 }
 
 export interface DashboardProjectRow extends DashboardRowBase {
@@ -10,9 +11,20 @@ export interface DashboardProjectRow extends DashboardRowBase {
   description: string;
   type: string;
   location: string;
+  imageUrl: string;
+  imageUrls: string[];
+  projectServiceIds: string[];
+  projectServiceNames: string[];
+  projectServicesSummary: string;
+  projectServices: {
+    id: string;
+    name: string;
+    icon: string;
+  }[];
 }
 
 export interface DashboardServiceRow extends DashboardRowBase {
+  icon: string;
   name: string;
   slug: string;
   description: string;
@@ -21,6 +33,10 @@ export interface DashboardServiceRow extends DashboardRowBase {
 }
 
 export interface DashboardTestimonialRow extends DashboardRowBase {
+  clientId: string;
+  projectId: string;
+  projectName: string;
+  companyName: string;
   clientName: string;
   clientInitials: string;
   clientLocation: string;

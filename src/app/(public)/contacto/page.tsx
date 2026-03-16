@@ -11,6 +11,12 @@ export const metadata: Metadata = {
     "Contáctanos para cotizar tu proyecto eléctrico. Respondemos en menos de 24 horas. Atención de emergencias 24/7.",
 };
 
+const CONTACT_INFO = {
+  email: "contacto@synova.cl",
+  whatsappNumber: "+56976210953",
+  phoneNumbers: ["+56912345678"],
+};
+
 export default async function ContactoPage({
   searchParams,
 }: {
@@ -199,12 +205,17 @@ export default async function ContactoPage({
                 hoverBorderColor="hover:border-secondary/30"
                 icon={<span className="material-symbols-outlined text-2xl">phone_in_talk</span>}
                 action={
-                  <a
-                    href="tel:+56912345678"
-                    className="mt-3 inline-block text-xl font-bold text-secondary hover:text-primary transition-colors"
-                  >
-                    +56 9 1234 5678
-                  </a>
+                  <div className="mt-3 flex flex-col gap-1">
+                    {CONTACT_INFO.phoneNumbers.map((phoneNumber) => (
+                      <a
+                        key={phoneNumber}
+                        href={`tel:${phoneNumber}`}
+                        className="inline-block text-xl font-bold text-secondary hover:text-primary transition-colors"
+                      >
+                        {phoneNumber}
+                      </a>
+                    ))}
+                  </div>
                 }
               />
 
@@ -226,7 +237,8 @@ export default async function ContactoPage({
                 }
                 action={
                   <a
-                    href="#"
+                    href={`https://wa.me/${CONTACT_INFO.whatsappNumber.replace(/\D/g, "")}`}
+                    target="_blank"
                     className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-[#1eb853]"
                   >
                     <span>Iniciar chat</span>
@@ -242,31 +254,17 @@ export default async function ContactoPage({
                 iconGradient="from-secondary to-primary"
                 hoverBorderColor="hover:border-secondary/30"
                 icon={<span className="material-symbols-outlined text-2xl">mail</span>}
-                action={<CopyEmailButton email="contacto@synova.cl" />}
+                action={<CopyEmailButton email={CONTACT_INFO.email} />}
               />
               {/* Horarios */}
-              <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-on-surface mb-4">
-                  <span className="material-symbols-outlined text-secondary">schedule</span>
-                  Horario de Atención
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-on-surface-muted">Lunes - Viernes</span>
-                    <span className="font-medium text-on-surface">08:00 - 18:00 hrs</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-on-surface-muted">Sábado</span>
-                    <span className="font-medium text-on-surface">09:00 - 14:00 hrs</span>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-border-light flex items-center justify-between">
-                    <span className="text-sm font-bold text-secondary">Emergencias Eléctricas</span>
-                    <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-600/10">
-                      24/7 Disponible
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <ContactCard
+                title="Horario de Atención"
+                subtitle="Siempre disponible"
+                iconGradient="from-secondary to-primary"
+                hoverBorderColor="hover:border-secondary/30"
+                icon={<span className="material-symbols-outlined text-2xl">schedule</span>}
+                action={null}
+              />
             </div>
           </div>
         </section>

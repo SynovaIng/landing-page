@@ -1,12 +1,43 @@
-import type { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
+import Link from "next/link";
 
 interface TestimonialCardProps {
-  testimonial: Testimonial;
+  testimonial: {
+    id: string;
+    text: string;
+    authorName: string;
+    authorInitials: string;
+    authorLocation: string;
+    rating: number;
+    projectId: string | null;
+    projectName: string;
+  };
 }
 
 export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
+  const hasAssignedProject = Boolean(testimonial.projectId);
+  const hasProjectChip = Boolean(testimonial.projectName);
+
   return (
-    <div className="bg-surface p-10 rounded-lg border border-border hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-glow group">
+    <div
+      className={`relative bg-surface p-10 rounded-lg border border-border hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-glow group ${hasProjectChip ? "pt-16" : ""}`}
+    >
+      {hasProjectChip ? (
+        <span className="absolute top-4 left-4 inline-flex h-9 items-center rounded-full bg-background-light border border-border px-3 text-[10px] text-secondary uppercase tracking-widest max-w-[70%] truncate">
+          {testimonial.projectName}
+        </span>
+      ) : null}
+
+      {hasAssignedProject ? (
+        <Link
+          href={`/proyectos?projectId=${encodeURIComponent(testimonial.projectId as string)}`}
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background-light border border-border text-secondary hover:text-white hover:bg-secondary flex items-center justify-center transition-colors"
+          aria-label="Ver proyecto relacionado"
+          title="Ver proyecto"
+        >
+          <span className="material-symbols-outlined text-[18px]">north_east</span>
+        </Link>
+      ) : null}
+
       {/* Stars */}
       <div className="flex text-yellow-500 mb-6">
         {Array.from({ length: testimonial.rating }, (_, i) => i + 1).map((star) => (

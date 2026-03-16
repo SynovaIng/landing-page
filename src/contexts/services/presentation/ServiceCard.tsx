@@ -21,7 +21,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
       <h3 className="text-xl font-bold text-navy mb-3 group-hover:text-secondary transition-colors relative z-10">
         {service.title}
       </h3>
-      <p className="text-muted text-sm leading-relaxed mb-4 grow font-light relative z-10">
+      <p className="text-muted text-sm leading-relaxed mb-4 font-light relative z-10">
         {service.description}
       </p>
 
@@ -29,8 +29,8 @@ export default function ServiceCard({ service }: ServiceCardProps) {
       {service.features.length > 0 && (
         <ul className="flex flex-col gap-2 mb-6 relative z-10">
           {service.features.map((f) => (
-            <li key={f} className="flex items-start gap-2 text-muted text-sm">
-              <span className="material-symbols-outlined text-secondary text-[18px] mt-0.5">{"check_circle"}</span>
+            <li key={f} className="flex items-center gap-2 text-muted text-sm">
+              <span className="material-symbols-outlined text-secondary text-[18px]">{"check_circle"}</span>
               <span>{f}</span>
             </li>
           ))}

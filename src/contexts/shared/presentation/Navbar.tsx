@@ -203,7 +203,7 @@ export default function Navbar() {
                     setThemeOpen(false);
                   }}
                   title="Abrir perfil"
-                  className="w-10 h-10 rounded-full bg-primary text-white text-xs font-bold tracking-wide hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center"
+                  className="w-10 h-10 rounded-full bg-primary text-white text-xs font-bold tracking-wide hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[24px] leading-none">
                     account_circle

@@ -1,4 +1,5 @@
 import type { Project } from "@/contexts/projects/domain/project.entity";
+import { PROJECT_IMAGE_PLACEHOLDER } from "@/contexts/projects/domain/project.entity";
 
 interface ProjectCardProps {
   project: Project;
@@ -12,6 +13,8 @@ const categoryColors: Record<string, string> = {
 };
 
 export default function ProjectCard({ project, onClick }: ProjectCardProps) {
+  const previewImage = project.imageUrl || PROJECT_IMAGE_PLACEHOLDER;
+
   return (
     <button
       type="button"
@@ -21,8 +24,8 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
       {/* Image */}
       <div className="aspect-4/3 w-full overflow-hidden relative">
         <div
-          className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-          style={{ backgroundImage: `url('${project.imageUrl}')` }}
+          className="w-full h-full bg-contain bg-center bg-no-repeat bg-black"
+          style={{ backgroundImage: `url('${previewImage}')` }}
         />
         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mix-blend-multiply" />
       </div>

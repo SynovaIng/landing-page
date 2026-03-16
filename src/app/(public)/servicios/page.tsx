@@ -30,6 +30,8 @@ const sectors = [
   },
 ];
 
+const SERVICES_GRID_COLUMNS_CLASS = "md:grid-cols-3";
+
 export default async function ServiciosPage() {
   const services = await container.get(GetAllServicesUseCase).execute();
   return (
@@ -52,7 +54,7 @@ export default async function ServiciosPage() {
 
       {/* ── Services Grid ── */}
       <section className="px-6 md:px-10 lg:px-16 py-20 bg-background-light">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className={`max-w-7xl mx-auto grid grid-cols-1 ${SERVICES_GRID_COLUMNS_CLASS} gap-8`}>
           {services.map((s) => (
             <ServiceCard key={s.id} service={s} />
           ))}
