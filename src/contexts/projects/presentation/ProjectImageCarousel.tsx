@@ -76,7 +76,7 @@ export default function ProjectImageCarousel({ gallery }: ProjectImageCarouselPr
   return (
     <div className="relative">
       <div
-        className={`w-full h-[380px] md:h-[520px] lg:h-[640px] bg-contain bg-center bg-no-repeat bg-background-light transition-opacity duration-500 ${
+        className={`w-full h-[380px] md:h-[520px] lg:h-[640px] bg-contain bg-center bg-no-repeat bg-black transition-opacity duration-500 ${
           isImageTransitioning ? "opacity-20" : "opacity-100"
         }`}
         style={{
@@ -107,7 +107,7 @@ export default function ProjectImageCarousel({ gallery }: ProjectImageCarouselPr
               aria-label={`Ver imagen ${index + 1}`}
             >
               <span
-                className="block h-full w-full bg-contain bg-center bg-no-repeat bg-background-light"
+                className="block h-full w-full bg-contain bg-center bg-no-repeat bg-black"
                 style={{ backgroundImage: `url('${image}')` }}
               />
             </button>
