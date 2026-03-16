@@ -64,8 +64,11 @@ export default function TestimonialCarousel({ testimonials }: TestimonialCarouse
     }
 
     const firstCard = viewport.querySelector("[data-testimonial-card]") as HTMLDivElement | null;
+    const track = firstCard?.parentElement;
     const cardWidth = firstCard?.offsetWidth ?? viewport.clientWidth;
-    const gap = 32;
+    const gap = track
+      ? Number.parseFloat(window.getComputedStyle(track).columnGap || window.getComputedStyle(track).gap || "0")
+      : 0;
     const delta = cardWidth + gap;
 
     viewport.scrollBy({
@@ -106,14 +109,14 @@ export default function TestimonialCarousel({ testimonials }: TestimonialCarouse
 
       <div
         ref={viewportRef}
-        className="overflow-x-hidden"
+        className="overflow-x-auto pr-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="flex flex-nowrap gap-8">
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
               data-testimonial-card
-              className="w-full shrink-0 md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]"
+              className="w-[88%] shrink-0 md:w-[47%] lg:w-[31%]"
             >
               <TestimonialCard testimonial={testimonial} />
             </div>
