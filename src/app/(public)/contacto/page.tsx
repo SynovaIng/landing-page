@@ -245,28 +245,14 @@ export default async function ContactoPage({
                 action={<CopyEmailButton email="contacto@synova.cl" />}
               />
               {/* Horarios */}
-              <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-on-surface mb-4">
-                  <span className="material-symbols-outlined text-secondary">schedule</span>
-                  Horario de Atención
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-on-surface-muted">Lunes - Viernes</span>
-                    <span className="font-medium text-on-surface">08:00 - 18:00 hrs</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-on-surface-muted">Sábado</span>
-                    <span className="font-medium text-on-surface">09:00 - 14:00 hrs</span>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-border-light flex items-center justify-between">
-                    <span className="text-sm font-bold text-secondary">Emergencias Eléctricas</span>
-                    <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-600/10">
-                      24/7 Disponible
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <ContactCard
+                title="Horario de Atención"
+                subtitle="Siempre disponible"
+                iconGradient="from-secondary to-primary"
+                hoverBorderColor="hover:border-secondary/30"
+                icon={<span className="material-symbols-outlined text-2xl">schedule</span>}
+                action={null}
+              />
             </div>
           </div>
         </section>
