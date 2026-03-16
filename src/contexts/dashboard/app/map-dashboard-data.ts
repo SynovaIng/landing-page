@@ -39,7 +39,7 @@ export function mapDashboardData({
           : `${project.serviceIds.length} servicio${project.serviceIds.length === 1 ? "" : "s"}`,
       id: project.id,
       name: project.title,
-      description: `Proyecto en ${project.location}`,
+      description: project.location,
       type: project.category,
       location: project.location,
       imageUrl: project.imageUrl,

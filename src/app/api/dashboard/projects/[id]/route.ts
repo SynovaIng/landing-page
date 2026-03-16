@@ -68,11 +68,16 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     title: parsedInput.name,
     location: parsedInput.location,
     category: parsedInput.type,
-    description: parsedInput.description,
+    description: parsedInput.location,
     isPublished: parsedInput.isActive,
     serviceIds: parsedInput.serviceIds,
     imageUrls,
   });
 
-  return NextResponse.json(toProjectApiResponse(updated, parsedInput));
+  return NextResponse.json(
+    toProjectApiResponse(updated, {
+      ...parsedInput,
+      description: parsedInput.location,
+    }),
+  );
 }
