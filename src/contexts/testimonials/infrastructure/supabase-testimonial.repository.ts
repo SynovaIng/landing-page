@@ -32,12 +32,25 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
     return "";
   }
 
+  private getProjectNameFromRelation(projectRelation: unknown): string {
+    if (Array.isArray(projectRelation)) {
+      const first = projectRelation[0] as { name?: unknown } | undefined;
+      return String(first?.name ?? "");
+    }
+
+    if (projectRelation && typeof projectRelation === "object") {
+      return String((projectRelation as { name?: unknown }).name ?? "");
+    }
+
+    return "";
+  }
+
   async getAll(): Promise<Testimonial[]> {
     const supabase = await createSupabaseServerClient();
 
     const { data, error } = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
       .order("created_at", { ascending: false });
 
     if (error || !data) {
@@ -54,6 +67,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       companyId: review.client_id ? String(review.client_id) : null,
       projectId: review.project_id ? String(review.project_id) : null,
       companyName: this.getClientNameFromRelation((review as { clients?: unknown }).clients),
+      projectName: this.getProjectNameFromRelation((review as { projects?: unknown }).projects),
     }));
   }
 
@@ -62,7 +76,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const { data, error } = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
       .eq("id", id)
       .maybeSingle();
 
@@ -80,6 +94,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       companyId: data.client_id ? String(data.client_id) : null,
       projectId: data.project_id ? String(data.project_id) : null,
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
+      projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
     });
   }
 
@@ -97,7 +112,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         client_id: input.clientId ?? null,
         project_id: input.projectId ?? null,
       })
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
       .single();
 
     if (error || !data) {
@@ -114,6 +129,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
+      projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
     });
   }
 
@@ -132,7 +148,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         project_id: input.projectId ?? null,
       })
       .eq("id", id)
-      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name)")
+      .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
       .single();
 
     if (error || !data) {
@@ -149,6 +165,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
+      projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
     });
   }
 }

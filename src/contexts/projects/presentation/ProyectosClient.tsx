@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import type { Project, ProjectCategory } from "@/contexts/projects/domain/project.entity";
 import Button from "@/contexts/shared/presentation/Button";
@@ -36,6 +37,8 @@ interface ProyectosClientProps {
 }
 
 export default function ProyectosClient({ projects, services }: ProyectosClientProps) {
+  const searchParams = useSearchParams();
+  const projectIdFromQuery = searchParams.get("projectId");
   const [active, setActive] = useState<ProjectCategory | "Todos">("Todos");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
@@ -66,6 +69,20 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
       document.body.style.overflow = "";
     };
   }, [selectedProject]);
+
+  useEffect(() => {
+    if (!projectIdFromQuery) {
+      return;
+    }
+
+    const projectToOpen = projects.find((project) => project.id === projectIdFromQuery);
+    if (!projectToOpen) {
+      return;
+    }
+
+    setActive("Todos");
+    setSelectedProject(projectToOpen);
+  }, [projectIdFromQuery, projects]);
 
   return (
     <div className="pt-24">
