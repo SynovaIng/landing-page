@@ -47,6 +47,6 @@ export async function POST(request: Request) {
     ctaLabel: created.ctaLabel,
     features: created.features.join(" · "),
     orderIndex: created.orderIndex,
-    isActive: parsed.data.isActive,
+    isActive: created.isPublished,
   });
 }

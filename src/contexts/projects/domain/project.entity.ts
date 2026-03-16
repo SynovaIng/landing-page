@@ -11,6 +11,7 @@ export interface ProjectProps {
   imageUrl: string;
   imageUrls?: string[];
   serviceIds: string[];
+  isPublished?: boolean;
   orderIndex?: number;
 }
 
@@ -22,6 +23,7 @@ export class Project {
   public readonly imageUrl: string;
   public readonly imageUrls: string[];
   public readonly serviceIds: string[];
+  public readonly isPublished: boolean;
   public readonly orderIndex: number;
 
   constructor(props: ProjectProps) {
@@ -36,6 +38,7 @@ export class Project {
       : [PROJECT_IMAGE_PLACEHOLDER];
     this.imageUrl = this.imageUrls[0] ?? PROJECT_IMAGE_PLACEHOLDER;
     this.serviceIds = props.serviceIds;
+    this.isPublished = props.isPublished ?? true;
     this.orderIndex = props.orderIndex ?? 0;
   }
 }

@@ -76,7 +76,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
   return NextResponse.json(
     toProjectApiResponse(updated, {
-      ...parsedInput,
       description: parsedInput.location,
     }),
   );

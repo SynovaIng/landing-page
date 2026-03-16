@@ -132,7 +132,7 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
 
 export const toProjectApiResponse = (
   project: Project,
-  input: Pick<ProjectMutationInput, "description" | "isActive">,
+  input: Pick<ProjectMutationInput, "description">,
 ): ProjectApiResponse => {
   return projectApiResponseSchema.parse({
     id: project.id,
@@ -144,6 +144,6 @@ export const toProjectApiResponse = (
     imageUrls: project.imageUrls,
     projectServiceIds: project.serviceIds,
     orderIndex: project.orderIndex,
-    isActive: input.isActive,
+    isActive: project.isPublished,
   });
 };

@@ -69,6 +69,6 @@ export async function POST(request: Request) {
     stars: created.rating,
     message: created.text,
     orderIndex: created.orderIndex,
-    isActive: parsed.data.isActive,
+    isActive: created.isPublished,
   });
 }

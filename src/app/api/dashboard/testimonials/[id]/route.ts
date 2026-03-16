@@ -74,6 +74,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     stars: updated.rating,
     message: updated.text,
     orderIndex: updated.orderIndex,
-    isActive: parsed.data.isActive,
+    isActive: updated.isPublished,
   });
 }

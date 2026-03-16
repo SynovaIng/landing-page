@@ -5,6 +5,7 @@ export interface TestimonialProps {
   authorInitials: string;
   authorLocation: string;
   rating: number;
+  isPublished?: boolean;
   companyId?: string | null;
   projectId?: string | null;
   companyName?: string;
@@ -19,6 +20,7 @@ export class Testimonial {
   public readonly authorInitials: string;
   public readonly authorLocation: string;
   public readonly rating: number;
+  public readonly isPublished: boolean;
   public readonly companyId: string | null;
   public readonly projectId: string | null;
   public readonly companyName: string;
@@ -32,6 +34,7 @@ export class Testimonial {
     this.authorInitials = props.authorInitials;
     this.authorLocation = props.authorLocation;
     this.rating = props.rating;
+    this.isPublished = props.isPublished ?? true;
     this.companyId = props.companyId ?? null;
     this.projectId = props.projectId ?? null;
     this.companyName = props.companyName ?? "";

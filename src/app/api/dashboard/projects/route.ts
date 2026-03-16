@@ -35,7 +35,6 @@ export async function POST(request: Request) {
 
   return NextResponse.json(
     toProjectApiResponse(created, {
-      ...parsedInput,
       description: parsedInput.location,
     }),
   );

@@ -7,6 +7,7 @@ import {
 } from "@/contexts/projects/domain/project.entity";
 import type {
   CreateProjectInput,
+  GetAllProjectsOptions,
   UpdateProjectInput,
 } from "@/contexts/projects/domain/project.repository";
 import { ProjectRepository } from "@/contexts/projects/domain/project.repository";
@@ -62,19 +63,31 @@ const isMissingOrderIndexError = (error: { code?: string; message?: string } | n
 
 @Service()
 export class SupabaseProjectRepository extends ProjectRepository {
-  async getAll(): Promise<Project[]> {
+  async getAll(options?: GetAllProjectsOptions): Promise<Project[]> {
+    const includeUnpublished = options?.includeUnpublished ?? false;
     const supabase = await createSupabaseServerClient();
-    const projectQueryWithOrder = await supabase
+
+    const baseProjectQueryWithOrder = supabase
       .from("projects")
-      .select("id, name, description, type, order_index")
+      .select("id, name, description, type, is_published, order_index")
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
+    const projectQueryWithOrder = includeUnpublished
+      ? await baseProjectQueryWithOrder
+      : await baseProjectQueryWithOrder.eq("is_published", true);
+
     const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
-      ? await supabase
-          .from("projects")
-          .select("id, name, description, type")
-          .order("created_at", { ascending: false })
+      ? await (includeUnpublished
+          ? supabase
+              .from("projects")
+              .select("id, name, description, type, is_published")
+              .order("created_at", { ascending: false })
+          : supabase
+              .from("projects")
+              .select("id, name, description, type, is_published")
+              .eq("is_published", true)
+              .order("created_at", { ascending: false }))
       : projectQueryWithOrder;
 
     const [projectServicesResult, projectImagesResult] = await Promise.all([
@@ -127,6 +140,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: coverImageByProject.get(String(row.id)) ?? PROJECT_IMAGE_PLACEHOLDER,
       imageUrls: imageUrlsByProject.get(String(row.id)) ?? [PROJECT_IMAGE_PLACEHOLDER],
       serviceIds: serviceIdsByProject.get(String(row.id)) ?? [],
+      isPublished: Boolean((row as { is_published?: boolean }).is_published ?? true),
       orderIndex: Number((row as { order_index?: number }).order_index ?? 0),
     }));
   }
@@ -135,14 +149,14 @@ export class SupabaseProjectRepository extends ProjectRepository {
     const supabase = await createSupabaseServerClient();
     const projectQueryWithOrder = await supabase
       .from("projects")
-      .select("id, name, description, type, order_index")
+      .select("id, name, description, type, is_published, order_index")
       .eq("id", id)
       .maybeSingle();
 
     const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
       ? await supabase
           .from("projects")
-          .select("id, name, description, type")
+          .select("id, name, description, type, is_published")
           .eq("id", id)
           .maybeSingle()
       : projectQueryWithOrder;
@@ -178,6 +192,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: String(projectImagesData?.[0]?.url ?? PROJECT_IMAGE_PLACEHOLDER),
       imageUrls: (projectImagesData ?? []).map((item) => String(item.url)),
       serviceIds: (projectServicesData ?? []).map((item) => String(item.service_id)),
+      isPublished: Boolean((data as { is_published?: boolean }).is_published ?? true),
       orderIndex: Number((data as { order_index?: number }).order_index ?? 0),
     });
   }
@@ -202,7 +217,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
         is_published: input.isPublished,
         order_index: nextOrderIndex,
       })
-      .select("id, name, description, type, order_index")
+      .select("id, name, description, type, is_published, order_index")
       .single();
 
     if (error || !data) {
@@ -249,6 +264,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: imageUrls[0] ?? PROJECT_IMAGE_PLACEHOLDER,
       imageUrls: imageUrls.length > 0 ? imageUrls : [PROJECT_IMAGE_PLACEHOLDER],
       serviceIds: uniqueServiceIds,
+      isPublished: Boolean(data.is_published ?? input.isPublished),
       orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
   }
@@ -265,7 +281,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
         is_published: input.isPublished,
       })
       .eq("id", input.id)
-      .select("id, name, description, type, order_index")
+      .select("id, name, description, type, is_published, order_index")
       .single();
 
     if (error || !data) {
@@ -364,8 +380,32 @@ export class SupabaseProjectRepository extends ProjectRepository {
       imageUrl: String(updatedCoverData?.[0]?.url ?? PROJECT_IMAGE_PLACEHOLDER),
       imageUrls: (updatedCoverData ?? []).map((item) => String(item.url)),
       serviceIds: uniqueServiceIds,
+      isPublished: Boolean(data.is_published ?? input.isPublished),
       orderIndex: Number(data.order_index ?? 0),
     });
+  }
+
+  async setVisibility(id: string, isPublished: boolean): Promise<Project> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("projects")
+      .update({ is_published: isPublished })
+      .eq("id", id)
+      .select("id")
+      .single();
+
+    if (error || !data) {
+      throw new Error("No se pudo actualizar la visibilidad del proyecto");
+    }
+
+    const updated = await this.getById(id);
+
+    if (!updated) {
+      throw new Error("No se pudo cargar el proyecto actualizado");
+    }
+
+    return updated;
   }
 
   async reorder(ids: string[]): Promise<void> {

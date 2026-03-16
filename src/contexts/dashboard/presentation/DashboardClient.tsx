@@ -248,9 +248,33 @@ export default function DashboardClient({
     }));
   };
 
-  const toggleActive = (id: string) => {
+  const toggleActive = async (id: string) => {
+    const currentRow = rowsBySection[activeSection].find((row) => row.id === id);
+
+    if (!currentRow) {
+      return;
+    }
+
+    const nextIsActive = !currentRow.isActive;
+
     updateRowsForSection(activeSection, (rows) =>
-      rows.map((row) => (row.id === id ? { ...row, isActive: !row.isActive } : row)),
+      rows.map((row) => (row.id === id ? { ...row, isActive: nextIsActive } : row)),
+    );
+
+    const response = await fetch(`/api/dashboard/${activeSection}/${id}/visibility`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isActive: nextIsActive }),
+    });
+
+    if (response.ok) {
+      return;
+    }
+
+    updateRowsForSection(activeSection, (rows) =>
+      rows.map((row) => (row.id === id ? { ...row, isActive: currentRow.isActive } : row)),
     );
   };
 

@@ -6,6 +6,7 @@ import { CreateTestimonialUseCase } from "@/contexts/testimonials/use-cases/crea
 import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 import { GetTestimonialByIdUseCase } from "@/contexts/testimonials/use-cases/get-testimonial-by-id.use-case";
 import { ReorderTestimonialsUseCase } from "@/contexts/testimonials/use-cases/reorder-testimonials.use-case";
+import { SetTestimonialVisibilityUseCase } from "@/contexts/testimonials/use-cases/set-testimonial-visibility.use-case";
 import { UpdateTestimonialUseCase } from "@/contexts/testimonials/use-cases/update-testimonial.use-case";
 
 export const registerTestimonialsContainer = (builder: ContainerBuilder): void => {
@@ -17,5 +18,6 @@ export const registerTestimonialsContainer = (builder: ContainerBuilder): void =
   builder.registerAndUse(GetAllTestimonialsUseCase);
   builder.registerAndUse(GetTestimonialByIdUseCase);
   builder.registerAndUse(ReorderTestimonialsUseCase);
+  builder.registerAndUse(SetTestimonialVisibilityUseCase);
   builder.registerAndUse(UpdateTestimonialUseCase);
 };

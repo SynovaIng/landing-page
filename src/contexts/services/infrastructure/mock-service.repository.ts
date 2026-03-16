@@ -1,7 +1,7 @@
 import { Service as DiodService } from "diod";
 
 import { Service } from "@/contexts/services/domain/service.entity";
-import type { CreateServiceInput } from "@/contexts/services/domain/service.repository";
+import type { CreateServiceInput, GetAllServicesOptions } from "@/contexts/services/domain/service.repository";
 import { ServiceRepository } from "@/contexts/services/domain/service.repository";
 
 const mockServices: Service[] = [
@@ -65,8 +65,12 @@ const mockServices: Service[] = [
 
 @DiodService()
 export class MockServiceRepository extends ServiceRepository {
-  async getAll(): Promise<Service[]> {
-    return mockServices;
+  async getAll(options?: GetAllServicesOptions): Promise<Service[]> {
+    if (options?.includeUnpublished) {
+      return mockServices;
+    }
+
+    return mockServices.filter((service) => service.isPublished);
   }
 
   async getById(id: string): Promise<Service | null> {
@@ -81,6 +85,7 @@ export class MockServiceRepository extends ServiceRepository {
       description: input.description ?? "",
       features: input.features,
       ctaLabel: input.ctaLabel,
+      isPublished: input.isPublished,
       orderIndex: mockServices.length,
     });
 
@@ -105,11 +110,35 @@ export class MockServiceRepository extends ServiceRepository {
           description: service.description,
           features: service.features,
           ctaLabel: service.ctaLabel,
+          isPublished: service.isPublished,
           orderIndex: index,
         });
       })
       .filter((service): service is Service => service !== null);
 
     mockServices.splice(0, mockServices.length, ...reordered);
+  }
+
+  async setVisibility(id: string, isPublished: boolean): Promise<Service> {
+    const index = mockServices.findIndex((service) => service.id === id);
+
+    if (index === -1) {
+      throw new Error("Servicio no encontrado");
+    }
+
+    const current = mockServices[index];
+    const updated = new Service({
+      id: current.id,
+      icon: current.icon,
+      title: current.title,
+      description: current.description,
+      features: current.features,
+      ctaLabel: current.ctaLabel,
+      isPublished,
+      orderIndex: current.orderIndex,
+    });
+
+    mockServices[index] = updated;
+    return updated;
   }
 }

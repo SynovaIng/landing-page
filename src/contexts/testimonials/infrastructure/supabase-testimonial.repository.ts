@@ -3,6 +3,7 @@ import { Service } from "diod";
 import { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
 import type {
   CreateTestimonialInput,
+  GetAllTestimonialsOptions,
   UpdateTestimonialInput,
 } from "@/contexts/testimonials/domain/testimonial.repository";
 import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
@@ -57,20 +58,31 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
     return "";
   }
 
-  async getAll(): Promise<Testimonial[]> {
+  async getAll(options?: GetAllTestimonialsOptions): Promise<Testimonial[]> {
+    const includeUnpublished = options?.includeUnpublished ?? false;
     const supabase = await createSupabaseServerClient();
 
-    const queryWithOrder = await supabase
+    const queryBaseWithOrder = supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
+    const queryWithOrder = includeUnpublished
+      ? await queryBaseWithOrder
+      : await queryBaseWithOrder.eq("is_published", true);
+
     const query = isMissingOrderIndexError(queryWithOrder.error)
-      ? await supabase
-          .from("reviews")
-          .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
-          .order("created_at", { ascending: false })
+      ? await (includeUnpublished
+          ? supabase
+              .from("reviews")
+              .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, clients(name), projects(name)")
+              .order("created_at", { ascending: false })
+          : supabase
+              .from("reviews")
+              .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, clients(name), projects(name)")
+              .eq("is_published", true)
+              .order("created_at", { ascending: false }))
       : queryWithOrder;
 
     const { data, error } = query;
@@ -86,6 +98,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: toInitials(String(review.client_name ?? "")),
       authorLocation: String(review.client_location ?? ""),
       rating: Number(review.stars ?? 0),
+      isPublished: Boolean((review as { is_published?: boolean }).is_published ?? true),
       companyId: review.client_id ? String(review.client_id) : null,
       projectId: review.project_id ? String(review.project_id) : null,
       companyName: this.getClientNameFromRelation((review as { clients?: unknown }).clients),
@@ -99,14 +112,14 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const queryWithOrder = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
       .eq("id", id)
       .maybeSingle();
 
     const query = isMissingOrderIndexError(queryWithOrder.error)
       ? await supabase
           .from("reviews")
-          .select("id, message, client_name, client_location, stars, client_id, project_id, clients(name), projects(name)")
+          .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, clients(name), projects(name)")
           .eq("id", id)
           .maybeSingle()
       : queryWithOrder;
@@ -124,6 +137,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: toInitials(String(data.client_name ?? "")),
       authorLocation: String(data.client_location ?? ""),
       rating: Number(data.stars ?? 0),
+      isPublished: Boolean((data as { is_published?: boolean }).is_published ?? true),
       companyId: data.client_id ? String(data.client_id) : null,
       projectId: data.project_id ? String(data.project_id) : null,
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
@@ -155,7 +169,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         project_id: input.projectId ?? null,
         order_index: nextOrderIndex,
       })
-      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
       .single();
 
     if (error || !data) {
@@ -169,6 +183,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: input.authorInitials || toInitials(input.authorName),
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
+      isPublished: Boolean(data.is_published ?? input.isPublished),
       companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
@@ -192,7 +207,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         project_id: input.projectId ?? null,
       })
       .eq("id", id)
-      .select("id, message, client_name, client_location, stars, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
       .single();
 
     if (error || !data) {
@@ -206,12 +221,36 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorInitials: input.authorInitials || toInitials(input.authorName),
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
+      isPublished: Boolean(data.is_published ?? input.isPublished),
       companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
       companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
       orderIndex: Number(data.order_index ?? 0),
     });
+  }
+
+  async setVisibility(id: string, isPublished: boolean): Promise<Testimonial> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .update({ is_published: isPublished })
+      .eq("id", id)
+      .select("id")
+      .single();
+
+    if (error || !data) {
+      throw new Error("No se pudo actualizar la visibilidad de la reseña");
+    }
+
+    const updated = await this.getById(id);
+
+    if (!updated) {
+      throw new Error("No se pudo cargar la reseña actualizada");
+    }
+
+    return updated;
   }
 
   async reorder(ids: string[]): Promise<void> {

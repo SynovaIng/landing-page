@@ -3,6 +3,7 @@ import { Service } from "diod";
 import { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
 import type {
   CreateTestimonialInput,
+  GetAllTestimonialsOptions,
   UpdateTestimonialInput,
 } from "@/contexts/testimonials/domain/testimonial.repository";
 import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
@@ -39,8 +40,12 @@ const mockTestimonials: Testimonial[] = [
 
 @Service()
 export class MockTestimonialRepository extends TestimonialRepository {
-  async getAll(): Promise<Testimonial[]> {
-    return mockTestimonials;
+  async getAll(options?: GetAllTestimonialsOptions): Promise<Testimonial[]> {
+    if (options?.includeUnpublished) {
+      return mockTestimonials;
+    }
+
+    return mockTestimonials.filter((testimonial) => testimonial.isPublished);
   }
 
   async getById(id: string): Promise<Testimonial | null> {
@@ -55,6 +60,7 @@ export class MockTestimonialRepository extends TestimonialRepository {
       authorInitials: input.authorInitials,
       authorLocation: input.authorLocation,
       rating: input.rating,
+      isPublished: input.isPublished,
       companyId: input.clientId ?? null,
       projectId: input.projectId ?? null,
       orderIndex: mockTestimonials.length,
@@ -78,6 +84,7 @@ export class MockTestimonialRepository extends TestimonialRepository {
       authorInitials: input.authorInitials,
       authorLocation: input.authorLocation,
       rating: input.rating,
+      isPublished: input.isPublished,
       companyId: input.clientId ?? null,
       projectId: input.projectId ?? null,
       orderIndex: mockTestimonials[index].orderIndex,
@@ -104,6 +111,7 @@ export class MockTestimonialRepository extends TestimonialRepository {
           authorInitials: testimonial.authorInitials,
           authorLocation: testimonial.authorLocation,
           rating: testimonial.rating,
+          isPublished: testimonial.isPublished,
           companyId: testimonial.companyId,
           projectId: testimonial.projectId,
           companyName: testimonial.companyName,
@@ -114,5 +122,32 @@ export class MockTestimonialRepository extends TestimonialRepository {
       .filter((testimonial): testimonial is Testimonial => testimonial !== null);
 
     mockTestimonials.splice(0, mockTestimonials.length, ...reordered);
+  }
+
+  async setVisibility(id: string, isPublished: boolean): Promise<Testimonial> {
+    const index = mockTestimonials.findIndex((testimonial) => testimonial.id === id);
+
+    if (index === -1) {
+      throw new Error("No se encontró la reseña");
+    }
+
+    const current = mockTestimonials[index];
+    const updated = new Testimonial({
+      id: current.id,
+      text: current.text,
+      authorName: current.authorName,
+      authorInitials: current.authorInitials,
+      authorLocation: current.authorLocation,
+      rating: current.rating,
+      isPublished,
+      companyId: current.companyId,
+      projectId: current.projectId,
+      companyName: current.companyName,
+      projectName: current.projectName,
+      orderIndex: current.orderIndex,
+    });
+
+    mockTestimonials[index] = updated;
+    return updated;
   }
 }

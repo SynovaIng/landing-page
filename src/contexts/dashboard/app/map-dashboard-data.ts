@@ -45,7 +45,7 @@ export function mapDashboardData({
       imageUrl: project.imageUrl,
       imageUrls: project.imageUrls,
       orderIndex: project.orderIndex,
-      isActive: true,
+      isActive: project.isPublished,
     })),
     services: services.map((service) => ({
       id: service.id,
@@ -56,7 +56,7 @@ export function mapDashboardData({
       ctaLabel: service.ctaLabel,
       features: service.features.join(" · "),
       orderIndex: service.orderIndex,
-      isActive: true,
+      isActive: service.isPublished,
     })),
     testimonials: testimonials.map((testimonial) => ({
       projectId: testimonial.projectId ?? "",
@@ -73,7 +73,7 @@ export function mapDashboardData({
       stars: testimonial.rating,
       message: testimonial.text,
       orderIndex: testimonial.orderIndex,
-      isActive: true,
+      isActive: testimonial.isPublished,
     })),
   };
 }

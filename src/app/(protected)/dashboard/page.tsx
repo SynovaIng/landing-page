@@ -24,9 +24,9 @@ export default async function AdminDashboardPage() {
   const user = await getAuthenticatedUserUseCase.execute();
 
   const [projects, services, testimonials] = await Promise.all([
-    container.get(GetAllProjectsUseCase).execute(),
-    container.get(GetAllServicesUseCase).execute(),
-    container.get(GetAllTestimonialsUseCase).execute(),
+    container.get(GetAllProjectsUseCase).execute({ includeUnpublished: true }),
+    container.get(GetAllServicesUseCase).execute({ includeUnpublished: true }),
+    container.get(GetAllTestimonialsUseCase).execute({ includeUnpublished: true }),
   ]);
 
   const mappedData = mapDashboardData({ projects, services, testimonials });

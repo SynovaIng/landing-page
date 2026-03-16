@@ -3,6 +3,7 @@ import { Service } from "diod";
 import { Project } from "@/contexts/projects/domain/project.entity";
 import type {
   CreateProjectInput,
+  GetAllProjectsOptions,
   UpdateProjectInput,
 } from "@/contexts/projects/domain/project.repository";
 import { ProjectRepository } from "@/contexts/projects/domain/project.repository";
@@ -72,8 +73,12 @@ const mockProjects: Project[] = [
 
 @Service()
 export class MockProjectRepository extends ProjectRepository {
-  async getAll(): Promise<Project[]> {
-    return mockProjects;
+  async getAll(options?: GetAllProjectsOptions): Promise<Project[]> {
+    if (options?.includeUnpublished) {
+      return mockProjects;
+    }
+
+    return mockProjects.filter((project) => project.isPublished);
   }
 
   async getById(id: string): Promise<Project | null> {
@@ -88,6 +93,7 @@ export class MockProjectRepository extends ProjectRepository {
       category: input.category as Project["category"],
       imageUrl: "",
       serviceIds: input.serviceIds,
+      isPublished: input.isPublished,
       orderIndex: mockProjects.length,
     });
 
@@ -109,6 +115,7 @@ export class MockProjectRepository extends ProjectRepository {
       category: input.category as Project["category"],
       imageUrl: mockProjects[index].imageUrl,
       serviceIds: input.serviceIds,
+      isPublished: input.isPublished,
       orderIndex: mockProjects[index].orderIndex,
     });
 
@@ -134,11 +141,36 @@ export class MockProjectRepository extends ProjectRepository {
           imageUrl: project.imageUrl,
           imageUrls: project.imageUrls,
           serviceIds: project.serviceIds,
+          isPublished: project.isPublished,
           orderIndex: index,
         });
       })
       .filter((project): project is Project => project !== null);
 
     mockProjects.splice(0, mockProjects.length, ...reordered);
+  }
+
+  async setVisibility(id: string, isPublished: boolean): Promise<Project> {
+    const index = mockProjects.findIndex((project) => project.id === id);
+
+    if (index === -1) {
+      throw new Error("Proyecto no encontrado");
+    }
+
+    const current = mockProjects[index];
+    const updated = new Project({
+      id: current.id,
+      title: current.title,
+      location: current.location,
+      category: current.category,
+      imageUrl: current.imageUrl,
+      imageUrls: current.imageUrls,
+      serviceIds: current.serviceIds,
+      isPublished,
+      orderIndex: current.orderIndex,
+    });
+
+    mockProjects[index] = updated;
+    return updated;
   }
 }
