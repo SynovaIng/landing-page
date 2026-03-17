@@ -6,6 +6,6 @@ export interface ProjectGalleryDetails {
 }
 
 export const getProjectGalleryDetails = (project: Project): ProjectGalleryDetails => ({
-  description: project.description.trim() || `Proyecto ejecutado en ${project.location}.`,
+  description: project.description.trim(),
   gallery: project.imageUrls,
 });

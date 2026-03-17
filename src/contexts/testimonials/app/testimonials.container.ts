@@ -3,6 +3,7 @@ import type { ContainerBuilder } from "diod";
 import { TestimonialRepository } from "@/contexts/testimonials/domain/testimonial.repository";
 import { SupabaseTestimonialRepository } from "@/contexts/testimonials/infrastructure/supabase-testimonial.repository";
 import { CreateTestimonialUseCase } from "@/contexts/testimonials/use-cases/create-testimonial.use-case";
+import { DeleteTestimonialsUseCase } from "@/contexts/testimonials/use-cases/delete-testimonials.use-case";
 import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 import { GetTestimonialByIdUseCase } from "@/contexts/testimonials/use-cases/get-testimonial-by-id.use-case";
 import { ReorderTestimonialsUseCase } from "@/contexts/testimonials/use-cases/reorder-testimonials.use-case";
@@ -15,6 +16,7 @@ export const registerTestimonialsContainer = (builder: ContainerBuilder): void =
 
   // Use Cases
   builder.registerAndUse(CreateTestimonialUseCase);
+  builder.registerAndUse(DeleteTestimonialsUseCase);
   builder.registerAndUse(GetAllTestimonialsUseCase);
   builder.registerAndUse(GetTestimonialByIdUseCase);
   builder.registerAndUse(ReorderTestimonialsUseCase);

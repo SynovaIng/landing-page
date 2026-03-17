@@ -7,6 +7,7 @@ import {
 } from "@/contexts/projects/app/project-api.schema";
 import { uploadProjectImages } from "@/contexts/projects/infrastructure/upload-project-image";
 import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-project.use-case";
+import { DeleteProjectsUseCase } from "@/contexts/projects/use-cases/delete-projects.use-case";
 
 export async function POST(request: Request) {
   let parsedInput;
@@ -34,4 +35,20 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json(toProjectApiResponse(created));
+}
+
+export async function DELETE(request: Request) {
+  const body = await request.json().catch(() => null);
+  const ids = Array.isArray(body?.ids)
+    ? body.ids.map((value: unknown) => String(value).trim()).filter((value: string) => value.length > 0)
+    : [];
+
+  if (ids.length === 0) {
+    return NextResponse.json({ error: "Debes indicar al menos un ID para eliminar." }, { status: 400 });
+  }
+
+  const useCase = container.get(DeleteProjectsUseCase);
+  await useCase.execute(ids);
+
+  return NextResponse.json({ ok: true });
 }

@@ -51,7 +51,7 @@ export function mapDashboardData({
       id: service.id,
       icon: service.icon,
       name: service.title,
-      slug: service.id,
+      slug: service.slug,
       description: service.description,
       ctaLabel: service.ctaLabel,
       features: service.features.join(" · "),

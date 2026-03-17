@@ -31,6 +31,7 @@ export abstract class TestimonialRepository {
   abstract getById(id: string): Promise<Testimonial | null>;
   abstract create(input: CreateTestimonialInput): Promise<Testimonial>;
   abstract update(id: string, input: UpdateTestimonialInput): Promise<Testimonial>;
+  abstract deleteMany(ids: string[]): Promise<void>;
   abstract setVisibility(id: string, isPublished: boolean): Promise<Testimonial>;
   abstract reorder(ids: string[]): Promise<void>;
 }

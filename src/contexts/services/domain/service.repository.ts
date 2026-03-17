@@ -14,10 +14,14 @@ export interface CreateServiceInput {
   isPublished: boolean;
 }
 
+export type UpdateServiceInput = Partial<CreateServiceInput>;
+
 export abstract class ServiceRepository {
   abstract getAll(options?: GetAllServicesOptions): Promise<Service[]>;
   abstract getById(id: string): Promise<Service | null>;
   abstract create(input: CreateServiceInput): Promise<Service>;
+  abstract update(id: string, input: UpdateServiceInput): Promise<Service>;
+  abstract deleteMany(ids: string[]): Promise<void>;
   abstract setVisibility(id: string, isPublished: boolean): Promise<Service>;
   abstract reorder(ids: string[]): Promise<void>;
 }

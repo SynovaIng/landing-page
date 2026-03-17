@@ -414,6 +414,25 @@ export class SupabaseProjectRepository extends ProjectRepository {
     return updated;
   }
 
+  async deleteMany(ids: string[]): Promise<void> {
+    const targetIds = Array.from(new Set(ids.map((id) => id.trim()).filter(Boolean)));
+
+    if (targetIds.length === 0) {
+      return;
+    }
+
+    const supabase = await createSupabaseServerClient();
+
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .in("id", targetIds);
+
+    if (error) {
+      throw new Error("No se pudieron eliminar los proyectos seleccionados");
+    }
+  }
+
   async reorder(ids: string[]): Promise<void> {
     const supabase = await createSupabaseServerClient();
 

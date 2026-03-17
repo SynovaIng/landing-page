@@ -228,8 +228,20 @@ export default function DashboardClient({
     });
   };
 
-  const removeSelected = () => {
+  const removeSelected = async () => {
     if (selectedIds.length === 0) {
+      return;
+    }
+
+    const response = await fetch(`/api/dashboard/${activeSection}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids: selectedIds }),
+    });
+
+    if (!response.ok) {
       return;
     }
 
@@ -629,6 +641,31 @@ export default function DashboardClient({
       updateRowsForSection(editContext.sectionKey, (rows) =>
         rows.map((row) =>
           row.id === editContext.rowId ? (normalizedUpdatedTestimonial as typeof row) : row
+        ),
+      );
+
+      closeEditModal();
+      return;
+    }
+
+    if (editContext.sectionKey === "services") {
+      const response = await fetch(`/api/dashboard/services/${editContext.rowId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(normalizedValues),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const updatedService = (await response.json()) as DashboardRowBase;
+
+      updateRowsForSection(editContext.sectionKey, (rows) =>
+        rows.map((row) =>
+          row.id === editContext.rowId ? (updatedService as typeof row) : row
         ),
       );
 
