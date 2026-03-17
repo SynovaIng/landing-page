@@ -8,6 +8,7 @@ import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-ser
 import { GetServiceByIdUseCase } from "@/contexts/services/use-cases/get-service-by-id.use-case";
 import { ReorderServicesUseCase } from "@/contexts/services/use-cases/reorder-services.use-case";
 import { SetServiceVisibilityUseCase } from "@/contexts/services/use-cases/set-service-visibility.use-case";
+import { UpdateServiceUseCase } from "@/contexts/services/use-cases/update-service.use-case";
 
 export const registerServicesContainer = (builder: ContainerBuilder): void => {
   // Domain & Infrastructure
@@ -20,4 +21,5 @@ export const registerServicesContainer = (builder: ContainerBuilder): void => {
   builder.registerAndUse(GetServiceByIdUseCase);
   builder.registerAndUse(ReorderServicesUseCase);
   builder.registerAndUse(SetServiceVisibilityUseCase);
+  builder.registerAndUse(UpdateServiceUseCase);
 };

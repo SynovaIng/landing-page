@@ -1,7 +1,7 @@
 import { Service as DiodService } from "diod";
 
 import { Service } from "@/contexts/services/domain/service.entity";
-import type { CreateServiceInput, GetAllServicesOptions } from "@/contexts/services/domain/service.repository";
+import type { CreateServiceInput, GetAllServicesOptions, UpdateServiceInput } from "@/contexts/services/domain/service.repository";
 import { ServiceRepository } from "@/contexts/services/domain/service.repository";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -44,6 +44,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       description: String(service.description ?? ""),
       features: pointsByService.get(String(service.id)) ?? [],
       ctaLabel: String(service.cta_label ?? "Cotizar"),
+      slug: String(service.slug ?? ""),
       isPublished: Boolean(service.is_published ?? true),
       orderIndex: Number(service.order_index ?? 0),
     }));
@@ -56,7 +57,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       await Promise.all([
         supabase
           .from("services")
-          .select("id, name, description, cta_label, icon, is_published, order_index")
+          .select("id, name, slug, description, cta_label, icon, is_published, order_index")
           .eq("id", id)
           .maybeSingle(),
         supabase
@@ -77,6 +78,7 @@ export class SupabaseServiceRepository extends ServiceRepository {
       description: String(serviceData.description ?? ""),
       features: (pointsData ?? []).map((point) => String(point.label)),
       ctaLabel: String(serviceData.cta_label ?? "Cotizar"),
+      slug: String(serviceData.slug ?? ""),
       isPublished: Boolean(serviceData.is_published ?? true),
       orderIndex: Number(serviceData.order_index ?? 0),
     });
@@ -133,9 +135,59 @@ export class SupabaseServiceRepository extends ServiceRepository {
       description: String(data.description ?? input.description ?? ""),
       features,
       ctaLabel: String(data.cta_label ?? input.ctaLabel),
+      slug: String(input.slug),
       isPublished: Boolean(data.is_published ?? input.isPublished),
       orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
+  }
+
+  async update(id: string, input: UpdateServiceInput): Promise<Service> {
+    const supabase = await createSupabaseServerClient();
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatePayload: any = {};
+    if (input.title !== undefined) updatePayload.name = input.title;
+    if (input.slug !== undefined) updatePayload.slug = input.slug;
+    if (input.description !== undefined) updatePayload.description = input.description;
+    if (input.icon !== undefined) updatePayload.icon = input.icon;
+    if (input.ctaLabel !== undefined) updatePayload.cta_label = input.ctaLabel;
+    if (input.isPublished !== undefined) updatePayload.is_published = input.isPublished;
+
+    if (Object.keys(updatePayload).length > 0) {
+      const { error: updateError } = await supabase
+        .from("services")
+        .update(updatePayload)
+        .eq("id", id);
+      
+      if (updateError) {
+        throw new Error("No se pudo actualizar el servicio");
+      }
+    }
+
+    if (input.features !== undefined) {
+      await supabase.from("service_points").delete().eq("service_id", id);
+
+      const features = input.features.filter((feature) => feature.trim().length > 0);
+      if (features.length > 0) {
+        const pointsPayload = features.map((feature, index) => ({
+          service_id: id,
+          label: feature,
+          order_index: index,
+        }));
+        
+        const { error: pointsError } = await supabase.from("service_points").insert(pointsPayload);
+        if (pointsError) {
+          console.warn("No se pudieron actualizar los service_points:", pointsError.message);
+        }
+      }
+    }
+
+    const updated = await this.getById(id);
+    if (!updated) {
+      throw new Error("No se pudo cargar el servicio actualizado");
+    }
+
+    return updated;
   }
 
   async setVisibility(id: string, isPublished: boolean): Promise<Service> {

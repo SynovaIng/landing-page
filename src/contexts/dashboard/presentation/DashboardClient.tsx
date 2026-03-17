@@ -648,6 +648,31 @@ export default function DashboardClient({
       return;
     }
 
+    if (editContext.sectionKey === "services") {
+      const response = await fetch(`/api/dashboard/services/${editContext.rowId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(normalizedValues),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const updatedService = (await response.json()) as DashboardRowBase;
+
+      updateRowsForSection(editContext.sectionKey, (rows) =>
+        rows.map((row) =>
+          row.id === editContext.rowId ? (updatedService as typeof row) : row
+        ),
+      );
+
+      closeEditModal();
+      return;
+    }
+
     const updatedRow = {
       ...editingRow,
       ...normalizedValues,
