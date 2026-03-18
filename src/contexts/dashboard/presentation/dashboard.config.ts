@@ -54,6 +54,7 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
       { key: "name", label: "Nombre" },
       { key: "type", label: "Tipo" },
       { key: "location", label: "Ubicación" },
+      { key: "companyName", label: "Empresa" },
       { key: "projectServicesSummary", label: "Servicios" },
     ],
   },
@@ -74,7 +75,6 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     columns: [
       { key: "orderIndex", label: "Orden" },
       { key: "clientName", label: "Cliente" },
-      { key: "companyName", label: "Empresa" },
       { key: "stars", label: "Estrellas" },
       { key: "clientLocation", label: "Ubicación" },
       { key: "message", label: "Comentario" },
@@ -90,6 +90,7 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "type", label: "Tipo", type: "select", options: PROJECT_CATEGORIES },
     { key: "location", label: "Ubicación", type: "text" },
     { key: "projectServiceIds", label: "Servicios", type: "text" },
+    { key: "clientId", label: "Empresa", type: "select" },
     { key: "imageFiles", label: "Imágenes del proyecto", type: "file" },
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
@@ -103,7 +104,6 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   testimonials: [
-    { key: "clientId", label: "Empresa", type: "select" },
     { key: "projectId", label: "Proyecto", type: "select" },
     { key: "clientName", label: "Nombre cliente", type: "text" },
     { key: "clientInitials", label: "Iniciales", type: "text" },
@@ -130,6 +130,8 @@ export const createFieldDefaults: Record<
     imageFileKeys: [],
     imageOrderRefs: [],
     isActive: true,
+    clientId: null,
+    companyName: "",
   },
   services: {
     icon: "engineering",
@@ -141,8 +143,8 @@ export const createFieldDefaults: Record<
     isActive: true,
   },
   testimonials: {
-    clientId: "",
-    projectId: "",
+    clientId: null,
+    projectId: null,
     companyName: "",
     createCompany: false,
     companyLocation: "",

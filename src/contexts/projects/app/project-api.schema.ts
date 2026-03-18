@@ -9,6 +9,9 @@ export const projectMutationSchema = z.object({
   description: z.string().trim().optional().default(""),
   serviceIds: z.array(z.string().trim().min(1)).default([]),
   isActive: z.boolean().default(true),
+  clientId: z.string().trim().optional().nullable(),
+  companyName: z.string().trim().optional(),
+  createCompany: z.boolean().default(false),
 });
 
 export type ProjectMutationInput = z.infer<typeof projectMutationSchema>;
@@ -24,6 +27,8 @@ export const projectApiResponseSchema = z.object({
   projectServiceIds: z.array(z.string().trim().min(1)),
   orderIndex: z.number().int().min(0),
   isActive: z.boolean(),
+  clientId: z.string().trim().nullable(),
+  companyName: z.string(),
 });
 
 export type ProjectApiResponse = z.infer<typeof projectApiResponseSchema>;
@@ -90,6 +95,12 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
       description: String(formData.get("description") ?? ""),
       serviceIds: parseServiceIds(formData.get("serviceIds")),
       isActive: parseBoolean(formData.get("isActive"), true),
+      companyName: String(formData.get("companyName") ?? "").trim(),
+      createCompany: parseBoolean(formData.get("createCompany"), false),
+      clientId: (() => {
+        const raw = String(formData.get("clientId") ?? "").trim();
+        return raw.length > 0 ? raw : null;
+      })(),
     });
 
     if (!parsed.success) {
@@ -142,5 +153,7 @@ export const toProjectApiResponse = (project: Project): ProjectApiResponse => {
     projectServiceIds: project.serviceIds,
     orderIndex: project.orderIndex,
     isActive: project.isPublished,
+    clientId: project.clientId,
+    companyName: project.companyName,
   });
 };

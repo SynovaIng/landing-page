@@ -11,7 +11,6 @@ export interface CreateTestimonialInput {
   authorLocation: string;
   rating: number;
   isPublished: boolean;
-  clientId?: string | null;
   projectId?: string | null;
 }
 
@@ -22,7 +21,6 @@ export interface UpdateTestimonialInput {
   authorLocation: string;
   rating: number;
   isPublished: boolean;
-  clientId?: string | null;
   projectId?: string | null;
 }
 

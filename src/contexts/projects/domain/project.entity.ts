@@ -14,6 +14,8 @@ export interface ProjectProps {
   serviceIds: string[];
   isPublished?: boolean;
   orderIndex?: number;
+  clientId?: string | null;
+  companyName?: string;
 }
 
 export class Project {
@@ -27,6 +29,8 @@ export class Project {
   public readonly serviceIds: string[];
   public readonly isPublished: boolean;
   public readonly orderIndex: number;
+  public readonly clientId: string | null;
+  public readonly companyName: string;
 
   constructor(props: ProjectProps) {
     const normalizedImageUrls = Array.from(new Set((props.imageUrls ?? [props.imageUrl]).filter(Boolean)));
@@ -43,5 +47,7 @@ export class Project {
     this.serviceIds = props.serviceIds;
     this.isPublished = props.isPublished ?? true;
     this.orderIndex = props.orderIndex ?? 0;
+    this.clientId = props.clientId ?? null;
+    this.companyName = props.companyName ?? "";
   }
 }

@@ -1,4 +1,5 @@
 import { Service } from "diod";
+import { z } from "zod";
 
 import type { ProjectCategory } from "@/contexts/projects/domain/project.entity";
 import {
@@ -61,6 +62,30 @@ const isMissingOrderIndexError = (error: { code?: string; message?: string } | n
   return String(error.message ?? "").toLowerCase().includes("order_index");
 };
 
+type RelationWithName = { name?: string | null } | { name?: string | null }[] | null;
+
+const relationWithNameSchema = z
+  .union([
+    z.object({ name: z.string().optional().nullable() }),
+    z.array(z.object({ name: z.string().optional().nullable() })),
+  ])
+  .nullable()
+  .optional();
+
+const getCompanyNameFromRelation = (clientRelation: RelationWithName | undefined): string => {
+  const parsed = relationWithNameSchema.safeParse(clientRelation);
+
+  if (!parsed.success || !parsed.data) {
+    return "";
+  }
+
+  if (Array.isArray(parsed.data)) {
+    return String(parsed.data[0]?.name ?? "");
+  }
+
+  return String(parsed.data.name ?? "");
+};
+
 @Service()
 export class SupabaseProjectRepository extends ProjectRepository {
   async getAll(options?: GetAllProjectsOptions): Promise<Project[]> {
@@ -69,7 +94,7 @@ export class SupabaseProjectRepository extends ProjectRepository {
 
     const baseProjectQueryWithOrder = supabase
       .from("projects")
-      .select("id, name, description, location, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index, client_id, clients(name)")
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -78,14 +103,14 @@ export class SupabaseProjectRepository extends ProjectRepository {
       : await baseProjectQueryWithOrder.eq("is_published", true);
 
     const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
-      ? await (includeUnpublished
+      ?         await (includeUnpublished
           ? supabase
               .from("projects")
-              .select("id, name, description, location, type, is_published")
+              .select("id, name, description, location, type, is_published, client_id, clients(name)")
               .order("created_at", { ascending: false })
           : supabase
               .from("projects")
-              .select("id, name, description, location, type, is_published")
+              .select("id, name, description, location, type, is_published, client_id, clients(name)")
               .eq("is_published", true)
               .order("created_at", { ascending: false }))
       : projectQueryWithOrder;
@@ -143,6 +168,10 @@ export class SupabaseProjectRepository extends ProjectRepository {
       serviceIds: serviceIdsByProject.get(String(row.id)) ?? [],
       isPublished: Boolean((row as { is_published?: boolean }).is_published ?? true),
       orderIndex: Number((row as { order_index?: number }).order_index ?? 0),
+      clientId: (row as { client_id?: string | null }).client_id
+        ? String((row as { client_id?: string | null }).client_id)
+        : null,
+      companyName: getCompanyNameFromRelation((row as { clients?: RelationWithName }).clients),
     }));
   }
 
@@ -150,14 +179,14 @@ export class SupabaseProjectRepository extends ProjectRepository {
     const supabase = await createSupabaseServerClient();
     const projectQueryWithOrder = await supabase
       .from("projects")
-      .select("id, name, description, location, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index, client_id, clients(name)")
       .eq("id", id)
       .maybeSingle();
 
     const projectQuery = isMissingOrderIndexError(projectQueryWithOrder.error)
       ? await supabase
           .from("projects")
-          .select("id, name, description, location, type, is_published")
+          .select("id, name, description, location, type, is_published, client_id, clients(name)")
           .eq("id", id)
           .maybeSingle()
       : projectQueryWithOrder;
@@ -196,6 +225,10 @@ export class SupabaseProjectRepository extends ProjectRepository {
       serviceIds: (projectServicesData ?? []).map((item) => String(item.service_id)),
       isPublished: Boolean((data as { is_published?: boolean }).is_published ?? true),
       orderIndex: Number((data as { order_index?: number }).order_index ?? 0),
+      clientId: (data as { client_id?: string | null }).client_id
+        ? String((data as { client_id?: string | null }).client_id)
+        : null,
+      companyName: getCompanyNameFromRelation((data as { clients?: RelationWithName }).clients),
     });
   }
 
@@ -210,6 +243,34 @@ export class SupabaseProjectRepository extends ProjectRepository {
 
     const nextOrderIndex = Number(maxOrderProject?.order_index ?? -1) + 1;
 
+    let resolvedClientId = input.clientId ?? null;
+
+    if (!resolvedClientId && input.createCompany && input.companyName && input.companyName.trim() !== "") {
+      const companyNameTrimmed = input.companyName.trim();
+      
+      const { data: existingClient } = await supabase
+        .from("clients")
+        .select("id")
+        .ilike("name", companyNameTrimmed)
+        .maybeSingle();
+
+      if (existingClient) {
+        resolvedClientId = String(existingClient.id);
+      } else {
+        const { data: newClient, error: clientError } = await supabase
+          .from("clients")
+          .insert({
+            name: companyNameTrimmed,
+          })
+          .select("id")
+          .single();
+
+        if (!clientError && newClient) {
+          resolvedClientId = String(newClient.id);
+        }
+      }
+    }
+
     const { data, error } = await supabase
       .from("projects")
       .insert({
@@ -219,8 +280,9 @@ export class SupabaseProjectRepository extends ProjectRepository {
         type: toDbProjectCategory(input.category),
         is_published: input.isPublished,
         order_index: nextOrderIndex,
+        client_id: resolvedClientId,
       })
-      .select("id, name, description, location, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index, client_id, clients(name)")
       .single();
 
     if (error || !data) {
@@ -270,11 +332,43 @@ export class SupabaseProjectRepository extends ProjectRepository {
       serviceIds: uniqueServiceIds,
       isPublished: Boolean(data.is_published ?? input.isPublished),
       orderIndex: Number(data.order_index ?? nextOrderIndex),
+      clientId: (data as { client_id?: string | null }).client_id
+        ? String((data as { client_id?: string | null }).client_id)
+        : (input.clientId ?? null),
+      companyName: getCompanyNameFromRelation((data as { clients?: RelationWithName }).clients),
     });
   }
 
   async update(input: UpdateProjectInput): Promise<Project> {
     const supabase = await createSupabaseServerClient();
+
+    let resolvedClientId = input.clientId ?? null;
+
+    if (!resolvedClientId && input.createCompany && input.companyName && input.companyName.trim() !== "") {
+      const companyNameTrimmed = input.companyName.trim();
+      
+      const { data: existingClient } = await supabase
+        .from("clients")
+        .select("id")
+        .ilike("name", companyNameTrimmed)
+        .maybeSingle();
+
+      if (existingClient) {
+        resolvedClientId = String(existingClient.id);
+      } else {
+        const { data: newClient, error: clientError } = await supabase
+          .from("clients")
+          .insert({
+            name: companyNameTrimmed,
+          })
+          .select("id")
+          .single();
+
+        if (!clientError && newClient) {
+          resolvedClientId = String(newClient.id);
+        }
+      }
+    }
 
     const { data, error } = await supabase
       .from("projects")
@@ -284,9 +378,10 @@ export class SupabaseProjectRepository extends ProjectRepository {
         location: input.location,
         type: toDbProjectCategory(input.category),
         is_published: input.isPublished,
+        client_id: resolvedClientId,
       })
       .eq("id", input.id)
-      .select("id, name, description, location, type, is_published, order_index")
+      .select("id, name, description, location, type, is_published, order_index, client_id, clients(name)")
       .single();
 
     if (error || !data) {
@@ -388,6 +483,10 @@ export class SupabaseProjectRepository extends ProjectRepository {
       serviceIds: uniqueServiceIds,
       isPublished: Boolean(data.is_published ?? input.isPublished),
       orderIndex: Number(data.order_index ?? 0),
+      clientId: (data as { client_id?: string | null }).client_id
+        ? String((data as { client_id?: string | null }).client_id)
+        : (input.clientId ?? null),
+      companyName: getCompanyNameFromRelation((data as { clients?: RelationWithName }).clients),
     });
   }
 

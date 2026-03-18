@@ -72,6 +72,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     isPublished: parsedInput.isActive,
     serviceIds: parsedInput.serviceIds,
     imageUrls,
+    clientId: parsedInput.clientId ?? null,
+    companyName: parsedInput.companyName,
+    createCompany: parsedInput.createCompany,
   });
 
   return NextResponse.json(toProjectApiResponse(updated));

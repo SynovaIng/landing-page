@@ -21,6 +21,8 @@ export interface DashboardProjectRow extends DashboardRowBase {
     name: string;
     icon: string;
   }[];
+  clientId: string | null;
+  companyName: string;
 }
 
 export interface DashboardServiceRow extends DashboardRowBase {
@@ -33,10 +35,8 @@ export interface DashboardServiceRow extends DashboardRowBase {
 }
 
 export interface DashboardTestimonialRow extends DashboardRowBase {
-  clientId: string;
-  projectId: string;
+  projectId: string | null;
   projectName: string;
-  companyName: string;
   clientName: string;
   clientInitials: string;
   clientLocation: string;

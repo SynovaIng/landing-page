@@ -17,6 +17,8 @@ export default async function ProyectosPage() {
     serviceIds: project.serviceIds,
     isPublished: project.isPublished,
     orderIndex: project.orderIndex,
+    clientId: project.clientId,
+    companyName: project.companyName,
   }));
   const plainServices = services.map((service) => ({
     id: service.id,

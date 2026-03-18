@@ -93,46 +93,37 @@ export default function DashboardClient({
     createOrderSavingState(),
   );
 
+  const fetchClients = async () => {
+    try {
+      const response = await fetch("/api/dashboard/clients", { cache: "no-store" });
+      if (!response.ok) return [];
+      const payload = (await response.json()) as {
+        clients?: { id?: string; name?: string; location?: string }[];
+      };
+      return (payload.clients ?? [])
+        .map((client) => ({
+          id: String(client.id ?? ""),
+          name: String(client.name ?? ""),
+          location: String(client.location ?? ""),
+        }))
+        .filter((client) => client.id.length > 0 && client.name.length > 0);
+    } catch {
+      return [];
+    }
+  };
+
+  const loadClientOptions = async () => {
+    const clients = await fetchClients();
+    setClientOptions(clients);
+  };
+
   useEffect(() => {
     let isActive = true;
-
-    const loadClientOptions = async () => {
-      try {
-        const response = await fetch("/api/dashboard/clients", { cache: "no-store" });
-
-        if (!response.ok) {
-          if (isActive) {
-            setClientOptions([]);
-          }
-          return;
-        }
-
-        const payload = (await response.json()) as {
-          clients?: { id?: string; name?: string; location?: string }[];
-        };
-
-        if (!isActive) {
-          return;
-        }
-
-        setClientOptions(
-          (payload.clients ?? [])
-            .map((client) => ({
-              id: String(client.id ?? ""),
-              name: String(client.name ?? ""),
-              location: String(client.location ?? ""),
-            }))
-            .filter((client) => client.id.length > 0 && client.name.length > 0),
-        );
-      } catch {
-        if (isActive) {
-          setClientOptions([]);
-        }
-      }
+    const init = async () => {
+      const clients = await fetchClients();
+      if (isActive) setClientOptions(clients);
     };
-
-    void loadClientOptions();
-
+    void init();
     return () => {
       isActive = false;
     };
@@ -380,6 +371,8 @@ export default function DashboardClient({
       projectServiceNames?: string[];
       projectServicesSummary?: string;
       projectServices?: { id: string; name: string; icon: string }[];
+      clientId?: string | null;
+      companyName?: string;
     };
 
     const serviceIds = Array.isArray(projectRow.projectServiceIds)
@@ -397,9 +390,15 @@ export default function DashboardClient({
     });
 
     const serviceNames = serviceItems.map((serviceItem) => serviceItem.name);
+    const clientId = projectRow.clientId ? String(projectRow.clientId) : null;
+    const matchedClient = clientId
+      ? clientOptions.find((clientOption) => clientOption.id === clientId)
+      : undefined;
 
     return {
       ...projectRow,
+      clientId,
+      companyName: matchedClient?.name ?? projectRow.companyName ?? "",
       projectServices: serviceItems,
       projectServiceIds: serviceIds,
       projectServiceNames: serviceNames,
@@ -412,17 +411,19 @@ export default function DashboardClient({
 
   const enrichTestimonialRow = (row: DashboardRowBase) => {
     const testimonialRow = row as DashboardRowBase & {
-      projectId?: string;
+      projectId?: string | null;
       projectName?: string;
     };
 
-    const projectId = String(testimonialRow.projectId ?? "").trim();
-    const matchedProject = projectOptions.find((projectOption) => projectOption.id === projectId);
+    const projectId = testimonialRow.projectId ? String(testimonialRow.projectId).trim() : null;
+    const matchedProject = projectId
+      ? projectOptions.find((projectOption) => projectOption.id === projectId)
+      : undefined;
 
     return {
       ...testimonialRow,
       projectId,
-      projectName: matchedProject?.name ?? testimonialRow.projectName ?? "—",
+      projectName: matchedProject?.name ?? testimonialRow.projectName ?? "",
     } as DashboardRowBase;
   };
 
@@ -448,6 +449,12 @@ export default function DashboardClient({
         normalizedValues[field.key] = Array.isArray(rawValue)
           ? rawValue.map((value) => String(value))
           : [];
+        return;
+      }
+
+      if (field.key === "clientId" || field.key === "projectId") {
+        const normalizedId = typeof rawValue === "string" ? rawValue.trim() : rawValue;
+        normalizedValues[field.key] = normalizedId ? String(normalizedId) : null;
         return;
       }
 
@@ -488,11 +495,7 @@ export default function DashboardClient({
         editContext.sectionKey === "testimonials"
           ? {
               ...normalizedValues,
-              clientId: String(normalizedValues.clientId ?? "").trim() || null,
-              projectId: String(normalizedValues.projectId ?? "").trim() || null,
-              companyName: String(draftValues.companyName ?? "").trim(),
-              createCompany: Boolean(draftValues.createCompany),
-              companyLocation: String(draftValues.companyLocation ?? "").trim(),
+              projectId: normalizedValues.projectId ?? null,
             }
           : normalizedValues;
 
@@ -514,6 +517,7 @@ export default function DashboardClient({
         formData.set("description", String(normalizedValues.description ?? ""));
         formData.set("isActive", String(Boolean(normalizedValues.isActive)));
         formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
+        formData.set("clientId", String(normalizedValues.clientId ?? ""));
 
         const imageFiles = Array.isArray(normalizedValues.imageFiles)
           ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
@@ -545,6 +549,9 @@ export default function DashboardClient({
       updateRowsForSection(editContext.sectionKey, (rows) =>
         normalizeOrderRows([...rows, normalizedCreatedRow]),
       );
+      if (editContext.sectionKey === "projects" && Boolean(draftValues.createCompany)) {
+        void loadClientOptions();
+      }
       closeEditModal();
       return;
     }
@@ -561,6 +568,9 @@ export default function DashboardClient({
       formData.set("description", String(normalizedValues.description ?? ""));
       formData.set("isActive", String(Boolean(normalizedValues.isActive)));
       formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
+      formData.set("clientId", String(normalizedValues.clientId ?? ""));
+      formData.set("companyName", String(draftValues.companyName ?? ""));
+      formData.set("createCompany", String(Boolean(draftValues.createCompany)));
 
       const imageFiles = Array.isArray(normalizedValues.imageFiles)
         ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
@@ -609,6 +619,10 @@ export default function DashboardClient({
         rows.map((row) => (row.id === editContext.rowId ? (updatedProject as typeof row) : row)),
       );
 
+      if (Boolean(draftValues.createCompany)) {
+        void loadClientOptions();
+      }
+
       closeEditModal();
       return;
     }
@@ -616,11 +630,7 @@ export default function DashboardClient({
     if (editContext.sectionKey === "testimonials") {
       const testimonialPayload = {
         ...normalizedValues,
-        clientId: String(normalizedValues.clientId ?? "").trim() || null,
-        projectId: String(normalizedValues.projectId ?? "").trim() || null,
-        companyName: String(draftValues.companyName ?? "").trim(),
-        createCompany: Boolean(draftValues.createCompany),
-        companyLocation: String(draftValues.companyLocation ?? "").trim(),
+        projectId: normalizedValues.projectId ?? null,
       };
 
       const response = await fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {

@@ -23,7 +23,9 @@ export async function resolveReviewCompany({
   companyLocation,
 }: ResolveReviewCompanyInput): Promise<ResolvedReviewCompany> {
   const normalizedClientId = String(clientId ?? "").trim();
-  const normalizedCompanyName = companyName.trim();
+  const normalizedCompanyName = ["-", "—"].includes(companyName.trim()) 
+    ? "" 
+    : companyName.trim();
   const normalizedCompanyLocation = companyLocation.trim();
 
   if (createCompany) {

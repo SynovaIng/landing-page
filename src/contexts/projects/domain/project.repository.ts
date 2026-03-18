@@ -12,6 +12,9 @@ export interface CreateProjectInput {
   isPublished: boolean;
   serviceIds: string[];
   imageUrls?: string[];
+  clientId?: string | null;
+  companyName?: string;
+  createCompany?: boolean;
 }
 
 export interface UpdateProjectInput {
@@ -23,6 +26,9 @@ export interface UpdateProjectInput {
   isPublished: boolean;
   serviceIds: string[];
   imageUrls?: string[];
+  clientId?: string | null;
+  companyName?: string;
+  createCompany?: boolean;
 }
 
 export abstract class ProjectRepository {
