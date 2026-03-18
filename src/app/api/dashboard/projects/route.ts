@@ -32,6 +32,9 @@ export async function POST(request: Request) {
     isPublished: parsedInput.isActive,
     serviceIds: parsedInput.serviceIds,
     imageUrls,
+    clientId: parsedInput.clientId ?? null,
+    companyName: parsedInput.companyName,
+    createCompany: parsedInput.createCompany,
   });
 
   return NextResponse.json(toProjectApiResponse(created));

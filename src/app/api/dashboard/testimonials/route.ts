@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     id: created.id,
-    clientId: created.companyId,
+    clientId: created.clientId,
     projectId: created.projectId,
     companyName: created.companyName || resolvedCompany.companyName,
     clientName: created.authorName,

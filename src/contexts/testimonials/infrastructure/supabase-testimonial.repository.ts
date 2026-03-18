@@ -1,4 +1,5 @@
 import { Service } from "diod";
+import { z } from "zod";
 
 import { Testimonial } from "@/contexts/testimonials/domain/testimonial.entity";
 import type {
@@ -18,6 +19,30 @@ const toInitials = (name: string) => {
     .join("") || "CL";
 };
 
+type RelationWithName = { name?: string | null } | { name?: string | null }[] | null;
+
+const relationWithNameSchema = z
+  .union([
+    z.object({ name: z.string().optional().nullable() }),
+    z.array(z.object({ name: z.string().optional().nullable() })),
+  ])
+  .nullable()
+  .optional();
+
+const getNameFromRelation = (relation: unknown): string => {
+  const parsed = relationWithNameSchema.safeParse(relation);
+
+  if (!parsed.success || !parsed.data) {
+    return "";
+  }
+
+  if (Array.isArray(parsed.data)) {
+    return String(parsed.data[0]?.name ?? "");
+  }
+
+  return String(parsed.data.name ?? "");
+};
+
 const isMissingOrderIndexError = (error: { code?: string; message?: string } | null): boolean => {
   if (!error) {
     return false;
@@ -32,30 +57,12 @@ const isMissingOrderIndexError = (error: { code?: string; message?: string } | n
 
 @Service()
 export class SupabaseTestimonialRepository extends TestimonialRepository {
-  private getClientNameFromRelation(clientRelation: unknown): string {
-    if (Array.isArray(clientRelation)) {
-      const first = clientRelation[0] as { name?: unknown } | undefined;
-      return String(first?.name ?? "");
-    }
-
-    if (clientRelation && typeof clientRelation === "object") {
-      return String((clientRelation as { name?: unknown }).name ?? "");
-    }
-
-    return "";
+  private getClientNameFromRelation(clientRelation: RelationWithName | undefined): string {
+    return getNameFromRelation(clientRelation);
   }
 
-  private getProjectNameFromRelation(projectRelation: unknown): string {
-    if (Array.isArray(projectRelation)) {
-      const first = projectRelation[0] as { name?: unknown } | undefined;
-      return String(first?.name ?? "");
-    }
-
-    if (projectRelation && typeof projectRelation === "object") {
-      return String((projectRelation as { name?: unknown }).name ?? "");
-    }
-
-    return "";
+  private getProjectNameFromRelation(projectRelation: RelationWithName | undefined): string {
+    return getNameFromRelation(projectRelation);
   }
 
   async getAll(options?: GetAllTestimonialsOptions): Promise<Testimonial[]> {
@@ -99,10 +106,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(review.client_location ?? ""),
       rating: Number(review.stars ?? 0),
       isPublished: Boolean((review as { is_published?: boolean }).is_published ?? true),
-      companyId: review.client_id ? String(review.client_id) : null,
+      clientId: review.client_id ? String(review.client_id) : null,
       projectId: review.project_id ? String(review.project_id) : null,
-      companyName: this.getClientNameFromRelation((review as { clients?: unknown }).clients),
-      projectName: this.getProjectNameFromRelation((review as { projects?: unknown }).projects),
+      companyName: this.getClientNameFromRelation((review as { clients?: RelationWithName }).clients),
+      projectName: this.getProjectNameFromRelation((review as { projects?: RelationWithName }).projects),
       orderIndex: Number((review as { order_index?: number }).order_index ?? 0),
     }));
   }
@@ -138,10 +145,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? ""),
       rating: Number(data.stars ?? 0),
       isPublished: Boolean((data as { is_published?: boolean }).is_published ?? true),
-      companyId: data.client_id ? String(data.client_id) : null,
+      clientId: data.client_id ? String(data.client_id) : null,
       projectId: data.project_id ? String(data.project_id) : null,
-      companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
-      projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
+      companyName: this.getClientNameFromRelation((data as { clients?: RelationWithName }).clients),
+      projectName: this.getProjectNameFromRelation((data as { projects?: RelationWithName }).projects),
       orderIndex: Number((data as { order_index?: number }).order_index ?? 0),
     });
   }
@@ -184,10 +191,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
       isPublished: Boolean(data.is_published ?? input.isPublished),
-      companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
+      clientId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
-      companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
-      projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
+      companyName: this.getClientNameFromRelation((data as { clients?: RelationWithName }).clients),
+      projectName: this.getProjectNameFromRelation((data as { projects?: RelationWithName }).projects),
       orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
   }
@@ -222,10 +229,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
       isPublished: Boolean(data.is_published ?? input.isPublished),
-      companyId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
+      clientId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
-      companyName: this.getClientNameFromRelation((data as { clients?: unknown }).clients),
-      projectName: this.getProjectNameFromRelation((data as { projects?: unknown }).projects),
+      companyName: this.getClientNameFromRelation((data as { clients?: RelationWithName }).clients),
+      projectName: this.getProjectNameFromRelation((data as { projects?: RelationWithName }).projects),
       orderIndex: Number(data.order_index ?? 0),
     });
   }

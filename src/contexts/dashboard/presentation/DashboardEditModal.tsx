@@ -163,7 +163,7 @@ export default function DashboardEditModal({
   }, [imagePreviewUrls]);
 
   useEffect(() => {
-    const selectedProjectId = String(values.projectId ?? "").trim();
+    const selectedProjectId = values.projectId ? String(values.projectId).trim() : null;
 
     if (!selectedProjectId) {
       return;
@@ -505,7 +505,7 @@ export default function DashboardEditModal({
             }
 
             if (field.key === "clientId") {
-              const selectedClientId = String(value ?? "");
+              const selectedClientId = value ? String(value) : null;
               const companyName = String(values.companyName ?? "");
               const isCreatingCompany = Boolean(values.createCompany);
               const companyLocation = String(values.companyLocation ?? "");
@@ -513,10 +513,7 @@ export default function DashboardEditModal({
               const filteredClients = clientOptions
                 .filter((clientOption) =>
                   clientOption.name.toLowerCase().includes(companyName.trim().toLowerCase()),
-                )
-                .slice(0, 6);
-
-              const hasCompanySearch = companyName.trim().length > 0;
+                );
 
               const updateFromCompanyName = (nextCompanyName: string) => {
                 onValueChange("companyName", nextCompanyName);
@@ -530,7 +527,7 @@ export default function DashboardEditModal({
                     clientOption.name.trim().toLowerCase() === nextCompanyName.trim().toLowerCase(),
                 );
 
-                onValueChange(field.key, exactMatch?.id ?? "");
+                onValueChange(field.key, exactMatch?.id ?? null);
               };
 
               return (
@@ -547,12 +544,12 @@ export default function DashboardEditModal({
                       placeholder={
                         isCreatingCompany
                           ? "Escribe el nombre de la nueva empresa"
-                          : "Escribe y selecciona una empresa existente"
+                          : "Selecciona o busca una empresa"
                       }
                       className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
                     />
 
-                    {!isCreatingCompany && hasCompanySearch ? (
+                    {!isCreatingCompany ? (
                       <div className="max-h-36 overflow-y-auto rounded-lg border border-border bg-surface">
                         {filteredClients.length === 0 ? (
                           <p className="px-3 py-2 text-xs text-on-surface-muted">
@@ -594,7 +591,7 @@ export default function DashboardEditModal({
                             onValueChange("createCompany", nextCreateValue);
 
                             if (nextCreateValue) {
-                              onValueChange(field.key, "");
+                              onValueChange(field.key, null);
                               return;
                             }
 
@@ -603,7 +600,7 @@ export default function DashboardEditModal({
                                 clientOption.name.trim().toLowerCase() === companyName.trim().toLowerCase(),
                             );
 
-                            onValueChange(field.key, exactMatch?.id ?? "");
+                            onValueChange(field.key, exactMatch?.id ?? null);
                           }}
                         />
                         <span className="h-6 w-11 rounded-full bg-border transition-colors peer-checked:bg-secondary" />
@@ -635,7 +632,7 @@ export default function DashboardEditModal({
             }
 
             if (field.key === "projectId") {
-              const selectedProjectId = String(value ?? "").trim();
+              const selectedProjectId = value ? String(value).trim() : null;
               const normalizedSearch = projectSearchTerm.trim().toLowerCase();
               const filteredProjects = projectOptions
                 .filter((projectOption) => projectOption.name.toLowerCase().includes(normalizedSearch))
@@ -660,9 +657,9 @@ export default function DashboardEditModal({
                             projectOption.name.trim().toLowerCase() === nextSearch.trim().toLowerCase(),
                         );
 
-                        onValueChange(field.key, exactMatch?.id ?? "");
+                        onValueChange(field.key, exactMatch?.id ?? null);
                       }}
-                      placeholder="Buscar proyecto"
+                      placeholder="Sin proyecto asignado - Buscar proyecto"
                       className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-on-surface shadow-sm focus:border-primary focus:outline-none"
                     />
 

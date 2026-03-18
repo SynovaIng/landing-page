@@ -65,7 +65,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
   return NextResponse.json({
     id: updated.id,
-    clientId: updated.companyId,
+    clientId: updated.clientId,
     projectId: updated.projectId,
     companyName: updated.companyName || resolvedCompany.companyName,
     clientName: updated.authorName,

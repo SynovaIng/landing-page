@@ -311,7 +311,7 @@ export default function DashboardTable({
 
   return (
     <div className="overflow-x-auto overflow-y-visible">
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext id="dashboard-table-dnd" sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <table className="min-w-full">
           <thead className="bg-surface-alt text-left">
             <tr>

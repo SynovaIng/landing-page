@@ -44,6 +44,8 @@ export function mapDashboardData({
       location: project.location,
       imageUrl: project.imageUrl,
       imageUrls: project.imageUrls,
+      clientId: project.clientId,
+      companyName: project.companyName,
       orderIndex: project.orderIndex,
       isActive: project.isPublished,
     })),
@@ -59,14 +61,13 @@ export function mapDashboardData({
       isActive: service.isPublished,
     })),
     testimonials: testimonials.map((testimonial) => ({
-      projectId: testimonial.projectId ?? "",
-      projectName:
-        testimonial.projectId && testimonial.projectId.length > 0
-          ? (projectNamesById.get(testimonial.projectId) ?? "—")
-          : "—",
+      projectId: testimonial.projectId,
+      projectName: testimonial.projectId
+        ? (projectNamesById.get(testimonial.projectId) ?? "")
+        : "",
       id: testimonial.id,
-      clientId: testimonial.companyId ?? "",
-      companyName: testimonial.companyName || "-",
+      clientId: testimonial.clientId,
+      companyName: testimonial.companyName || "",
       clientName: testimonial.authorName,
       clientInitials: testimonial.authorInitials,
       clientLocation: testimonial.authorLocation,
