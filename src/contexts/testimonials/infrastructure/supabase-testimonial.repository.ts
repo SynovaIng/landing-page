@@ -71,7 +71,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const queryBaseWithOrder = supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, projects(name)")
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -83,11 +83,11 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       ? await (includeUnpublished
           ? supabase
               .from("reviews")
-              .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, clients(name), projects(name)")
+              .select("id, message, client_name, client_location, stars, is_published, project_id, projects(name)")
               .order("created_at", { ascending: false })
           : supabase
               .from("reviews")
-              .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, clients(name), projects(name)")
+              .select("id, message, client_name, client_location, stars, is_published, project_id, projects(name)")
               .eq("is_published", true)
               .order("created_at", { ascending: false }))
       : queryWithOrder;
@@ -117,7 +117,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const queryWithOrder = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, projects(name)")
       .eq("id", id)
       .maybeSingle();
 
