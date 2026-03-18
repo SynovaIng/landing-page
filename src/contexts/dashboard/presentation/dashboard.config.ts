@@ -75,7 +75,6 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
     columns: [
       { key: "orderIndex", label: "Orden" },
       { key: "clientName", label: "Cliente" },
-      { key: "companyName", label: "Empresa" },
       { key: "stars", label: "Estrellas" },
       { key: "clientLocation", label: "Ubicación" },
       { key: "message", label: "Comentario" },
@@ -105,7 +104,6 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
     { key: "isActive", label: "Visible", type: "checkbox" },
   ],
   testimonials: [
-    { key: "clientId", label: "Empresa", type: "select" },
     { key: "projectId", label: "Proyecto", type: "select" },
     { key: "clientName", label: "Nombre cliente", type: "text" },
     { key: "clientInitials", label: "Iniciales", type: "text" },

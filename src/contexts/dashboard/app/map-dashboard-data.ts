@@ -66,8 +66,6 @@ export function mapDashboardData({
         ? (projectNamesById.get(testimonial.projectId) ?? "")
         : "",
       id: testimonial.id,
-      clientId: testimonial.clientId,
-      companyName: testimonial.companyName || "",
       clientName: testimonial.authorName,
       clientInitials: testimonial.authorInitials,
       clientLocation: testimonial.authorLocation,

@@ -495,11 +495,7 @@ export default function DashboardClient({
         editContext.sectionKey === "testimonials"
           ? {
               ...normalizedValues,
-              clientId: normalizedValues.clientId ?? null,
               projectId: normalizedValues.projectId ?? null,
-              companyName: String(draftValues.companyName ?? "").trim(),
-              createCompany: Boolean(draftValues.createCompany),
-              companyLocation: String(draftValues.companyLocation ?? "").trim(),
             }
           : normalizedValues;
 
@@ -634,13 +630,7 @@ export default function DashboardClient({
     if (editContext.sectionKey === "testimonials") {
       const testimonialPayload = {
         ...normalizedValues,
-        clientId: normalizedValues.clientId ?? null,
         projectId: normalizedValues.projectId ?? null,
-        companyName: ["-", "—"].includes(String(draftValues.companyName ?? "").trim())
-          ? ""
-          : String(draftValues.companyName ?? "").trim(),
-        createCompany: Boolean(draftValues.createCompany),
-        companyLocation: String(draftValues.companyLocation ?? "").trim(),
       };
 
       const response = await fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {

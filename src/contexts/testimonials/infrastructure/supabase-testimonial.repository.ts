@@ -106,9 +106,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(review.client_location ?? ""),
       rating: Number(review.stars ?? 0),
       isPublished: Boolean((review as { is_published?: boolean }).is_published ?? true),
-      clientId: review.client_id ? String(review.client_id) : null,
       projectId: review.project_id ? String(review.project_id) : null,
-      companyName: this.getClientNameFromRelation((review as { clients?: RelationWithName }).clients),
       projectName: this.getProjectNameFromRelation((review as { projects?: RelationWithName }).projects),
       orderIndex: Number((review as { order_index?: number }).order_index ?? 0),
     }));
@@ -145,9 +143,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? ""),
       rating: Number(data.stars ?? 0),
       isPublished: Boolean((data as { is_published?: boolean }).is_published ?? true),
-      clientId: data.client_id ? String(data.client_id) : null,
       projectId: data.project_id ? String(data.project_id) : null,
-      companyName: this.getClientNameFromRelation((data as { clients?: RelationWithName }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: RelationWithName }).projects),
       orderIndex: Number((data as { order_index?: number }).order_index ?? 0),
     });
@@ -172,11 +168,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         client_location: input.authorLocation,
         stars: input.rating,
         is_published: input.isPublished,
-        client_id: input.clientId ?? null,
         project_id: input.projectId ?? null,
         order_index: nextOrderIndex,
       })
-      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, projects(name)")
       .single();
 
     if (error || !data) {
@@ -191,9 +186,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
       isPublished: Boolean(data.is_published ?? input.isPublished),
-      clientId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
-      companyName: this.getClientNameFromRelation((data as { clients?: RelationWithName }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: RelationWithName }).projects),
       orderIndex: Number(data.order_index ?? nextOrderIndex),
     });
@@ -210,11 +203,10 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         client_location: input.authorLocation,
         stars: input.rating,
         is_published: input.isPublished,
-        client_id: input.clientId ?? null,
         project_id: input.projectId ?? null,
       })
       .eq("id", id)
-      .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, order_index, clients(name), projects(name)")
+      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, projects(name)")
       .single();
 
     if (error || !data) {
@@ -229,9 +221,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       authorLocation: String(data.client_location ?? input.authorLocation),
       rating: Number(data.stars ?? input.rating),
       isPublished: Boolean(data.is_published ?? input.isPublished),
-      clientId: data.client_id ? String(data.client_id) : (input.clientId ?? null),
       projectId: data.project_id ? String(data.project_id) : (input.projectId ?? null),
-      companyName: this.getClientNameFromRelation((data as { clients?: RelationWithName }).clients),
       projectName: this.getProjectNameFromRelation((data as { projects?: RelationWithName }).projects),
       orderIndex: Number(data.order_index ?? 0),
     });
