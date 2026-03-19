@@ -4,17 +4,12 @@ import { container } from "@/config/container";
 import ContactCard from "@/contexts/contacto/presentation/ContactCard";
 import CopyEmailButton from "@/contexts/contacto/presentation/CopyEmailButton";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { CONTACT_INFO } from "@/contexts/shared/app/contact-info";
 
 export const metadata: Metadata = {
   title: "Contacto",
   description:
     "Contáctanos para cotizar tu proyecto eléctrico. Respondemos en menos de 24 horas. Atención de emergencias 24/7.",
-};
-
-const CONTACT_INFO = {
-  email: "contacto@synova.cl",
-  whatsappNumber: "+56976210953",
-  phoneNumbers: ["+56912345678"],
 };
 
 export default async function ContactoPage({
