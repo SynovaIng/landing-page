@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { ContainerBuilder } from "diod";
 
 import { registerAuthContainer } from "@/contexts/auth/app/auth.container";
+import { registerContactoContainer } from "@/contexts/contacto/app/contacto.container";
 import { registerProjectsContainer } from "@/contexts/projects/app/projects.container";
 import { registerServicesContainer } from "@/contexts/services/app/services.container";
 import { registerSharedContainer } from "@/contexts/shared/app/shared.container";
@@ -11,6 +12,7 @@ import { registerTestimonialsContainer } from "@/contexts/testimonials/app/testi
 const builder = new ContainerBuilder();
 
 registerAuthContainer(builder);
+registerContactoContainer(builder);
 registerProjectsContainer(builder);
 registerServicesContainer(builder);
 registerSharedContainer(builder);
