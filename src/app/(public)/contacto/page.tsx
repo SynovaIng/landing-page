@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 
+import { sendContactFormAction } from "@/app/(public)/contacto/actions";
 import { container } from "@/config/container";
 import ContactCard from "@/contexts/contacto/presentation/ContactCard";
 import CopyEmailButton from "@/contexts/contacto/presentation/CopyEmailButton";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { CONTACT_INFO } from "@/contexts/shared/app/contact-info";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -11,18 +13,12 @@ export const metadata: Metadata = {
     "Contáctanos para cotizar tu proyecto eléctrico. Respondemos en menos de 24 horas. Atención de emergencias 24/7.",
 };
 
-const CONTACT_INFO = {
-  email: "contacto@synova.cl",
-  whatsappNumber: "+56976210953",
-  phoneNumbers: ["+56912345678"],
-};
-
 export default async function ContactoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ servicio?: string }>;
+  searchParams: Promise<{ servicio?: string; sent?: string; error?: string }>;
 }) {
-  const { servicio } = await searchParams;
+  const { servicio, sent, error } = await searchParams;
   const services = await container.get(GetAllServicesUseCase).execute();
   const selectedService = services.find((s) => s.id === servicio)?.id ?? "";
   return (
@@ -54,11 +50,17 @@ export default async function ContactoPage({
             {/* Form */}
             <div className="lg:col-span-7 xl:col-span-8">
               <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10 shadow-xl shadow-border/50">
-                <form
-                  action="#"
-                  method="POST"
-                  className="space-y-6"
-                >
+                {sent === "1" && (
+                  <div className="mb-6 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-on-surface">
+                    Tu mensaje fue enviado correctamente. Te responderemos pronto.
+                  </div>
+                )}
+                {error && (
+                  <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {decodeURIComponent(error)}
+                  </div>
+                )}
+                <form action={sendContactFormAction} className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
                       <label
@@ -77,6 +79,7 @@ export default async function ContactoPage({
                           id="name"
                           name="name"
                           type="text"
+                          required
                           autoComplete="name"
                           placeholder="Juan Pérez"
                           className="block w-full rounded-lg border-0 bg-surface py-3 pl-10 text-on-surface shadow-sm ring-1 ring-inset ring-border placeholder:text-on-surface-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
@@ -100,6 +103,7 @@ export default async function ContactoPage({
                           id="phone"
                           name="phone"
                           type="tel"
+                          required
                           autoComplete="tel"
                           placeholder="+56 9 1234 5678"
                           className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
@@ -125,6 +129,7 @@ export default async function ContactoPage({
                           id="email"
                           name="email"
                           type="email"
+                          required
                           autoComplete="email"
                           placeholder="juan@empresa.com"
                           className="block w-full rounded-lg border-0 bg-white py-3 pl-10 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
@@ -173,6 +178,7 @@ export default async function ContactoPage({
                         id="message"
                         name="message"
                         rows={4}
+                        required
                         placeholder="Describa brevemente su requerimiento..."
                         className="block w-full rounded-lg border-0 bg-surface py-3 px-4 text-on-surface shadow-sm ring-1 ring-inset ring-border placeholder:text-on-surface-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm transition-all"
                       />
