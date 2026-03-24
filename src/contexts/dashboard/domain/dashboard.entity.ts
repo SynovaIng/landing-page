@@ -39,7 +39,6 @@ export interface DashboardTestimonialRow extends DashboardRowBase {
   projectName: string;
   clientName: string;
   clientInitials: string;
-  clientLocation: string;
   stars: number;
   message: string;
 }
