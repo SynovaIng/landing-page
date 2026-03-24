@@ -14,6 +14,7 @@ import {
   sectionConfig,
 } from "./dashboard.config";
 import DashboardEditModal from "./DashboardEditModal";
+import DashboardReviewLinkModal from "./DashboardReviewLinkModal";
 import DashboardTable from "./DashboardTable";
 
 type DashboardEditableValue = string | number | boolean | string[] | File[] | null;
@@ -92,6 +93,12 @@ export default function DashboardClient({
   const [isSavingOrder, setIsSavingOrder] = useState<Record<DashboardSectionKey, boolean>>(
     createOrderSavingState(),
   );
+  const [isReviewLinkModalOpen, setIsReviewLinkModalOpen] = useState(false);
+  const [selectedProjectIdForReviewLink, setSelectedProjectIdForReviewLink] = useState("");
+  const [generatedReviewLink, setGeneratedReviewLink] = useState("");
+  const [reviewLinkStatusMessage, setReviewLinkStatusMessage] = useState("");
+  const [isGeneratingReviewLink, setIsGeneratingReviewLink] = useState(false);
+  const [copyFeedback, setCopyFeedback] = useState("");
 
   const fetchClients = async () => {
     try {
@@ -130,7 +137,9 @@ export default function DashboardClient({
   }, []);
 
   useEffect(() => {
-    if (!editContext) {
+    const hasOpenModal = Boolean(editContext) || isReviewLinkModalOpen;
+
+    if (!hasOpenModal) {
       return () => {};
     }
 
@@ -153,7 +162,7 @@ export default function DashboardClient({
       body.style.width = previousWidth;
       window.scrollTo(0, scrollY);
     };
-  }, [editContext]);
+  }, [editContext, isReviewLinkModalOpen]);
 
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
@@ -704,6 +713,78 @@ export default function DashboardClient({
     closeEditModal();
   };
 
+  const openReviewLinkModal = () => {
+    setSelectedProjectIdForReviewLink("");
+    setGeneratedReviewLink("");
+    setReviewLinkStatusMessage("");
+    setCopyFeedback("");
+    setIsReviewLinkModalOpen(true);
+  };
+
+  const closeReviewLinkModal = () => {
+    setIsReviewLinkModalOpen(false);
+    setSelectedProjectIdForReviewLink("");
+    setGeneratedReviewLink("");
+    setReviewLinkStatusMessage("");
+    setCopyFeedback("");
+  };
+
+  const generateReviewLink = async () => {
+    if (!selectedProjectIdForReviewLink) {
+      return;
+    }
+
+    setIsGeneratingReviewLink(true);
+    setReviewLinkStatusMessage("");
+    setCopyFeedback("");
+
+    try {
+      const response = await fetch("/api/dashboard/testimonials/review-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId: selectedProjectIdForReviewLink }),
+      });
+
+      if (!response.ok) {
+        setGeneratedReviewLink("");
+        setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+        return;
+      }
+
+      const payload = (await response.json()) as { link?: string };
+      const nextLink = String(payload.link ?? "");
+
+      if (!nextLink) {
+        setGeneratedReviewLink("");
+        setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+        return;
+      }
+
+      setGeneratedReviewLink(nextLink);
+      setReviewLinkStatusMessage("Link generado correctamente.");
+    } catch {
+      setGeneratedReviewLink("");
+      setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+    } finally {
+      setIsGeneratingReviewLink(false);
+    }
+  };
+
+  const copyReviewLink = async () => {
+    if (!generatedReviewLink) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(generatedReviewLink);
+      setCopyFeedback("Link copiado");
+    } catch {
+      setCopyFeedback("No se pudo copiar");
+    }
+  };
+
   return (
     <section className="rounded-2xl border border-border bg-surface shadow-subtle">
       <div className="border-b border-border px-6 py-5">
@@ -771,6 +852,16 @@ export default function DashboardClient({
             <span className="material-symbols-outlined text-[18px]">add</span>
             Nuevo
           </button>
+          {activeSection === "testimonials" ? (
+            <button
+              type="button"
+              onClick={openReviewLinkModal}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-alt sm:w-auto"
+            >
+              <span className="material-symbols-outlined text-[18px]">link</span>
+              Generar link
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -799,6 +890,24 @@ export default function DashboardClient({
         onValueChange={updateDraftValue}
         onClose={closeEditModal}
         onSave={saveEdit}
+      />
+
+      <DashboardReviewLinkModal
+        isOpen={isReviewLinkModalOpen}
+        projectOptions={projectOptions}
+        selectedProjectId={selectedProjectIdForReviewLink}
+        generatedLink={generatedReviewLink}
+        isGenerating={isGeneratingReviewLink}
+        statusMessage={reviewLinkStatusMessage}
+        copyFeedback={copyFeedback}
+        onClose={closeReviewLinkModal}
+        onProjectChange={setSelectedProjectIdForReviewLink}
+        onGenerate={() => {
+          void generateReviewLink();
+        }}
+        onCopyLink={() => {
+          void copyReviewLink();
+        }}
       />
     </section>
   );
