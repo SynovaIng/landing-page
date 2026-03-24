@@ -96,6 +96,8 @@ export default function DashboardClient({
   const [isReviewLinkModalOpen, setIsReviewLinkModalOpen] = useState(false);
   const [selectedProjectIdForReviewLink, setSelectedProjectIdForReviewLink] = useState("");
   const [generatedReviewLink, setGeneratedReviewLink] = useState("");
+  const [reviewLinkStatusMessage, setReviewLinkStatusMessage] = useState("");
+  const [isGeneratingReviewLink, setIsGeneratingReviewLink] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState("");
 
   const fetchClients = async () => {
@@ -714,6 +716,7 @@ export default function DashboardClient({
   const openReviewLinkModal = () => {
     setSelectedProjectIdForReviewLink("");
     setGeneratedReviewLink("");
+    setReviewLinkStatusMessage("");
     setCopyFeedback("");
     setIsReviewLinkModalOpen(true);
   };
@@ -722,21 +725,51 @@ export default function DashboardClient({
     setIsReviewLinkModalOpen(false);
     setSelectedProjectIdForReviewLink("");
     setGeneratedReviewLink("");
+    setReviewLinkStatusMessage("");
     setCopyFeedback("");
   };
 
-  const generateVisualReviewLink = () => {
+  const generateReviewLink = async () => {
     if (!selectedProjectIdForReviewLink) {
       return;
     }
 
-    const token =
-      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID().replaceAll("-", "")
-        : `${Date.now()}${Math.random().toString(16).slice(2)}`;
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    setGeneratedReviewLink(`${baseUrl}/review?token=${token}`);
+    setIsGeneratingReviewLink(true);
+    setReviewLinkStatusMessage("");
     setCopyFeedback("");
+
+    try {
+      const response = await fetch("/api/dashboard/testimonials/review-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId: selectedProjectIdForReviewLink }),
+      });
+
+      if (!response.ok) {
+        setGeneratedReviewLink("");
+        setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+        return;
+      }
+
+      const payload = (await response.json()) as { link?: string };
+      const nextLink = String(payload.link ?? "");
+
+      if (!nextLink) {
+        setGeneratedReviewLink("");
+        setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+        return;
+      }
+
+      setGeneratedReviewLink(nextLink);
+      setReviewLinkStatusMessage("Link generado correctamente.");
+    } catch {
+      setGeneratedReviewLink("");
+      setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+    } finally {
+      setIsGeneratingReviewLink(false);
+    }
   };
 
   const copyReviewLink = async () => {
@@ -864,10 +897,14 @@ export default function DashboardClient({
         projectOptions={projectOptions}
         selectedProjectId={selectedProjectIdForReviewLink}
         generatedLink={generatedReviewLink}
+        isGenerating={isGeneratingReviewLink}
+        statusMessage={reviewLinkStatusMessage}
         copyFeedback={copyFeedback}
         onClose={closeReviewLinkModal}
         onProjectChange={setSelectedProjectIdForReviewLink}
-        onGenerate={generateVisualReviewLink}
+        onGenerate={() => {
+          void generateReviewLink();
+        }}
         onCopyLink={() => {
           void copyReviewLink();
         }}

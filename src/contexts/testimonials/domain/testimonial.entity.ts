@@ -9,6 +9,8 @@ export interface TestimonialProps {
   projectId?: string | null;
   projectName?: string;
   orderIndex?: number;
+  token?: string | null;
+  tokenActive?: boolean;
 }
 
 export class Testimonial {
@@ -22,6 +24,8 @@ export class Testimonial {
   public readonly projectId: string | null;
   public readonly projectName: string;
   public readonly orderIndex: number;
+  public readonly token: string | null;
+  public readonly tokenActive: boolean;
 
   constructor(props: TestimonialProps) {
     this.id = props.id;
@@ -34,5 +38,7 @@ export class Testimonial {
     this.projectId = props.projectId ?? null;
     this.projectName = props.projectName ?? "";
     this.orderIndex = props.orderIndex ?? 0;
+    this.token = props.token ?? null;
+    this.tokenActive = props.tokenActive ?? false;
   }
 }

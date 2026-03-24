@@ -8,6 +8,8 @@ interface DashboardReviewLinkModalProps {
   projectOptions: ProjectOption[];
   selectedProjectId: string;
   generatedLink: string;
+  isGenerating: boolean;
+  statusMessage: string;
   copyFeedback: string;
   onClose: () => void;
   onProjectChange: (projectId: string) => void;
@@ -20,6 +22,8 @@ export default function DashboardReviewLinkModal({
   projectOptions,
   selectedProjectId,
   generatedLink,
+  isGenerating,
+  statusMessage,
   copyFeedback,
   onClose,
   onProjectChange,
@@ -85,12 +89,16 @@ export default function DashboardReviewLinkModal({
           <button
             type="button"
             onClick={onGenerate}
-            disabled={!selectedProjectId}
+            disabled={!selectedProjectId || isGenerating}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-gradient px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[18px]">link</span>
-            Generar link
+            {isGenerating ? "Generando..." : "Generar link"}
           </button>
+
+          {statusMessage ? (
+            <p className="text-xs text-on-surface-muted">{statusMessage}</p>
+          ) : null}
 
           <div className="rounded-xl border border-border bg-surface-alt p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-on-surface-muted">Link generado</p>
