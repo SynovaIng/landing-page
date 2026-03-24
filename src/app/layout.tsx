@@ -5,8 +5,13 @@ import { Inter,Montserrat } from "next/font/google";
 
 import { AuthProvider } from "@/contexts/auth/presentation/AuthContext";
 import Footer from "@/contexts/shared/presentation/Footer";
+import { LoadingOverlayProvider } from "@/contexts/shared/presentation/LoadingOverlayContext";
 import Navbar from "@/contexts/shared/presentation/Navbar";
 import { ThemeProvider } from "@/contexts/shared/presentation/ThemeContext";
+import {
+  DEFAULT_THEME_ID,
+  themes,
+} from "@/contexts/shared/presentation/themes";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -33,6 +38,12 @@ export const metadata: Metadata = {
   },
 };
 
+const defaultTheme = themes.find((theme) => theme.id === DEFAULT_THEME_ID) ?? themes[0];
+const defaultThemeVars = Object.entries(defaultTheme.vars)
+  .map(([key, value]) => `  ${key}: ${value};`)
+  .join("\n");
+const defaultThemeCss = `:root {\n${defaultThemeVars}\n}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,15 +57,18 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         />
+        <style id="synova-theme-override">{defaultThemeCss}</style>
       </head>
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <Navbar />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </AuthProvider>
-        </ThemeProvider>
+        <LoadingOverlayProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <Navbar />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
+            </AuthProvider>
+          </ThemeProvider>
+        </LoadingOverlayProvider>
       </body>
     </html>
   );

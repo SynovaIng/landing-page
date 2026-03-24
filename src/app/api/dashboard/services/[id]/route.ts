@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { container } from "@/config/container";
+import { buildUniqueServiceSlug, normalizeServiceSlug } from "@/contexts/services/app/service-slug";
+import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import { UpdateServiceUseCase } from "@/contexts/services/use-cases/update-service.use-case";
 
 const updateServiceSchema = z.object({
   icon: z.string().trim().min(1).optional(),
   name: z.string().trim().min(1).optional(),
-  slug: z.string().trim().min(1).optional(),
   description: z.string().trim().optional(),
   ctaLabel: z.string().trim().min(1).optional(),
   features: z.string().trim().optional(),
@@ -36,11 +37,23 @@ export async function PATCH(
     : undefined;
 
   const useCase = container.get(UpdateServiceUseCase);
+  let nextSlug: string | undefined;
+
+  if (parsed.data.name !== undefined) {
+    const getAllServicesUseCase = container.get(GetAllServicesUseCase);
+    const existingServices = await getAllServicesUseCase.execute({ includeUnpublished: true });
+    const baseSlug = normalizeServiceSlug(parsed.data.name);
+    const existingSlugs = existingServices
+      .filter((service) => service.id !== id)
+      .map((service) => service.slug);
+
+    nextSlug = buildUniqueServiceSlug(baseSlug, existingSlugs);
+  }
   
   try {
     const updated = await useCase.execute(id, {
       title: parsed.data.name,
-      slug: parsed.data.slug,
+      slug: nextSlug,
       description: parsed.data.description,
       ctaLabel: parsed.data.ctaLabel,
       features: featuresList,

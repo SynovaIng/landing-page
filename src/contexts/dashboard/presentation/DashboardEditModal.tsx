@@ -120,6 +120,7 @@ interface DashboardEditModalProps {
   projectServiceOptions: { id: string; name: string; icon?: string }[];
   projectOptions: { id: string; name: string }[];
   clientOptions: { id: string; name: string; location?: string }[];
+  isSubmitting: boolean;
   onValueChange: (fieldKey: string, value: string | number | boolean | string[] | File[] | null) => void;
   onClose: () => void;
   onSave: () => void;
@@ -134,6 +135,7 @@ export default function DashboardEditModal({
   projectServiceOptions,
   projectOptions,
   clientOptions,
+  isSubmitting,
   onValueChange,
   onClose,
   onSave,
@@ -237,6 +239,12 @@ export default function DashboardEditModal({
     return filteredServiceIcons.includes(selectedIcon) || defaultIconSet.has(selectedIcon);
   }, [defaultIconSet, filteredServiceIcons, selectedIcon]);
 
+  let submitButtonLabel = mode === "create" ? "Crear" : "Guardar cambios";
+
+  if (isSubmitting) {
+    submitButtonLabel = "Guardando...";
+  }
+
   if (!isOpen) {
     return null;
   }
@@ -257,7 +265,12 @@ export default function DashboardEditModal({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              if (!isSubmitting) {
+                onClose();
+              }
+            }}
+            disabled={isSubmitting}
             className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-muted hover:bg-surface-alt"
             aria-label="Cerrar modal"
           >
@@ -956,17 +969,23 @@ export default function DashboardEditModal({
         <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
           <button
             type="button"
-            onClick={onClose}
-            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt"
+            onClick={() => {
+              if (!isSubmitting) {
+                onClose();
+              }
+            }}
+            disabled={isSubmitting}
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancelar
           </button>
           <button
             type="button"
             onClick={onSave}
-            className="rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+            disabled={isSubmitting}
+            className="rounded-lg bg-cyan-gradient px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {mode === "create" ? "Crear" : "Guardar cambios"}
+            {submitButtonLabel}
           </button>
         </div>
       </div>

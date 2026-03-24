@@ -8,7 +8,6 @@ export interface CreateTestimonialInput {
   text: string;
   authorName: string;
   authorInitials: string;
-  authorLocation: string;
   rating: number;
   isPublished: boolean;
   projectId?: string | null;
@@ -18,7 +17,6 @@ export interface UpdateTestimonialInput {
   text: string;
   authorName: string;
   authorInitials: string;
-  authorLocation: string;
   rating: number;
   isPublished: boolean;
   projectId?: string | null;

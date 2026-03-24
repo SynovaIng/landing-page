@@ -68,7 +68,6 @@ export function mapDashboardData({
       id: testimonial.id,
       clientName: testimonial.authorName,
       clientInitials: testimonial.authorInitials,
-      clientLocation: testimonial.authorLocation,
       stars: testimonial.rating,
       message: testimonial.text,
       orderIndex: testimonial.orderIndex,

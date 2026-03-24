@@ -2,18 +2,18 @@
 
 @theme {
   /* ── Colores de marca ── */
-  --color-primary: #00c8e0;
-  --color-primary-dark: #00a0b3;
-  --color-secondary: #1a3a8f;
-  --color-secondary-dark: #142d70;
+  --color-primary: #eab308;
+  --color-primary-dark: #ca8a04;
+  --color-secondary: #e7b201;
+  --color-secondary-dark: #a88b1f;
 
   /* ── Texto & Navy ── */
-  --color-navy: #0f1a2e;
-  --color-muted: #6b7280;
+  --color-navy: #252526;
+  --color-muted: #64748b;
 
   /* ── Fondos ── */
-  --color-background-light: #f5f7fa;
-  --color-background-alt: #eff6ff;
+  --color-background-light: #ffffff;
+  --color-background-alt: #f8fafc;
 
   /* ── Superficie, bordes y texto sobre superficie ── */
   --color-surface: #ffffff;
@@ -24,13 +24,13 @@
   --color-on-surface-muted: #64748b;
 
   /* ── Header (Navbar) ── */
-  --color-header-bg: #ffffff;
-  --color-header-text: #0f172a;
+  --color-header-bg: #1f2937;
+  --color-header-text: #f8fafc;
 
   /* ── Footer ── */
-  --color-footer-bg: #0f172a;
-  --color-footer-text: #f8fafc;
-  --color-footer-text-muted: #94a3b8;
+  --color-footer-bg: #1f2937;
+  --color-footer-text: #ffffff;
+  --color-footer-text-muted: #9ca3af;
 
   /* ── Categorías de proyecto ── */
   --color-category-comercial: #0047ab;
@@ -47,7 +47,7 @@
     0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 
   /* ── Gradiente principal (sobreescrito por ThemeContext) ── */
-  --gradient-brand: linear-gradient(135deg, #1a3a8f 0%, #00c8e0 100%);
+  --gradient-brand: linear-gradient(135deg, #eab308 0%, #c9a227 100%);
 }
 
 /* ── Gradientes reutilizables ── */

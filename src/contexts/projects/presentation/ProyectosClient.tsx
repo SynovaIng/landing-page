@@ -1,7 +1,7 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 import type { Project, ProjectCategory } from "@/contexts/projects/domain/project.entity";
 import Button from "@/contexts/shared/presentation/Button";
@@ -37,10 +37,17 @@ interface ProyectosClientProps {
 }
 
 export default function ProyectosClient({ projects, services }: ProyectosClientProps) {
+  const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromQuery = searchParams.get("projectId");
   const [active, setActive] = useState<ProjectCategory | "Todos">("Todos");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const queryProject = useMemo(
+    () => projects.find((project) => project.id === projectIdFromQuery) ?? null,
+    [projectIdFromQuery, projects],
+  );
+  const displayedProject = selectedProject ?? queryProject;
 
   const filtered = active === "Todos" ? projects : projects.filter((project) => project.category === active);
   const emptyMessage =
@@ -49,44 +56,30 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
       : `No existen proyectos de tipo ${active}.`;
 
   const selectedProjectDetails = useMemo(() => {
-    if (!selectedProject) {
+    if (!displayedProject) {
       return null;
     }
 
-    return getProjectGalleryDetails(selectedProject);
-  }, [selectedProject]);
+    return getProjectGalleryDetails(displayedProject);
+  }, [displayedProject]);
 
   const selectedProjectServices = useMemo(() => {
-    if (!selectedProject) {
+    if (!displayedProject) {
       return [];
     }
 
-    return selectedProject.serviceIds
+    return displayedProject.serviceIds
       .map((serviceId) => services.find((service) => service.id === serviceId))
       .filter((service): service is ProjectServiceSummary => Boolean(service));
-  }, [selectedProject, services]);
+  }, [displayedProject, services]);
 
   useEffect(() => {
-    document.body.style.overflow = selectedProject ? "hidden" : "";
+    document.body.style.overflow = displayedProject ? "hidden" : "";
 
     return () => {
       document.body.style.overflow = "";
     };
-  }, [selectedProject]);
-
-  useEffect(() => {
-    if (!projectIdFromQuery) {
-      return;
-    }
-
-    const projectToOpen = projects.find((project) => project.id === projectIdFromQuery);
-    if (!projectToOpen) {
-      return;
-    }
-
-    setActive("Todos");
-    setSelectedProject(projectToOpen);
-  }, [projectIdFromQuery, projects]);
+  }, [displayedProject]);
 
   return (
     <div className="pt-24">
@@ -161,10 +154,22 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
       </main>
 
       <ProjectGalleryModal
-        project={selectedProject}
+        project={displayedProject}
         details={selectedProjectDetails}
         services={selectedProjectServices}
-        onClose={() => setSelectedProject(null)}
+        onClose={() => {
+          setSelectedProject(null);
+
+          if (!projectIdFromQuery) {
+            return;
+          }
+
+          const nextSearchParams = new URLSearchParams(searchParams.toString());
+          nextSearchParams.delete("projectId");
+          const nextQuery = nextSearchParams.toString();
+
+          router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+        }}
       />
     </div>
   );

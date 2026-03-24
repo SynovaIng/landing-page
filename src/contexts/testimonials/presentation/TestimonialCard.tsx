@@ -62,9 +62,11 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
         </div>
         <div>
           <p className="font-bold text-navy text-sm">{testimonial.authorName}</p>
-          <p className="text-[10px] text-secondary uppercase tracking-widest">
-            {testimonial.authorLocation}
-          </p>
+          {testimonial.authorLocation ? (
+            <p className="text-[10px] text-secondary uppercase tracking-widest">
+              {testimonial.authorLocation}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

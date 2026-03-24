@@ -21,13 +21,15 @@ const toInitials = (name: string) => {
     .join("") || "CL";
 };
 
-type RelationWithName = { name?: string | null } | { name?: string | null }[] | null;
+type RelationWithProject =
+  | { name?: string | null; location?: string | null }
+  | { name?: string | null; location?: string | null }[]
+  | null;
 
 interface ReviewRow {
   id: unknown;
   message?: unknown;
   client_name?: unknown;
-  client_location?: unknown;
   stars?: unknown;
   is_published?: unknown;
   project_id?: unknown;
@@ -35,29 +37,36 @@ interface ReviewRow {
   token?: unknown;
   token_active?: unknown;
   project_name?: unknown;
-  projects?: RelationWithName;
+  project_location?: unknown;
+  projects?: RelationWithProject;
 }
 
-const relationWithNameSchema = z
+const relationWithProjectSchema = z
   .union([
-    z.object({ name: z.string().optional().nullable() }),
-    z.array(z.object({ name: z.string().optional().nullable() })),
+    z.object({
+      name: z.string().optional().nullable(),
+      location: z.string().optional().nullable(),
+    }),
+    z.array(z.object({
+      name: z.string().optional().nullable(),
+      location: z.string().optional().nullable(),
+    })),
   ])
   .nullable()
   .optional();
 
-const getNameFromRelation = (relation: unknown): string => {
-  const parsed = relationWithNameSchema.safeParse(relation);
+const getProjectFieldFromRelation = (relation: unknown, key: "name" | "location"): string => {
+  const parsed = relationWithProjectSchema.safeParse(relation);
 
   if (!parsed.success || !parsed.data) {
     return "";
   }
 
   if (Array.isArray(parsed.data)) {
-    return String(parsed.data[0]?.name ?? "");
+    return String(parsed.data[0]?.[key] ?? "");
   }
 
-  return String(parsed.data.name ?? "");
+  return String(parsed.data[key] ?? "");
 };
 
 const isMissingOrderIndexError = (error: { code?: string; message?: string } | null): boolean => {
@@ -74,23 +83,24 @@ const isMissingOrderIndexError = (error: { code?: string; message?: string } | n
 
 @Service()
 export class SupabaseTestimonialRepository extends TestimonialRepository {
-  private getClientNameFromRelation(clientRelation: RelationWithName | undefined): string {
-    return getNameFromRelation(clientRelation);
+  private getProjectNameFromRelation(projectRelation: RelationWithProject | undefined): string {
+    return getProjectFieldFromRelation(projectRelation, "name");
   }
 
-  private getProjectNameFromRelation(projectRelation: RelationWithName | undefined): string {
-    return getNameFromRelation(projectRelation);
+  private getProjectLocationFromRelation(projectRelation: RelationWithProject | undefined): string {
+    return getProjectFieldFromRelation(projectRelation, "location");
   }
 
   private mapReviewToEntity(review: ReviewRow): Testimonial {
     const projectNameFromFunction = review.project_name ? String(review.project_name) : "";
+    const projectLocationFromFunction = review.project_location ? String(review.project_location) : "";
 
     return new Testimonial({
       id: String(review.id),
       text: String(review.message ?? ""),
       authorName: String(review.client_name ?? ""),
       authorInitials: toInitials(String(review.client_name ?? "")),
-      authorLocation: String(review.client_location ?? ""),
+      authorLocation: projectLocationFromFunction || this.getProjectLocationFromRelation(review.projects),
       rating: Number(review.stars ?? 0),
       isPublished: Boolean(review.is_published ?? true),
       projectId: review.project_id ? String(review.project_id) : null,
@@ -107,7 +117,7 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const queryBaseWithOrder = supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, token, token_active, projects(name)")
+      .select("id, message, client_name, stars, is_published, project_id, order_index, token, token_active, projects(name, location)")
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -119,11 +129,11 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       ? await (includeUnpublished
           ? supabase
               .from("reviews")
-              .select("id, message, client_name, client_location, stars, is_published, project_id, token, token_active, projects(name)")
+              .select("id, message, client_name, stars, is_published, project_id, token, token_active, projects(name, location)")
               .order("created_at", { ascending: false })
           : supabase
               .from("reviews")
-              .select("id, message, client_name, client_location, stars, is_published, project_id, token, token_active, projects(name)")
+              .select("id, message, client_name, stars, is_published, project_id, token, token_active, projects(name, location)")
               .eq("is_published", true)
               .order("created_at", { ascending: false }))
       : queryWithOrder;
@@ -142,14 +152,14 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const queryWithOrder = await supabase
       .from("reviews")
-      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, token, token_active, projects(name)")
+      .select("id, message, client_name, stars, is_published, project_id, order_index, token, token_active, projects(name, location)")
       .eq("id", id)
       .maybeSingle();
 
     const query = isMissingOrderIndexError(queryWithOrder.error)
       ? await supabase
           .from("reviews")
-          .select("id, message, client_name, client_location, stars, is_published, client_id, project_id, token, token_active, clients(name), projects(name)")
+          .select("id, message, client_name, stars, is_published, client_id, project_id, token, token_active, clients(name), projects(name, location)")
           .eq("id", id)
           .maybeSingle()
       : queryWithOrder;
@@ -200,13 +210,12 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       .insert({
         message: input.text,
         client_name: input.authorName,
-        client_location: input.authorLocation,
         stars: input.rating,
         is_published: input.isPublished,
         project_id: input.projectId ?? null,
         order_index: nextOrderIndex,
       })
-      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, token, token_active, projects(name)")
+      .select("id, message, client_name, stars, is_published, project_id, order_index, token, token_active, projects(name, location)")
       .single();
 
     if (error || !data) {
@@ -217,7 +226,6 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       ...data,
       message: data.message ?? input.text,
       client_name: data.client_name ?? input.authorName,
-      client_location: data.client_location ?? input.authorLocation,
       stars: data.stars ?? input.rating,
       is_published: data.is_published ?? input.isPublished,
       project_id: data.project_id ?? input.projectId ?? null,
@@ -244,12 +252,11 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
         token_active: true,
         message: "",
         client_name: "",
-        client_location: "",
         stars: 5,
         is_published: false,
         order_index: nextOrderIndex,
       })
-      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, token, token_active, projects(name)")
+      .select("id, message, client_name, stars, is_published, project_id, order_index, token, token_active, projects(name, location)")
       .single();
 
     if (error || !data) {
@@ -267,13 +274,12 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       .update({
         message: input.text,
         client_name: input.authorName,
-        client_location: input.authorLocation,
         stars: input.rating,
         is_published: input.isPublished,
         project_id: input.projectId ?? null,
       })
       .eq("id", id)
-      .select("id, message, client_name, client_location, stars, is_published, project_id, order_index, token, token_active, projects(name)")
+      .select("id, message, client_name, stars, is_published, project_id, order_index, token, token_active, projects(name, location)")
       .single();
 
     if (error || !data) {
@@ -284,7 +290,6 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
       ...data,
       message: data.message ?? input.text,
       client_name: data.client_name ?? input.authorName,
-      client_location: data.client_location ?? input.authorLocation,
       stars: data.stars ?? input.rating,
       is_published: data.is_published ?? input.isPublished,
       project_id: data.project_id ?? input.projectId ?? null,
@@ -308,8 +313,12 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const row = Array.isArray(data) ? data[0] : null;
 
-    if (error || !row) {
-      throw new Error("No se pudo enviar la reseña");
+    if (error) {
+      throw new Error(`No se pudo enviar la reseña: ${error.message}`);
+    }
+
+    if (!row) {
+      throw new Error("El link de reseña es inválido o ya fue utilizado");
     }
 
     return this.mapReviewToEntity(row as ReviewRow);
