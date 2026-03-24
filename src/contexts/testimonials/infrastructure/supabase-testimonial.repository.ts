@@ -308,8 +308,12 @@ export class SupabaseTestimonialRepository extends TestimonialRepository {
 
     const row = Array.isArray(data) ? data[0] : null;
 
-    if (error || !row) {
-      throw new Error("No se pudo enviar la reseña");
+    if (error) {
+      throw new Error(`No se pudo enviar la reseña: ${error.message}`);
+    }
+
+    if (!row) {
+      throw new Error("El link de reseña es inválido o ya fue utilizado");
     }
 
     return this.mapReviewToEntity(row as ReviewRow);
