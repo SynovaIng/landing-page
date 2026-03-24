@@ -65,7 +65,6 @@ export const sectionConfig: Record<DashboardSectionKey, SectionConfig> = {
       { key: "orderIndex", label: "Orden" },
       { key: "icon", label: "Icono" },
       { key: "name", label: "Nombre" },
-      { key: "slug", label: "Slug" },
       { key: "ctaLabel", label: "Texto del botón" },
     ],
   },
@@ -96,7 +95,6 @@ export const editFieldConfig: Record<DashboardSectionKey, FieldConfig[]> = {
   services: [
     { key: "icon", label: "Icono", type: "text" },
     { key: "name", label: "Nombre", type: "text" },
-    { key: "slug", label: "Slug", type: "text" },
     { key: "description", label: "Descripción", type: "textarea" },
     { key: "ctaLabel", label: "Texto del botón", type: "text" },
     { key: "features", label: "Características", type: "textarea" },
@@ -134,7 +132,6 @@ export const createFieldDefaults: Record<
   services: {
     icon: "engineering",
     name: "",
-    slug: "",
     description: "",
     ctaLabel: "Cotizar",
     features: "",
