@@ -5,6 +5,7 @@ import { container } from "@/config/container";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import Button from "@/contexts/shared/presentation/Button";
+import HeroBackgroundCarousel from "@/contexts/shared/presentation/HeroBackgroundCarousel";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 import StatsBar from "@/contexts/shared/presentation/StatsBar";
 import TestimonialCarousel from "@/contexts/testimonials/presentation/TestimonialCarousel";
@@ -58,29 +59,20 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center bg-linear-to-br from-background-alt to-background-light">
-        <div className="absolute inset-0 z-0 opacity-10">
-          <Image
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsxDgGDLNnwtuJwaH1OW0SdsKIiE7Wi22khRCzc5b66OgDu3ZH3ZyY2RL6xaXjFgB1GGluWpsQXhGajsn4t0lgnKYUAZGHW2uEhANotGjnwGpAKjqzC0IDimqJNiUXrNVV33WBljZlXQoNwxoNC6-xRaWy20c1b-uqL4G7K1BJ9lqnz6Tmc-R6GADafE4J9ErcQz1RVSnNpipjj90YCZdkJnaO3g9kOa1EKbjvjcP3O_nPNdamXq7EO3NTL106NAW3rfaJO_5S6mcF"
-            alt="Fondo industrial eléctrico"
-            fill
-            className="object-cover mix-blend-multiply grayscale"
-            priority
-          />
-        </div>
-        <div className="absolute inset-0 bg-surface/40" />
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center bg-navy">
+        <HeroBackgroundCarousel />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-block py-1.5 px-4 rounded-full bg-surface text-secondary text-xs font-bold tracking-widest mb-8 uppercase border border-secondary/20 shadow-sm">
+          <span className="inline-block py-1.5 px-4 rounded-full bg-white/15 text-white text-xs font-bold tracking-widest mb-8 uppercase border border-white/30 shadow-sm backdrop-blur-sm">
             Certificados SEC Clase A
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-navy mb-8 leading-tight tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-8 leading-tight tracking-tight">
             Soluciones Eléctricas <br />
             <span className="text-secondary">Profesionales</span>{" "}
-            <span className="text-primary">en Santiago</span>
+            <span className="text-primary">a su servicio</span>
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-muted font-light leading-relaxed">
+          <p className="mt-4 max-w-2xl mx-auto text-xl text-white/85 font-light leading-relaxed">
             Expertos en instalaciones de alto estándar, mantenimiento industrial
             y residencial. Seguridad certificada para su tranquilidad.
           </p>
