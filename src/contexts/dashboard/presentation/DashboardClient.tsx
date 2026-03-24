@@ -14,6 +14,7 @@ import {
   sectionConfig,
 } from "./dashboard.config";
 import DashboardEditModal from "./DashboardEditModal";
+import DashboardReviewLinkModal from "./DashboardReviewLinkModal";
 import DashboardTable from "./DashboardTable";
 
 type DashboardEditableValue = string | number | boolean | string[] | File[] | null;
@@ -92,6 +93,10 @@ export default function DashboardClient({
   const [isSavingOrder, setIsSavingOrder] = useState<Record<DashboardSectionKey, boolean>>(
     createOrderSavingState(),
   );
+  const [isReviewLinkModalOpen, setIsReviewLinkModalOpen] = useState(false);
+  const [selectedProjectIdForReviewLink, setSelectedProjectIdForReviewLink] = useState("");
+  const [generatedReviewLink, setGeneratedReviewLink] = useState("");
+  const [copyFeedback, setCopyFeedback] = useState("");
 
   const fetchClients = async () => {
     try {
@@ -130,7 +135,9 @@ export default function DashboardClient({
   }, []);
 
   useEffect(() => {
-    if (!editContext) {
+    const hasOpenModal = Boolean(editContext) || isReviewLinkModalOpen;
+
+    if (!hasOpenModal) {
       return () => {};
     }
 
@@ -153,7 +160,7 @@ export default function DashboardClient({
       body.style.width = previousWidth;
       window.scrollTo(0, scrollY);
     };
-  }, [editContext]);
+  }, [editContext, isReviewLinkModalOpen]);
 
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
@@ -704,6 +711,47 @@ export default function DashboardClient({
     closeEditModal();
   };
 
+  const openReviewLinkModal = () => {
+    setSelectedProjectIdForReviewLink("");
+    setGeneratedReviewLink("");
+    setCopyFeedback("");
+    setIsReviewLinkModalOpen(true);
+  };
+
+  const closeReviewLinkModal = () => {
+    setIsReviewLinkModalOpen(false);
+    setSelectedProjectIdForReviewLink("");
+    setGeneratedReviewLink("");
+    setCopyFeedback("");
+  };
+
+  const generateVisualReviewLink = () => {
+    if (!selectedProjectIdForReviewLink) {
+      return;
+    }
+
+    const token =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID().replaceAll("-", "")
+        : `${Date.now()}${Math.random().toString(16).slice(2)}`;
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    setGeneratedReviewLink(`${baseUrl}/review?token=${token}`);
+    setCopyFeedback("");
+  };
+
+  const copyReviewLink = async () => {
+    if (!generatedReviewLink) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(generatedReviewLink);
+      setCopyFeedback("Link copiado");
+    } catch {
+      setCopyFeedback("No se pudo copiar");
+    }
+  };
+
   return (
     <section className="rounded-2xl border border-border bg-surface shadow-subtle">
       <div className="border-b border-border px-6 py-5">
@@ -771,6 +819,16 @@ export default function DashboardClient({
             <span className="material-symbols-outlined text-[18px]">add</span>
             Nuevo
           </button>
+          {activeSection === "testimonials" ? (
+            <button
+              type="button"
+              onClick={openReviewLinkModal}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-alt sm:w-auto"
+            >
+              <span className="material-symbols-outlined text-[18px]">link</span>
+              Generar link
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -799,6 +857,20 @@ export default function DashboardClient({
         onValueChange={updateDraftValue}
         onClose={closeEditModal}
         onSave={saveEdit}
+      />
+
+      <DashboardReviewLinkModal
+        isOpen={isReviewLinkModalOpen}
+        projectOptions={projectOptions}
+        selectedProjectId={selectedProjectIdForReviewLink}
+        generatedLink={generatedReviewLink}
+        copyFeedback={copyFeedback}
+        onClose={closeReviewLinkModal}
+        onProjectChange={setSelectedProjectIdForReviewLink}
+        onGenerate={generateVisualReviewLink}
+        onCopyLink={() => {
+          void copyReviewLink();
+        }}
       />
     </section>
   );
