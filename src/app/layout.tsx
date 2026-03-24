@@ -5,6 +5,7 @@ import { Inter,Montserrat } from "next/font/google";
 
 import { AuthProvider } from "@/contexts/auth/presentation/AuthContext";
 import Footer from "@/contexts/shared/presentation/Footer";
+import { LoadingOverlayProvider } from "@/contexts/shared/presentation/LoadingOverlayContext";
 import Navbar from "@/contexts/shared/presentation/Navbar";
 import { ThemeProvider } from "@/contexts/shared/presentation/ThemeContext";
 
@@ -48,13 +49,15 @@ export default function RootLayout({
         />
       </head>
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <Navbar />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </AuthProvider>
-        </ThemeProvider>
+        <LoadingOverlayProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <Navbar />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
+            </AuthProvider>
+          </ThemeProvider>
+        </LoadingOverlayProvider>
       </body>
     </html>
   );

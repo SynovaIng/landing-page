@@ -7,6 +7,7 @@ import type {
   DashboardSectionData,
   DashboardSectionKey,
 } from "@/contexts/dashboard/domain/dashboard.entity";
+import { useLoadingOverlay } from "@/contexts/shared/presentation/LoadingOverlayContext";
 
 import {
   createFieldDefaults,
@@ -75,6 +76,7 @@ export default function DashboardClient({
   services,
   testimonials,
 }: DashboardClientProps) {
+  const { isLoading: isSubmittingEdit, withLoading } = useLoadingOverlay();
   const [activeSection, setActiveSection] = useState<DashboardSectionKey>("projects");
   const [rowsBySection, setRowsBySection] = useState<DashboardSectionData>({
     projects,
@@ -508,7 +510,7 @@ export default function DashboardClient({
             }
           : normalizedValues;
 
-      const response = await (async () => {
+      const response = await withLoading(async () => {
         if (editContext.sectionKey !== "projects") {
           return fetch(`/api/dashboard/${editContext.sectionKey}`, {
             method: "POST",
@@ -540,7 +542,7 @@ export default function DashboardClient({
           method: "POST",
           body: formData,
         });
-      })();
+      });
 
       if (!response.ok) {
         return;
@@ -613,10 +615,12 @@ export default function DashboardClient({
         formData.append("imageOrderRefs", ref);
       });
 
-      const response = await fetch(`/api/dashboard/projects/${editContext.rowId}`, {
-        method: "PATCH",
-        body: formData,
-      });
+      const response = await withLoading(() =>
+        fetch(`/api/dashboard/projects/${editContext.rowId}`, {
+          method: "PATCH",
+          body: formData,
+        }),
+      );
 
       if (!response.ok) {
         return;
@@ -642,13 +646,15 @@ export default function DashboardClient({
         projectId: normalizedValues.projectId ?? null,
       };
 
-      const response = await fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(testimonialPayload),
-      });
+      const response = await withLoading(() =>
+        fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(testimonialPayload),
+        }),
+      );
 
       if (!response.ok) {
         return;
@@ -668,13 +674,15 @@ export default function DashboardClient({
     }
 
     if (editContext.sectionKey === "services") {
-      const response = await fetch(`/api/dashboard/services/${editContext.rowId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(normalizedValues),
-      });
+      const response = await withLoading(() =>
+        fetch(`/api/dashboard/services/${editContext.rowId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(normalizedValues),
+        }),
+      );
 
       if (!response.ok) {
         return;
@@ -887,6 +895,7 @@ export default function DashboardClient({
         projectServiceOptions={projectServiceOptions}
         projectOptions={projectOptions}
         clientOptions={clientOptions}
+        isSubmitting={isSubmittingEdit}
         onValueChange={updateDraftValue}
         onClose={closeEditModal}
         onSave={saveEdit}
