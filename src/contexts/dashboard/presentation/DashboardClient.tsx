@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type {
   DashboardRowBase,
   DashboardSectionData,
   DashboardSectionKey,
 } from "@/contexts/dashboard/domain/dashboard.entity";
+import ErrorToast from "@/contexts/shared/presentation/ErrorToast";
 import { useLoadingOverlay } from "@/contexts/shared/presentation/LoadingOverlayContext";
 
 import {
@@ -36,6 +37,11 @@ interface ClientOption {
 interface ProjectOption {
   id: string;
   name: string;
+}
+
+interface DashboardErrorToast {
+  title: string;
+  detail: string;
 }
 
 type DashboardClientProps = DashboardSectionData;
@@ -101,6 +107,7 @@ export default function DashboardClient({
   const [reviewLinkStatusMessage, setReviewLinkStatusMessage] = useState("");
   const [isGeneratingReviewLink, setIsGeneratingReviewLink] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState("");
+  const [errorToast, setErrorToast] = useState<DashboardErrorToast | null>(null);
 
   const fetchClients = async () => {
     try {
@@ -165,6 +172,66 @@ export default function DashboardClient({
       window.scrollTo(0, scrollY);
     };
   }, [editContext, isReviewLinkModalOpen]);
+
+  const showErrorToast = useCallback((title: string, detail: string) => {
+    setErrorToast({ title, detail });
+  }, []);
+
+  const parseErrorDetailFromResponse = useCallback(async (response: Response) => {
+    const contentType = response.headers.get("content-type") ?? "";
+    const requestId = response.headers.get("x-request-id") ?? "";
+    let apiMessage = "";
+    let apiCode = "";
+    let apiDetail = "";
+
+    if (contentType.includes("application/json")) {
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        code?: string;
+        detail?: string;
+      } | null;
+
+      apiMessage = String(payload?.error ?? "").trim();
+      apiCode = String(payload?.code ?? "").trim();
+      apiDetail = String(payload?.detail ?? "").trim();
+    } else {
+      apiDetail = (await response.text().catch(() => "")).trim();
+    }
+
+    const fallbackByStatus =
+      response.status === 413
+        ? "El archivo supera el tamaño permitido por el servidor. Reduce el peso o cantidad de imágenes y vuelve a intentar."
+        : "No se pudo completar la solicitud.";
+
+    const summary = apiMessage || fallbackByStatus;
+    const details: string[] = [
+      `HTTP ${response.status} ${response.statusText}`,
+      apiCode ? `Código: ${apiCode}` : "",
+      apiDetail ? `Detalle: ${apiDetail}` : "",
+      requestId ? `Request ID: ${requestId}` : "",
+    ].filter((line) => line.length > 0);
+
+    return {
+      summary,
+      detail: details.join("\n"),
+    };
+  }, []);
+
+  const showErrorFromResponse = useCallback(
+    async (title: string, response: Response) => {
+      const parsed = await parseErrorDetailFromResponse(response);
+      showErrorToast(title, `${parsed.summary}\n\n${parsed.detail}`.trim());
+    },
+    [parseErrorDetailFromResponse, showErrorToast],
+  );
+
+  const showUnexpectedError = useCallback(
+    (title: string, error: unknown) => {
+      const detail = error instanceof Error ? error.message : "Error desconocido";
+      showErrorToast(title, detail);
+    },
+    [showErrorToast],
+  );
 
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
@@ -235,15 +302,23 @@ export default function DashboardClient({
       return;
     }
 
-    const response = await fetch(`/api/dashboard/${activeSection}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids: selectedIds }),
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`/api/dashboard/${activeSection}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+    } catch (error) {
+      showUnexpectedError("No se pudieron eliminar los registros seleccionados.", error);
+      return;
+    }
 
     if (!response.ok) {
+      await showErrorFromResponse("No se pudieron eliminar los registros seleccionados.", response);
       return;
     }
 
@@ -275,17 +350,29 @@ export default function DashboardClient({
       rows.map((row) => (row.id === id ? { ...row, isActive: nextIsActive } : row)),
     );
 
-    const response = await fetch(`/api/dashboard/${activeSection}/${id}/visibility`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ isActive: nextIsActive }),
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`/api/dashboard/${activeSection}/${id}/visibility`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isActive: nextIsActive }),
+      });
+    } catch (error) {
+      updateRowsForSection(activeSection, (rows) =>
+        rows.map((row) => (row.id === id ? { ...row, isActive: currentRow.isActive } : row)),
+      );
+      showUnexpectedError("No se pudo actualizar la visibilidad.", error);
+      return;
+    }
 
     if (response.ok) {
       return;
     }
+
+    await showErrorFromResponse("No se pudo actualizar la visibilidad.", response);
 
     updateRowsForSection(activeSection, (rows) =>
       rows.map((row) => (row.id === id ? { ...row, isActive: currentRow.isActive } : row)),
@@ -321,13 +408,24 @@ export default function DashboardClient({
       [sectionKey]: true,
     }));
 
-    const response = await fetch(`/api/dashboard/${sectionKey}/reorder`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids }),
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`/api/dashboard/${sectionKey}/reorder`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids }),
+      });
+    } catch (error) {
+      setIsSavingOrder((prev) => ({
+        ...prev,
+        [sectionKey]: false,
+      }));
+      showUnexpectedError("No se pudo guardar el orden.", error);
+      return;
+    }
 
     setIsSavingOrder((prev) => ({
       ...prev,
@@ -335,6 +433,7 @@ export default function DashboardClient({
     }));
 
     if (!response.ok) {
+      await showErrorFromResponse("No se pudo guardar el orden.", response);
       return;
     }
 
@@ -510,41 +609,55 @@ export default function DashboardClient({
             }
           : normalizedValues;
 
-      const response = await withLoading(async () => {
-        if (editContext.sectionKey !== "projects") {
-          return fetch(`/api/dashboard/${editContext.sectionKey}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestPayload),
+      let response: Response;
+
+      try {
+        response = await withLoading(async () => {
+          if (editContext.sectionKey !== "projects") {
+            return fetch(`/api/dashboard/${editContext.sectionKey}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(requestPayload),
+            });
+          }
+
+          const formData = new FormData();
+          formData.set("name", String(normalizedValues.name ?? ""));
+          formData.set("type", String(normalizedValues.type ?? "Comercial"));
+          formData.set("location", String(normalizedValues.location ?? ""));
+          formData.set("description", String(normalizedValues.description ?? ""));
+          formData.set("isActive", String(Boolean(normalizedValues.isActive)));
+          formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
+          formData.set("clientId", String(normalizedValues.clientId ?? ""));
+
+          const imageFiles = Array.isArray(normalizedValues.imageFiles)
+            ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
+            : [];
+
+          imageFiles.forEach((file) => {
+            formData.append("images", file);
           });
-        }
 
-        const formData = new FormData();
-        formData.set("name", String(normalizedValues.name ?? ""));
-        formData.set("type", String(normalizedValues.type ?? "Comercial"));
-        formData.set("location", String(normalizedValues.location ?? ""));
-        formData.set("description", String(normalizedValues.description ?? ""));
-        formData.set("isActive", String(Boolean(normalizedValues.isActive)));
-        formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
-        formData.set("clientId", String(normalizedValues.clientId ?? ""));
-
-        const imageFiles = Array.isArray(normalizedValues.imageFiles)
-          ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
-          : [];
-
-        imageFiles.forEach((file) => {
-          formData.append("images", file);
+          return fetch("/api/dashboard/projects", {
+            method: "POST",
+            body: formData,
+          });
         });
-
-        return fetch("/api/dashboard/projects", {
-          method: "POST",
-          body: formData,
-        });
-      });
+      } catch (error) {
+        showUnexpectedError(
+          `No se pudo crear ${sectionConfig[editContext.sectionKey].singularLabel}.`,
+          error,
+        );
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse(
+          `No se pudo crear ${sectionConfig[editContext.sectionKey].singularLabel}.`,
+          response,
+        );
         return;
       }
 
@@ -615,14 +728,22 @@ export default function DashboardClient({
         formData.append("imageOrderRefs", ref);
       });
 
-      const response = await withLoading(() =>
-        fetch(`/api/dashboard/projects/${editContext.rowId}`, {
-          method: "PATCH",
-          body: formData,
-        }),
-      );
+      let response: Response;
+
+      try {
+        response = await withLoading(() =>
+          fetch(`/api/dashboard/projects/${editContext.rowId}`, {
+            method: "PATCH",
+            body: formData,
+          }),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudo actualizar el proyecto.", error);
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse("No se pudo actualizar el proyecto.", response);
         return;
       }
 
@@ -646,17 +767,25 @@ export default function DashboardClient({
         projectId: normalizedValues.projectId ?? null,
       };
 
-      const response = await withLoading(() =>
-        fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(testimonialPayload),
-        }),
-      );
+      let response: Response;
+
+      try {
+        response = await withLoading(() =>
+          fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(testimonialPayload),
+          }),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudo actualizar la reseña.", error);
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse("No se pudo actualizar la reseña.", response);
         return;
       }
 
@@ -674,17 +803,25 @@ export default function DashboardClient({
     }
 
     if (editContext.sectionKey === "services") {
-      const response = await withLoading(() =>
-        fetch(`/api/dashboard/services/${editContext.rowId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(normalizedValues),
-        }),
-      );
+      let response: Response;
+
+      try {
+        response = await withLoading(() =>
+          fetch(`/api/dashboard/services/${editContext.rowId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(normalizedValues),
+          }),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudo actualizar el servicio.", error);
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse("No se pudo actualizar el servicio.", response);
         return;
       }
 
@@ -758,6 +895,7 @@ export default function DashboardClient({
       if (!response.ok) {
         setGeneratedReviewLink("");
         setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+        await showErrorFromResponse("No se pudo generar el link de reseña.", response);
         return;
       }
 
@@ -775,6 +913,7 @@ export default function DashboardClient({
     } catch {
       setGeneratedReviewLink("");
       setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+      showErrorToast("No se pudo generar el link de reseña.", "Error de red o servidor no disponible.");
     } finally {
       setIsGeneratingReviewLink(false);
     }
@@ -897,6 +1036,7 @@ export default function DashboardClient({
         clientOptions={clientOptions}
         isSubmitting={isSubmittingEdit}
         onValueChange={updateDraftValue}
+        onFileValidationError={showErrorToast}
         onClose={closeEditModal}
         onSave={saveEdit}
       />
@@ -917,6 +1057,11 @@ export default function DashboardClient({
         onCopyLink={() => {
           void copyReviewLink();
         }}
+      />
+
+      <ErrorToast
+        error={errorToast}
+        onClose={() => setErrorToast(null)}
       />
     </section>
   );
