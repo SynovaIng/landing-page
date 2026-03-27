@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type {
   DashboardRowBase,
   DashboardSectionData,
   DashboardSectionKey,
 } from "@/contexts/dashboard/domain/dashboard.entity";
+import { PROJECT_IMAGE_BUCKET } from "@/contexts/projects/domain/project-image.constants";
+import ErrorToast from "@/contexts/shared/presentation/ErrorToast";
 import { useLoadingOverlay } from "@/contexts/shared/presentation/LoadingOverlayContext";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 import {
   createFieldDefaults,
@@ -36,6 +39,17 @@ interface ClientOption {
 interface ProjectOption {
   id: string;
   name: string;
+}
+
+interface DashboardErrorToast {
+  title: string;
+  detail: string;
+}
+
+interface SignedUploadPayload {
+  path: string;
+  token: string;
+  publicUrl: string;
 }
 
 type DashboardClientProps = DashboardSectionData;
@@ -101,6 +115,8 @@ export default function DashboardClient({
   const [reviewLinkStatusMessage, setReviewLinkStatusMessage] = useState("");
   const [isGeneratingReviewLink, setIsGeneratingReviewLink] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState("");
+  const [errorToast, setErrorToast] = useState<DashboardErrorToast | null>(null);
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const fetchClients = async () => {
     try {
@@ -165,6 +181,167 @@ export default function DashboardClient({
       window.scrollTo(0, scrollY);
     };
   }, [editContext, isReviewLinkModalOpen]);
+
+  const showErrorToast = useCallback((title: string, detail: string) => {
+    setErrorToast({ title, detail });
+  }, []);
+
+  const parseErrorDetailFromResponse = useCallback(async (response: Response) => {
+    const contentType = response.headers.get("content-type") ?? "";
+    const requestId = response.headers.get("x-request-id") ?? "";
+    let apiMessage = "";
+    let apiCode = "";
+    let apiDetail = "";
+
+    if (contentType.includes("application/json")) {
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        code?: string;
+        detail?: string;
+      } | null;
+
+      apiMessage = String(payload?.error ?? "").trim();
+      apiCode = String(payload?.code ?? "").trim();
+      apiDetail = String(payload?.detail ?? "").trim();
+    } else {
+      apiDetail = (await response.text().catch(() => "")).trim();
+    }
+
+    const fallbackByStatus =
+      response.status === 413
+        ? "El archivo supera el tamaño permitido por el servidor. Reduce el peso o cantidad de imágenes y vuelve a intentar."
+        : "No se pudo completar la solicitud.";
+
+    const summary = apiMessage || fallbackByStatus;
+    const details: string[] = [
+      `HTTP ${response.status} ${response.statusText}`,
+      apiCode ? `Código: ${apiCode}` : "",
+      apiDetail ? `Detalle: ${apiDetail}` : "",
+      requestId ? `Request ID: ${requestId}` : "",
+    ].filter((line) => line.length > 0);
+
+    return {
+      summary,
+      detail: details.join("\n"),
+    };
+  }, []);
+
+  const showErrorFromResponse = useCallback(
+    async (title: string, response: Response) => {
+      const parsed = await parseErrorDetailFromResponse(response);
+      showErrorToast(title, `${parsed.summary}\n\n${parsed.detail}`.trim());
+    },
+    [parseErrorDetailFromResponse, showErrorToast],
+  );
+
+  const showUnexpectedError = useCallback(
+    (title: string, error: unknown) => {
+      const detail = error instanceof Error ? error.message : "Error desconocido";
+      showErrorToast(title, detail);
+    },
+    [showErrorToast],
+  );
+
+  const requestSignedProjectUpload = useCallback(
+    async (file: File, projectId?: string): Promise<SignedUploadPayload> => {
+      const response = await fetch("/api/dashboard/projects/upload-signed-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          projectId: projectId ?? null,
+        }),
+      });
+
+      if (!response.ok) {
+        const parsed = await parseErrorDetailFromResponse(response);
+        throw new Error(`${parsed.summary}\n${parsed.detail}`.trim());
+      }
+
+      const payload = (await response.json()) as SignedUploadPayload;
+
+      if (!payload.path || !payload.token || !payload.publicUrl) {
+        throw new Error("La API no devolvió datos válidos para subir la imagen.");
+      }
+
+      return payload;
+    },
+    [parseErrorDetailFromResponse],
+  );
+
+  const uploadProjectFilesDirectly = useCallback(
+    async (
+      files: File[],
+      fileKeys: string[],
+      projectId?: string,
+    ): Promise<Map<string, string>> => {
+      const uploadedByKey = new Map<string, string>();
+
+      for (let index = 0; index < files.length; index += 1) {
+        const file = files[index];
+
+        if (!file) {
+          continue;
+        }
+
+        const uploadKey = fileKeys[index] ?? `new-${index}`;
+        const signedUpload = await requestSignedProjectUpload(file, projectId);
+
+        const { error } = await supabase
+          .storage
+          .from(PROJECT_IMAGE_BUCKET)
+          .uploadToSignedUrl(signedUpload.path, signedUpload.token, file, {
+            contentType: file.type || undefined,
+            upsert: false,
+          });
+
+        if (error) {
+          throw new Error(`No se pudo subir ${file.name}: ${error.message}`);
+        }
+
+        uploadedByKey.set(uploadKey, signedUpload.publicUrl);
+      }
+
+      return uploadedByKey;
+    },
+    [requestSignedProjectUpload, supabase],
+  );
+
+  const buildProjectImageUrls = useCallback(
+    (
+      existingImageUrls: string[],
+      imageOrderRefs: string[],
+      uploadedByKey: Map<string, string>,
+    ): string[] => {
+      const orderedUrls = imageOrderRefs
+        .map((ref) => {
+          if (ref.startsWith("existing:")) {
+            const existingUrl = ref.slice("existing:".length);
+            return existingImageUrls.includes(existingUrl) ? existingUrl : "";
+          }
+
+          if (ref.startsWith("new:")) {
+            const key = ref.slice("new:".length);
+            return uploadedByKey.get(key) ?? "";
+          }
+
+          return "";
+        })
+        .filter((url) => url.length > 0);
+
+      if (orderedUrls.length > 0) {
+        return Array.from(new Set(orderedUrls));
+      }
+
+      const uploadedUrls = Array.from(uploadedByKey.values());
+
+      return Array.from(new Set([...existingImageUrls, ...uploadedUrls].filter((url) => url.length > 0)));
+    },
+    [],
+  );
 
   const section = sectionConfig[activeSection];
   const currentRows = rowsBySection[activeSection];
@@ -235,15 +412,23 @@ export default function DashboardClient({
       return;
     }
 
-    const response = await fetch(`/api/dashboard/${activeSection}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids: selectedIds }),
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`/api/dashboard/${activeSection}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+    } catch (error) {
+      showUnexpectedError("No se pudieron eliminar los registros seleccionados.", error);
+      return;
+    }
 
     if (!response.ok) {
+      await showErrorFromResponse("No se pudieron eliminar los registros seleccionados.", response);
       return;
     }
 
@@ -275,17 +460,29 @@ export default function DashboardClient({
       rows.map((row) => (row.id === id ? { ...row, isActive: nextIsActive } : row)),
     );
 
-    const response = await fetch(`/api/dashboard/${activeSection}/${id}/visibility`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ isActive: nextIsActive }),
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`/api/dashboard/${activeSection}/${id}/visibility`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isActive: nextIsActive }),
+      });
+    } catch (error) {
+      updateRowsForSection(activeSection, (rows) =>
+        rows.map((row) => (row.id === id ? { ...row, isActive: currentRow.isActive } : row)),
+      );
+      showUnexpectedError("No se pudo actualizar la visibilidad.", error);
+      return;
+    }
 
     if (response.ok) {
       return;
     }
+
+    await showErrorFromResponse("No se pudo actualizar la visibilidad.", response);
 
     updateRowsForSection(activeSection, (rows) =>
       rows.map((row) => (row.id === id ? { ...row, isActive: currentRow.isActive } : row)),
@@ -321,13 +518,24 @@ export default function DashboardClient({
       [sectionKey]: true,
     }));
 
-    const response = await fetch(`/api/dashboard/${sectionKey}/reorder`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids }),
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`/api/dashboard/${sectionKey}/reorder`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids }),
+      });
+    } catch (error) {
+      setIsSavingOrder((prev) => ({
+        ...prev,
+        [sectionKey]: false,
+      }));
+      showUnexpectedError("No se pudo guardar el orden.", error);
+      return;
+    }
 
     setIsSavingOrder((prev) => ({
       ...prev,
@@ -335,6 +543,7 @@ export default function DashboardClient({
     }));
 
     if (!response.ok) {
+      await showErrorFromResponse("No se pudo guardar el orden.", response);
       return;
     }
 
@@ -510,41 +719,67 @@ export default function DashboardClient({
             }
           : normalizedValues;
 
-      const response = await withLoading(async () => {
-        if (editContext.sectionKey !== "projects") {
-          return fetch(`/api/dashboard/${editContext.sectionKey}`, {
+      let response: Response;
+
+      try {
+        response = await withLoading(async () => {
+          if (editContext.sectionKey !== "projects") {
+            return fetch(`/api/dashboard/${editContext.sectionKey}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(requestPayload),
+            });
+          }
+
+          const imageFiles = Array.isArray(normalizedValues.imageFiles)
+            ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
+            : [];
+          const imageFileKeys = Array.isArray(normalizedValues.imageFileKeys)
+            ? normalizedValues.imageFileKeys.map((value) => String(value)).filter((value) => value.length > 0)
+            : imageFiles.map((_, index) => `new-${index}`);
+          const imageOrderRefs = Array.isArray(normalizedValues.imageOrderRefs)
+            ? normalizedValues.imageOrderRefs.map((value) => String(value)).filter((value) => value.length > 0)
+            : imageFileKeys.map((key) => `new:${key}`);
+
+          const uploadedByKey = await uploadProjectFilesDirectly(imageFiles, imageFileKeys);
+          const orderedImageUrls = buildProjectImageUrls([], imageOrderRefs, uploadedByKey);
+
+          return fetch("/api/dashboard/projects", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(requestPayload),
+            body: JSON.stringify({
+              name: String(normalizedValues.name ?? ""),
+              type: String(normalizedValues.type ?? "Comercial"),
+              location: String(normalizedValues.location ?? ""),
+              description: String(normalizedValues.description ?? ""),
+              isActive: Boolean(normalizedValues.isActive),
+              serviceIds: Array.isArray(normalizedValues.projectServiceIds)
+                ? normalizedValues.projectServiceIds.map((value) => String(value))
+                : [],
+              clientId: normalizedValues.clientId ? String(normalizedValues.clientId) : null,
+              companyName: String(draftValues.companyName ?? ""),
+              createCompany: Boolean(draftValues.createCompany),
+              imageUrls: orderedImageUrls,
+            }),
           });
-        }
-
-        const formData = new FormData();
-        formData.set("name", String(normalizedValues.name ?? ""));
-        formData.set("type", String(normalizedValues.type ?? "Comercial"));
-        formData.set("location", String(normalizedValues.location ?? ""));
-        formData.set("description", String(normalizedValues.description ?? ""));
-        formData.set("isActive", String(Boolean(normalizedValues.isActive)));
-        formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
-        formData.set("clientId", String(normalizedValues.clientId ?? ""));
-
-        const imageFiles = Array.isArray(normalizedValues.imageFiles)
-          ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
-          : [];
-
-        imageFiles.forEach((file) => {
-          formData.append("images", file);
         });
-
-        return fetch("/api/dashboard/projects", {
-          method: "POST",
-          body: formData,
-        });
-      });
+      } catch (error) {
+        showUnexpectedError(
+          `No se pudo crear ${sectionConfig[editContext.sectionKey].singularLabel}.`,
+          error,
+        );
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse(
+          `No se pudo crear ${sectionConfig[editContext.sectionKey].singularLabel}.`,
+          response,
+        );
         return;
       }
 
@@ -572,57 +807,70 @@ export default function DashboardClient({
     }
 
     if (editContext.sectionKey === "projects") {
-      const formData = new FormData();
-      formData.set("name", String(normalizedValues.name ?? ""));
-      formData.set("type", String(normalizedValues.type ?? "Comercial"));
-      formData.set("location", String(normalizedValues.location ?? ""));
-      formData.set("description", String(normalizedValues.description ?? ""));
-      formData.set("isActive", String(Boolean(normalizedValues.isActive)));
-      formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
-      formData.set("clientId", String(normalizedValues.clientId ?? ""));
-      formData.set("companyName", String(draftValues.companyName ?? ""));
-      formData.set("createCompany", String(Boolean(draftValues.createCompany)));
-
       const imageFiles = Array.isArray(normalizedValues.imageFiles)
         ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
         : [];
 
-      imageFiles.forEach((file) => {
-        formData.append("images", file);
-      });
-
       const imageFileKeys = Array.isArray(normalizedValues.imageFileKeys)
         ? normalizedValues.imageFileKeys.map((value) => String(value)).filter((value) => value.length > 0)
-        : [];
-
-      imageFileKeys.forEach((key) => {
-        formData.append("imageKeys", key);
-      });
+        : imageFiles.map((_, index) => `new-${index}`);
 
       const existingImageUrls = Array.isArray(normalizedValues.imageUrls)
         ? normalizedValues.imageUrls.map((value) => String(value)).filter((value) => value.length > 0)
         : [];
 
-      existingImageUrls.forEach((url) => {
-        formData.append("existingImageUrls", url);
-      });
-
       const imageOrderRefs = Array.isArray(normalizedValues.imageOrderRefs)
         ? normalizedValues.imageOrderRefs.map((value) => String(value)).filter((value) => value.length > 0)
-        : [];
+        : [
+            ...existingImageUrls.map((url) => `existing:${url}`),
+            ...imageFileKeys.map((key) => `new:${key}`),
+          ];
 
-      imageOrderRefs.forEach((ref) => {
-        formData.append("imageOrderRefs", ref);
-      });
+      let uploadedByKey = new Map<string, string>();
 
-      const response = await withLoading(() =>
-        fetch(`/api/dashboard/projects/${editContext.rowId}`, {
-          method: "PATCH",
-          body: formData,
-        }),
-      );
+      try {
+        uploadedByKey = await withLoading(() =>
+          uploadProjectFilesDirectly(imageFiles, imageFileKeys, editContext.rowId),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudieron subir las imágenes del proyecto.", error);
+        return;
+      }
+
+      const imageUrls = buildProjectImageUrls(existingImageUrls, imageOrderRefs, uploadedByKey);
+
+      let response: Response;
+
+      try {
+        response = await withLoading(() =>
+          fetch(`/api/dashboard/projects/${editContext.rowId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: String(normalizedValues.name ?? ""),
+              type: String(normalizedValues.type ?? "Comercial"),
+              location: String(normalizedValues.location ?? ""),
+              description: String(normalizedValues.description ?? ""),
+              isActive: Boolean(normalizedValues.isActive),
+              serviceIds: Array.isArray(normalizedValues.projectServiceIds)
+                ? normalizedValues.projectServiceIds.map((value) => String(value))
+                : [],
+              clientId: normalizedValues.clientId ? String(normalizedValues.clientId) : null,
+              companyName: String(draftValues.companyName ?? ""),
+              createCompany: Boolean(draftValues.createCompany),
+              imageUrls,
+            }),
+          }),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudo actualizar el proyecto.", error);
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse("No se pudo actualizar el proyecto.", response);
         return;
       }
 
@@ -646,17 +894,25 @@ export default function DashboardClient({
         projectId: normalizedValues.projectId ?? null,
       };
 
-      const response = await withLoading(() =>
-        fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(testimonialPayload),
-        }),
-      );
+      let response: Response;
+
+      try {
+        response = await withLoading(() =>
+          fetch(`/api/dashboard/testimonials/${editContext.rowId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(testimonialPayload),
+          }),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudo actualizar la reseña.", error);
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse("No se pudo actualizar la reseña.", response);
         return;
       }
 
@@ -674,17 +930,25 @@ export default function DashboardClient({
     }
 
     if (editContext.sectionKey === "services") {
-      const response = await withLoading(() =>
-        fetch(`/api/dashboard/services/${editContext.rowId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(normalizedValues),
-        }),
-      );
+      let response: Response;
+
+      try {
+        response = await withLoading(() =>
+          fetch(`/api/dashboard/services/${editContext.rowId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(normalizedValues),
+          }),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudo actualizar el servicio.", error);
+        return;
+      }
 
       if (!response.ok) {
+        await showErrorFromResponse("No se pudo actualizar el servicio.", response);
         return;
       }
 
@@ -758,6 +1022,7 @@ export default function DashboardClient({
       if (!response.ok) {
         setGeneratedReviewLink("");
         setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+        await showErrorFromResponse("No se pudo generar el link de reseña.", response);
         return;
       }
 
@@ -775,6 +1040,7 @@ export default function DashboardClient({
     } catch {
       setGeneratedReviewLink("");
       setReviewLinkStatusMessage("No se pudo generar el link. Intenta nuevamente.");
+      showErrorToast("No se pudo generar el link de reseña.", "Error de red o servidor no disponible.");
     } finally {
       setIsGeneratingReviewLink(false);
     }
@@ -897,6 +1163,7 @@ export default function DashboardClient({
         clientOptions={clientOptions}
         isSubmitting={isSubmittingEdit}
         onValueChange={updateDraftValue}
+        onFileValidationError={showErrorToast}
         onClose={closeEditModal}
         onSave={saveEdit}
       />
@@ -917,6 +1184,11 @@ export default function DashboardClient({
         onCopyLink={() => {
           void copyReviewLink();
         }}
+      />
+
+      <ErrorToast
+        error={errorToast}
+        onClose={() => setErrorToast(null)}
       />
     </section>
   );
