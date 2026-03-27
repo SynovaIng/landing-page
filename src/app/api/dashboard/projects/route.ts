@@ -36,17 +36,23 @@ const getErrorMessage = (error: unknown, fallback: string): string => {
 export async function POST(request: Request) {
   let parsedInput;
   let imageFiles: File[] = [];
+  let uploadedImageUrls: string[] = [];
 
   try {
     const parsedRequest = await parseProjectMutationRequest(request);
     parsedInput = parsedRequest.payload;
     imageFiles = parsedRequest.imageFiles;
+    uploadedImageUrls = parsedRequest.uploadedImageUrls;
   } catch {
     return toErrorResponse(400, "Payload inválido", "INVALID_PROJECT_MUTATION_PAYLOAD");
   }
 
   try {
-    const imageUrls = await uploadProjectImages(imageFiles);
+    const uploadedFromRequest = await uploadProjectImages(imageFiles);
+    const imageUrls = Array.from(new Set([
+      ...uploadedImageUrls,
+      ...uploadedFromRequest,
+    ].map((url) => String(url).trim()).filter((url) => url.length > 0)));
 
     const useCase = container.get(CreateProjectUseCase);
     const created = await useCase.execute({

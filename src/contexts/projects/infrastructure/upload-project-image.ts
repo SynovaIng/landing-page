@@ -1,6 +1,7 @@
+import { PROJECT_IMAGE_BUCKET } from "@/contexts/projects/domain/project-image.constants";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const PROJECT_IMAGE_BUCKET = "project-images";
+export { PROJECT_IMAGE_BUCKET };
 
 export const getProjectImagePathFromPublicUrl = (publicUrl: string): string | null => {
   const url = publicUrl.trim();
@@ -35,6 +36,43 @@ const getFileExtension = (filename: string): string => {
   return extension.replace(/[^a-z0-9]/g, "") || "jpg";
 };
 
+const createProjectImagePath = (fileName: string, projectId?: string): string => {
+  const extension = getFileExtension(fileName);
+  const folder = projectId ? `projects/${projectId}` : "projects/pending";
+
+  return `${folder}/${crypto.randomUUID()}.${extension}`;
+};
+
+export interface SignedProjectImageUpload {
+  path: string;
+  token: string;
+  publicUrl: string;
+}
+
+export const createSignedProjectImageUpload = async (
+  fileName: string,
+  projectId?: string,
+): Promise<SignedProjectImageUpload> => {
+  const supabase = await createSupabaseServerClient();
+  const path = createProjectImagePath(fileName, projectId);
+  const { data, error } = await supabase
+    .storage
+    .from(PROJECT_IMAGE_BUCKET)
+    .createSignedUploadUrl(path);
+
+  if (error || !data?.token) {
+    throw new Error(`No se pudo preparar la carga de imagen: ${error?.message ?? "token inválido"}`);
+  }
+
+  const { data: publicData } = supabase.storage.from(PROJECT_IMAGE_BUCKET).getPublicUrl(path);
+
+  return {
+    path,
+    token: data.token,
+    publicUrl: publicData.publicUrl,
+  };
+};
+
 export const uploadProjectImage = async (file: File, projectId?: string): Promise<string> => {
   const [uploadedUrl] = await uploadProjectImages([file], projectId);
 
@@ -53,13 +91,10 @@ export const uploadProjectImages = async (files: File[], projectId?: string): Pr
   }
 
   const supabase = await createSupabaseServerClient();
-  const folder = projectId ? `projects/${projectId}` : "projects/pending";
-
   const uploadedUrls: string[] = [];
 
   for (const file of validFiles) {
-    const extension = getFileExtension(file.name);
-    const filePath = `${folder}/${crypto.randomUUID()}.${extension}`;
+    const filePath = createProjectImagePath(file.name, projectId);
 
     const { error: uploadError } = await supabase.storage
       .from(PROJECT_IMAGE_BUCKET)

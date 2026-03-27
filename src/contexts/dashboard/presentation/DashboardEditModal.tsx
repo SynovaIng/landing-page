@@ -127,8 +127,7 @@ interface DashboardEditModalProps {
   onSave: () => void;
 }
 
-const MAX_IMAGE_FILE_SIZE_BYTES = 8 * 1024 * 1024;
-const MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
+const MAX_IMAGE_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 
 const formatSizeMb = (sizeInBytes: number): string => {
   return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -835,8 +834,6 @@ export default function DashboardEditModal({
                         const acceptedFiles: File[] = [];
                         const rejectedMessages: string[] = [];
 
-                        let runningTotal = selectedFiles.reduce((sum, selectedFile) => sum + selectedFile.size, 0);
-
                         pickedFiles.forEach((file) => {
                           const fileLabel = file.name || "archivo sin nombre";
 
@@ -859,15 +856,7 @@ export default function DashboardEditModal({
                             return;
                           }
 
-                          if (runningTotal + file.size > MAX_TOTAL_IMAGE_BYTES) {
-                            rejectedMessages.push(
-                              `${fileLabel}: supera el máximo total por carga (${formatSizeMb(MAX_TOTAL_IMAGE_BYTES)}).`,
-                            );
-                            return;
-                          }
-
                           acceptedFiles.push(file);
-                          runningTotal += file.size;
                         });
 
                         if (rejectedMessages.length > 0) {

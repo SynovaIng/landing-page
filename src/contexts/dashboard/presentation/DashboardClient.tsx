@@ -7,8 +7,10 @@ import type {
   DashboardSectionData,
   DashboardSectionKey,
 } from "@/contexts/dashboard/domain/dashboard.entity";
+import { PROJECT_IMAGE_BUCKET } from "@/contexts/projects/domain/project-image.constants";
 import ErrorToast from "@/contexts/shared/presentation/ErrorToast";
 import { useLoadingOverlay } from "@/contexts/shared/presentation/LoadingOverlayContext";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 import {
   createFieldDefaults,
@@ -42,6 +44,12 @@ interface ProjectOption {
 interface DashboardErrorToast {
   title: string;
   detail: string;
+}
+
+interface SignedUploadPayload {
+  path: string;
+  token: string;
+  publicUrl: string;
 }
 
 type DashboardClientProps = DashboardSectionData;
@@ -108,6 +116,7 @@ export default function DashboardClient({
   const [isGeneratingReviewLink, setIsGeneratingReviewLink] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState("");
   const [errorToast, setErrorToast] = useState<DashboardErrorToast | null>(null);
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const fetchClients = async () => {
     try {
@@ -231,6 +240,107 @@ export default function DashboardClient({
       showErrorToast(title, detail);
     },
     [showErrorToast],
+  );
+
+  const requestSignedProjectUpload = useCallback(
+    async (file: File, projectId?: string): Promise<SignedUploadPayload> => {
+      const response = await fetch("/api/dashboard/projects/upload-signed-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          projectId: projectId ?? null,
+        }),
+      });
+
+      if (!response.ok) {
+        const parsed = await parseErrorDetailFromResponse(response);
+        throw new Error(`${parsed.summary}\n${parsed.detail}`.trim());
+      }
+
+      const payload = (await response.json()) as SignedUploadPayload;
+
+      if (!payload.path || !payload.token || !payload.publicUrl) {
+        throw new Error("La API no devolvió datos válidos para subir la imagen.");
+      }
+
+      return payload;
+    },
+    [parseErrorDetailFromResponse],
+  );
+
+  const uploadProjectFilesDirectly = useCallback(
+    async (
+      files: File[],
+      fileKeys: string[],
+      projectId?: string,
+    ): Promise<Map<string, string>> => {
+      const uploadedByKey = new Map<string, string>();
+
+      for (let index = 0; index < files.length; index += 1) {
+        const file = files[index];
+
+        if (!file) {
+          continue;
+        }
+
+        const uploadKey = fileKeys[index] ?? `new-${index}`;
+        const signedUpload = await requestSignedProjectUpload(file, projectId);
+
+        const { error } = await supabase
+          .storage
+          .from(PROJECT_IMAGE_BUCKET)
+          .uploadToSignedUrl(signedUpload.path, signedUpload.token, file, {
+            contentType: file.type || undefined,
+            upsert: false,
+          });
+
+        if (error) {
+          throw new Error(`No se pudo subir ${file.name}: ${error.message}`);
+        }
+
+        uploadedByKey.set(uploadKey, signedUpload.publicUrl);
+      }
+
+      return uploadedByKey;
+    },
+    [requestSignedProjectUpload, supabase],
+  );
+
+  const buildProjectImageUrls = useCallback(
+    (
+      existingImageUrls: string[],
+      imageOrderRefs: string[],
+      uploadedByKey: Map<string, string>,
+    ): string[] => {
+      const orderedUrls = imageOrderRefs
+        .map((ref) => {
+          if (ref.startsWith("existing:")) {
+            const existingUrl = ref.slice("existing:".length);
+            return existingImageUrls.includes(existingUrl) ? existingUrl : "";
+          }
+
+          if (ref.startsWith("new:")) {
+            const key = ref.slice("new:".length);
+            return uploadedByKey.get(key) ?? "";
+          }
+
+          return "";
+        })
+        .filter((url) => url.length > 0);
+
+      if (orderedUrls.length > 0) {
+        return Array.from(new Set(orderedUrls));
+      }
+
+      const uploadedUrls = Array.from(uploadedByKey.values());
+
+      return Array.from(new Set([...existingImageUrls, ...uploadedUrls].filter((url) => url.length > 0)));
+    },
+    [],
   );
 
   const section = sectionConfig[activeSection];
@@ -623,26 +733,38 @@ export default function DashboardClient({
             });
           }
 
-          const formData = new FormData();
-          formData.set("name", String(normalizedValues.name ?? ""));
-          formData.set("type", String(normalizedValues.type ?? "Comercial"));
-          formData.set("location", String(normalizedValues.location ?? ""));
-          formData.set("description", String(normalizedValues.description ?? ""));
-          formData.set("isActive", String(Boolean(normalizedValues.isActive)));
-          formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
-          formData.set("clientId", String(normalizedValues.clientId ?? ""));
-
           const imageFiles = Array.isArray(normalizedValues.imageFiles)
             ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
             : [];
+          const imageFileKeys = Array.isArray(normalizedValues.imageFileKeys)
+            ? normalizedValues.imageFileKeys.map((value) => String(value)).filter((value) => value.length > 0)
+            : imageFiles.map((_, index) => `new-${index}`);
+          const imageOrderRefs = Array.isArray(normalizedValues.imageOrderRefs)
+            ? normalizedValues.imageOrderRefs.map((value) => String(value)).filter((value) => value.length > 0)
+            : imageFileKeys.map((key) => `new:${key}`);
 
-          imageFiles.forEach((file) => {
-            formData.append("images", file);
-          });
+          const uploadedByKey = await uploadProjectFilesDirectly(imageFiles, imageFileKeys);
+          const orderedImageUrls = buildProjectImageUrls([], imageOrderRefs, uploadedByKey);
 
           return fetch("/api/dashboard/projects", {
             method: "POST",
-            body: formData,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: String(normalizedValues.name ?? ""),
+              type: String(normalizedValues.type ?? "Comercial"),
+              location: String(normalizedValues.location ?? ""),
+              description: String(normalizedValues.description ?? ""),
+              isActive: Boolean(normalizedValues.isActive),
+              serviceIds: Array.isArray(normalizedValues.projectServiceIds)
+                ? normalizedValues.projectServiceIds.map((value) => String(value))
+                : [],
+              clientId: normalizedValues.clientId ? String(normalizedValues.clientId) : null,
+              companyName: String(draftValues.companyName ?? ""),
+              createCompany: Boolean(draftValues.createCompany),
+              imageUrls: orderedImageUrls,
+            }),
           });
         });
       } catch (error) {
@@ -685,48 +807,37 @@ export default function DashboardClient({
     }
 
     if (editContext.sectionKey === "projects") {
-      const formData = new FormData();
-      formData.set("name", String(normalizedValues.name ?? ""));
-      formData.set("type", String(normalizedValues.type ?? "Comercial"));
-      formData.set("location", String(normalizedValues.location ?? ""));
-      formData.set("description", String(normalizedValues.description ?? ""));
-      formData.set("isActive", String(Boolean(normalizedValues.isActive)));
-      formData.set("serviceIds", JSON.stringify(normalizedValues.projectServiceIds ?? []));
-      formData.set("clientId", String(normalizedValues.clientId ?? ""));
-      formData.set("companyName", String(draftValues.companyName ?? ""));
-      formData.set("createCompany", String(Boolean(draftValues.createCompany)));
-
       const imageFiles = Array.isArray(normalizedValues.imageFiles)
         ? normalizedValues.imageFiles.filter((file): file is File => file instanceof File)
         : [];
 
-      imageFiles.forEach((file) => {
-        formData.append("images", file);
-      });
-
       const imageFileKeys = Array.isArray(normalizedValues.imageFileKeys)
         ? normalizedValues.imageFileKeys.map((value) => String(value)).filter((value) => value.length > 0)
-        : [];
-
-      imageFileKeys.forEach((key) => {
-        formData.append("imageKeys", key);
-      });
+        : imageFiles.map((_, index) => `new-${index}`);
 
       const existingImageUrls = Array.isArray(normalizedValues.imageUrls)
         ? normalizedValues.imageUrls.map((value) => String(value)).filter((value) => value.length > 0)
         : [];
 
-      existingImageUrls.forEach((url) => {
-        formData.append("existingImageUrls", url);
-      });
-
       const imageOrderRefs = Array.isArray(normalizedValues.imageOrderRefs)
         ? normalizedValues.imageOrderRefs.map((value) => String(value)).filter((value) => value.length > 0)
-        : [];
+        : [
+            ...existingImageUrls.map((url) => `existing:${url}`),
+            ...imageFileKeys.map((key) => `new:${key}`),
+          ];
 
-      imageOrderRefs.forEach((ref) => {
-        formData.append("imageOrderRefs", ref);
-      });
+      let uploadedByKey = new Map<string, string>();
+
+      try {
+        uploadedByKey = await withLoading(() =>
+          uploadProjectFilesDirectly(imageFiles, imageFileKeys, editContext.rowId),
+        );
+      } catch (error) {
+        showUnexpectedError("No se pudieron subir las imágenes del proyecto.", error);
+        return;
+      }
+
+      const imageUrls = buildProjectImageUrls(existingImageUrls, imageOrderRefs, uploadedByKey);
 
       let response: Response;
 
@@ -734,7 +845,23 @@ export default function DashboardClient({
         response = await withLoading(() =>
           fetch(`/api/dashboard/projects/${editContext.rowId}`, {
             method: "PATCH",
-            body: formData,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: String(normalizedValues.name ?? ""),
+              type: String(normalizedValues.type ?? "Comercial"),
+              location: String(normalizedValues.location ?? ""),
+              description: String(normalizedValues.description ?? ""),
+              isActive: Boolean(normalizedValues.isActive),
+              serviceIds: Array.isArray(normalizedValues.projectServiceIds)
+                ? normalizedValues.projectServiceIds.map((value) => String(value))
+                : [],
+              clientId: normalizedValues.clientId ? String(normalizedValues.clientId) : null,
+              companyName: String(draftValues.companyName ?? ""),
+              createCompany: Boolean(draftValues.createCompany),
+              imageUrls,
+            }),
           }),
         );
       } catch (error) {

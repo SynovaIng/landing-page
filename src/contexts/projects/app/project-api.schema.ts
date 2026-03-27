@@ -12,6 +12,7 @@ export const projectMutationSchema = z.object({
   clientId: z.string().trim().optional().nullable(),
   companyName: z.string().trim().optional(),
   createCompany: z.boolean().default(false),
+  imageUrls: z.array(z.string().trim().min(1)).optional().default([]),
 });
 
 export type ProjectMutationInput = z.infer<typeof projectMutationSchema>;
@@ -74,6 +75,7 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
   imageKeys: string[];
   existingImageUrls: string[];
   imageOrderRefs: string[];
+  uploadedImageUrls: string[];
 }> => {
   const contentType = request.headers.get("content-type") ?? "";
 
@@ -122,6 +124,10 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
         .getAll("imageOrderRefs")
         .map((entry) => String(entry).trim())
         .filter((entry) => entry.length > 0),
+      uploadedImageUrls: formData
+        .getAll("imageUrls")
+        .map((entry) => String(entry).trim())
+        .filter((entry) => entry.length > 0),
     };
   }
 
@@ -138,6 +144,7 @@ export const parseProjectMutationRequest = async (request: Request): Promise<{
     imageKeys: [],
     existingImageUrls: [],
     imageOrderRefs: [],
+    uploadedImageUrls: parsed.data.imageUrls,
   };
 };
 

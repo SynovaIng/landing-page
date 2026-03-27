@@ -43,6 +43,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   let imageKeys: string[] = [];
   let existingImageUrls: string[] = [];
   let imageOrderRefs: string[] = [];
+  let requestImageUrls: string[] = [];
 
   try {
     const parsedRequest = await parseProjectMutationRequest(request);
@@ -51,16 +52,17 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     imageKeys = parsedRequest.imageKeys;
     existingImageUrls = parsedRequest.existingImageUrls;
     imageOrderRefs = parsedRequest.imageOrderRefs;
+    requestImageUrls = parsedRequest.uploadedImageUrls;
   } catch {
     return toErrorResponse(400, "Payload inválido", "INVALID_PROJECT_MUTATION_PAYLOAD");
   }
 
   try {
-    const uploadedImageUrls = await uploadProjectImages(imageFiles, id);
+    const uploadedFromForm = await uploadProjectImages(imageFiles, id);
 
     const uploadedByKey = new Map<string, string>();
     imageKeys.forEach((key, index) => {
-      const uploadedUrl = uploadedImageUrls[index];
+      const uploadedUrl = uploadedFromForm[index];
 
       if (uploadedUrl) {
         uploadedByKey.set(key, uploadedUrl);
@@ -83,9 +85,15 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       })
       .filter((url) => url.length > 0);
 
-    const imageUrls = orderedUrls.length > 0
-      ? orderedUrls
-      : [...existingImageUrls, ...uploadedImageUrls];
+    let imageUrls: string[];
+
+    if (orderedUrls.length > 0) {
+      imageUrls = orderedUrls;
+    } else if (requestImageUrls.length > 0) {
+      imageUrls = requestImageUrls;
+    } else {
+      imageUrls = [...existingImageUrls, ...uploadedFromForm];
+    }
 
     const useCase = container.get(UpdateProjectUseCase);
     const updated = await useCase.execute({
