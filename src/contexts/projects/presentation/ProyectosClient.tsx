@@ -18,12 +18,7 @@ const categories: (ProjectCategory | "Todos")[] = [
   "Industrial",
 ];
 
-const stats = [
-  { value: "+150", label: "Proyectos Realizados" },
-  { value: "+10", label: "Años de experiencia" },
-  { value: "100%", label: "Certificados SEC" },
-  { value: "RM", label: "Cobertura Total" },
-];
+const PAGE_SIZE = 9;
 
 interface ProjectServiceSummary {
   id: string;
@@ -34,14 +29,16 @@ interface ProjectServiceSummary {
 interface ProyectosClientProps {
   projects: Project[];
   services: ProjectServiceSummary[];
+  projectsStatValue: string;
 }
 
-export default function ProyectosClient({ projects, services }: ProyectosClientProps) {
+export default function ProyectosClient({ projects, services, projectsStatValue }: ProyectosClientProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromQuery = searchParams.get("projectId");
   const [active, setActive] = useState<ProjectCategory | "Todos">("Todos");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const queryProject = useMemo(
     () => projects.find((project) => project.id === projectIdFromQuery) ?? null,
@@ -50,10 +47,17 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
   const displayedProject = selectedProject ?? queryProject;
 
   const filtered = active === "Todos" ? projects : projects.filter((project) => project.category === active);
+  const visibleProjects = filtered.slice(0, visibleCount);
+  const hasMoreProjects = filtered.length > visibleCount;
   const emptyMessage =
     active === "Todos"
       ? "Actualmente no hay proyectos disponibles."
       : `No existen proyectos de tipo ${active}.`;
+  const stats = [
+    { value: projectsStatValue, label: "Proyectos Realizados" },
+    { value: "100%", label: "Certificados SEC" },
+    { value: "Chile", label: "Cobertura Total" },
+  ];
 
   const selectedProjectDetails = useMemo(() => {
     if (!displayedProject) {
@@ -99,7 +103,10 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
               {categories.map((category) => (
                 <button
                   key={category}
-                  onClick={() => setActive(category)}
+                  onClick={() => {
+                    setActive(category);
+                    setVisibleCount(PAGE_SIZE);
+                  }}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm ${
                     active === category
                       ? "bg-cyan-gradient text-white font-bold shadow-md"
@@ -113,10 +120,24 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
           </div>
 
           {filtered.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-              {filtered.map((project) => (
-                <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
-              ))}
+            <div className="mb-24">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {visibleProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                ))}
+              </div>
+
+              {hasMoreProjects ? (
+                <div className="mt-10 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                    className="inline-flex items-center justify-center rounded-full border border-border bg-surface px-8 py-3 text-sm font-semibold text-navy transition-colors hover:border-secondary hover:text-secondary"
+                  >
+                    Mostrar más
+                  </button>
+                </div>
+              ) : null}
             </div>
           ) : (
             <div className="mb-24 rounded-2xl border border-border bg-surface p-10 text-center">
@@ -127,7 +148,7 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
 
         <div className="bg-surface border-y border-border py-16">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
               {stats.map((stat) => (
                 <StatCard key={stat.label} value={stat.value} label={stat.label} />
               ))}

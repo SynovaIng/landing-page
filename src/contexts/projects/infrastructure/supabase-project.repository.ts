@@ -9,6 +9,7 @@ import {
 import type {
   CreateProjectInput,
   GetAllProjectsOptions,
+  ProjectStatusCounts,
   UpdateProjectInput,
 } from "@/contexts/projects/domain/project.repository";
 import { ProjectRepository } from "@/contexts/projects/domain/project.repository";
@@ -173,6 +174,26 @@ export class SupabaseProjectRepository extends ProjectRepository {
         : null,
       companyName: getCompanyNameFromRelation((row as { clients?: RelationWithName }).clients),
     }));
+  }
+
+  async getStatusCounts(): Promise<ProjectStatusCounts> {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.rpc("get_projects_status_counts");
+    const row = Array.isArray(data) ? data[0] : null;
+
+    if (error || !row) {
+      return {
+        activeCount: 0,
+        inactiveCount: 0,
+        totalCount: 0,
+      };
+    }
+
+    return {
+      activeCount: Number((row as { active_count?: number | string | null }).active_count ?? 0),
+      inactiveCount: Number((row as { inactive_count?: number | string | null }).inactive_count ?? 0),
+      totalCount: Number((row as { total_count?: number | string | null }).total_count ?? 0),
+    };
   }
 
   async getById(id: string): Promise<Project | null> {

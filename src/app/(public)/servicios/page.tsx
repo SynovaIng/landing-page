@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { container } from "@/config/container";
+import { formatProjectCountApprox } from "@/contexts/projects/app/format-project-count";
+import { GetProjectStatusCountsUseCase } from "@/contexts/projects/use-cases/get-project-status-counts.use-case";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import Button from "@/contexts/shared/presentation/Button";
@@ -33,7 +35,12 @@ const sectors = [
 const SERVICES_GRID_COLUMNS_CLASS = "md:grid-cols-3";
 
 export default async function ServiciosPage() {
-  const services = await container.get(GetAllServicesUseCase).execute();
+  const [services, projectCounts] = await Promise.all([
+    container.get(GetAllServicesUseCase).execute(),
+    container.get(GetProjectStatusCountsUseCase).execute(),
+  ]);
+  const projectsCountLabel = formatProjectCountApprox(projectCounts.totalCount);
+
   return (
     <div className="pt-24">
       {/* ── Hero ── */}
@@ -62,7 +69,7 @@ export default async function ServiciosPage() {
       </section>
 
       {/* ── Sectores ── */}
-      <section className="bg-surface border-y border-border py-20 px-6 md:px-10">
+      <section id="tipos-de-proyectos" className="bg-surface border-y border-border py-20 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             eyebrow="Sectores que atendemos"
@@ -92,8 +99,8 @@ export default async function ServiciosPage() {
             backgroundSize: "20px 20px",
           }}
         />
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="flex items-center gap-6">
+        <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-3 items-stretch">
+          <div className="flex items-center justify-center md:justify-start gap-6 py-6 md:py-0 md:pr-8">
             <div className="bg-surface p-4 rounded-xl shadow-lg border border-border-light">
               <div className="text-navy text-center">
                 <span className="material-symbols-outlined text-5xl text-secondary">verified</span>
@@ -105,16 +112,14 @@ export default async function ServiciosPage() {
               <p className="text-muted">Instaladores autorizados por la SEC Clase A.</p>
             </div>
           </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-border to-transparent" />
-          <div className="text-center md:text-left">
-            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">10+</p>
+          <div className="text-center py-6 md:py-0 md:px-8 border-y md:border-y-0 md:border-x border-border flex flex-col items-center justify-center">
+            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">24/7</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
-              Años de Experiencia
+              Emergencias Eléctricas
             </p>
           </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-border to-transparent" />
-          <div className="text-center md:text-left">
-            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">500+</p>
+          <div className="text-center py-6 md:py-0 md:pl-8 flex flex-col items-center justify-center">
+            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">{projectsCountLabel}</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
               Proyectos Completados
             </p>

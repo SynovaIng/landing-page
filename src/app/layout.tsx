@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter,Montserrat } from "next/font/google";
 
+import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 import { AuthProvider } from "@/contexts/auth/presentation/AuthContext";
 import Footer from "@/contexts/shared/presentation/Footer";
 import { LoadingOverlayProvider } from "@/contexts/shared/presentation/LoadingOverlayContext";
@@ -44,11 +45,26 @@ const defaultThemeVars = Object.entries(defaultTheme.vars)
   .join("\n");
 const defaultThemeCss = `:root {\n${defaultThemeVars}\n}`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { checkUserAuthenticatedUseCase, getAuthenticatedUserUseCase } =
+    createServerAuthUseCases();
+  const authenticated = await checkUserAuthenticatedUseCase.execute();
+  const user = authenticated ? await getAuthenticatedUserUseCase.execute() : null;
+  const initialSession = {
+    authenticated,
+    user: user
+      ? {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+        }
+      : null,
+  };
+
   return (
     <html lang="es">
       <head>
@@ -62,10 +78,10 @@ export default function RootLayout({
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
         <LoadingOverlayProvider>
           <ThemeProvider>
-            <AuthProvider>
+            <AuthProvider initialSession={initialSession}>
               <Navbar />
               <main className="min-h-screen">{children}</main>
-              <Footer />
+              <Footer currentYear={new Date().getFullYear()} />
             </AuthProvider>
           </ThemeProvider>
         </LoadingOverlayProvider>

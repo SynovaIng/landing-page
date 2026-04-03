@@ -6,6 +6,7 @@ import { CreateProjectUseCase } from "@/contexts/projects/use-cases/create-proje
 import { DeleteProjectsUseCase } from "@/contexts/projects/use-cases/delete-projects.use-case";
 import { GetAllProjectsUseCase } from "@/contexts/projects/use-cases/get-all-projects.use-case";
 import { GetProjectByIdUseCase } from "@/contexts/projects/use-cases/get-project-by-id.use-case";
+import { GetProjectStatusCountsUseCase } from "@/contexts/projects/use-cases/get-project-status-counts.use-case";
 import { ReorderProjectsUseCase } from "@/contexts/projects/use-cases/reorder-projects.use-case";
 import { SetProjectVisibilityUseCase } from "@/contexts/projects/use-cases/set-project-visibility.use-case";
 import { UpdateProjectUseCase } from "@/contexts/projects/use-cases/update-project.use-case";
@@ -19,6 +20,7 @@ export const registerProjectsContainer = (builder: ContainerBuilder): void => {
   builder.registerAndUse(DeleteProjectsUseCase);
   builder.registerAndUse(GetAllProjectsUseCase);
   builder.registerAndUse(GetProjectByIdUseCase);
+  builder.registerAndUse(GetProjectStatusCountsUseCase);
   builder.registerAndUse(ReorderProjectsUseCase);
   builder.registerAndUse(SetProjectVisibilityUseCase);
   builder.registerAndUse(UpdateProjectUseCase);

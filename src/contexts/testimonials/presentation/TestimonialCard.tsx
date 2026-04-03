@@ -1,5 +1,19 @@
 import Link from "next/link";
 
+const MAX_PREVIEW_CHARS = 160;
+
+const getPreview = (text: string, max = MAX_PREVIEW_CHARS): { text: string; truncated: boolean } => {
+  if (text.length <= max) {
+    return { text, truncated: false };
+  }
+
+  const slice = text.slice(0, max + 1);
+  const lastSpace = slice.lastIndexOf(" ");
+  const cut = lastSpace > max * 0.6 ? lastSpace : max;
+
+  return { text: `${text.slice(0, cut).trimEnd()}...`, truncated: true };
+};
+
 interface TestimonialCardProps {
   testimonial: {
     id: string;
@@ -11,11 +25,13 @@ interface TestimonialCardProps {
     projectId: string | null;
     projectName: string;
   };
+  onOpenFullText: () => void;
 }
 
-export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
+export default function TestimonialCard({ testimonial, onOpenFullText }: TestimonialCardProps) {
   const hasAssignedProject = Boolean(testimonial.projectId);
   const hasProjectChip = Boolean(testimonial.projectName);
+  const preview = getPreview(testimonial.text);
 
   return (
     <div
@@ -50,10 +66,21 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
         ))}
       </div>
 
-      {/* Quote */}
-      <p className="text-muted italic mb-8 font-light leading-relaxed group-hover:text-navy transition-colors">
-        &ldquo;{testimonial.text}&rdquo;
-      </p>
+      <div className="mb-8">
+        <p className="text-muted italic font-light leading-relaxed group-hover:text-navy transition-colors">
+          &ldquo;{preview.text}&rdquo;
+        </p>
+        {preview.truncated ? (
+          <button
+            type="button"
+            onClick={onOpenFullText}
+            className="mt-3 inline-flex cursor-pointer items-center gap-1 text-xs font-semibold uppercase tracking-wider text-secondary transition-colors hover:text-navy"
+          >
+            Mostrar mas
+            <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+          </button>
+        ) : null}
+      </div>
 
       {/* Author */}
       <div className="flex items-center gap-4">

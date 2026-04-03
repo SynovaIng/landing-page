@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 import { container } from "@/config/container";
+import { formatProjectCountApprox } from "@/contexts/projects/app/format-project-count";
+import { GetProjectStatusCountsUseCase } from "@/contexts/projects/use-cases/get-project-status-counts.use-case";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import Button from "@/contexts/shared/presentation/Button";
@@ -16,13 +18,6 @@ export const metadata: Metadata = {
   description:
     "Expertos en instalaciones eléctricas de alto estándar, certificaciones SEC y emergencias 24/7 en Santiago de Chile.",
 };
-
-const stats = [
-  { value: "+10", label: "Años de experiencia" },
-  { value: "500+", label: "Proyectos Ejecutados" },
-  { value: "100%", label: "Certificación SEC" },
-  { value: "24/7", label: "Soporte Técnico" },
-];
 
 const whyUs = [
   {
@@ -43,9 +38,17 @@ const whyUs = [
 ];
 
 export default async function HomePage() {
-  const services = await container.get(GetAllServicesUseCase).execute();
+  const [services, testimonials, projectCounts] = await Promise.all([
+    container.get(GetAllServicesUseCase).execute(),
+    container.get(GetAllTestimonialsUseCase).execute(),
+    container.get(GetProjectStatusCountsUseCase).execute(),
+  ]);
   const featuredServices = services.slice(0, 4);
-  const testimonials = await container.get(GetAllTestimonialsUseCase).execute();
+  const stats = [
+    { value: formatProjectCountApprox(projectCounts.totalCount), label: "Proyectos Ejecutados" },
+    { value: "100%", label: "Certificación SEC" },
+    { value: "24/7", label: "Soporte Técnico" },
+  ];
   const testimonialItems = testimonials.map((testimonial) => ({
     id: testimonial.id,
     text: testimonial.text,

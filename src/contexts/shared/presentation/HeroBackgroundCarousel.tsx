@@ -5,24 +5,24 @@ import { useEffect, useState } from "react";
 
 const HERO_IMAGES = [
   {
-    src: "https://media.istockphoto.com/id/2151045567/photo/electrician-engineer-tests-electrical-installations-and-wires-on-relay-protection-system.jpg?b=1&s=612x612&w=0&k=20&c=WflaG4XWKfAo9WFkeYxA1WW_4Y_RUhC4jawLQfrz_yY=",
-    alt: "Ingeniero eléctrico trabajando en proyecto industrial",
-  },
-  {
     src: "https://cdn.pixabay.com/photo/2015/12/07/10/49/electrician-1080554_1280.jpg",
     alt: "Electricista realizando instalación residencial",
+  },
+  {
+    src: "https://andysmithelectrical.ie/wp-content/uploads/2021/04/Commercvial-Electricians-scaled.jpg",
+    alt: "Ingeniero eléctrico en labores de mantenimiento",
+  },
+  {
+    src: "https://bestlittlemep.co.uk/wp-content/uploads/2025/04/getty-images-vAkNz2AEnns-unsplash-2048x1365.webp",
+    alt: "Infraestructura de subestación eléctrica industrial",
   },
   {
     src: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=2200&q=80",
     alt: "Líneas de alta tensión para distribución energética",
   },
   {
-    src: "https://media.istockphoto.com/id/2148804020/photo/male-electrician-working-in-a-switchboard-with-fuses.jpg?b=1&s=612x612&w=0&k=20&c=aHrbwEdsPQ0wfdIhNhflf5nbrios16h_q8IlFDFuths=",
-    alt: "Infraestructura de subestación eléctrica industrial",
-  },
-  {
-    src: "https://media.istockphoto.com/id/1469508136/photo/electrician-installing-wiring-system-in-the-ceiling.jpg?b=1&s=612x612&w=0&k=20&c=jQjEzc2o2sofaOBjb_0Hxgf3bxrTCl1-ESMfYusDlJA=",
-    alt: "Ingeniero eléctrico en labores de mantenimiento",
+    src: "https://images.unsplash.com/photo-1576446468729-7674e99608f5?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Ingeniero eléctrico trabajando en proyecto industrial",
   },
 ];
 
@@ -32,14 +32,14 @@ export default function HeroBackgroundCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
+    const timeoutId = window.setTimeout(() => {
       setActiveIndex((current) => (current + 1) % HERO_IMAGES.length);
     }, AUTO_PLAY_INTERVAL_MS);
 
     return () => {
-      window.clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [activeIndex]);
 
   return (
     <>

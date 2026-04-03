@@ -36,9 +36,9 @@ const credentials = [
     desc: "Licencia vigente para todo tipo de proyecto",
   },
   {
-    icon: "history",
-    title: "+10 Años en el Mercado",
-    desc: "Experiencia comprobada en Santiago",
+    icon: "groups",
+    title: "Equipo Técnico Especializado",
+    desc: "Profesionales calificados para proyectos residenciales, comerciales e industriales",
   },
   {
     icon: "gavel",
@@ -149,7 +149,7 @@ export default function NosotrosPage() {
       </section>
 
       {/* ── Credenciales ── */}
-      <section className="bg-surface border-y border-border-light py-12">
+      <section id="certificaciones" className="bg-surface border-y border-border-light py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-border">
             {credentials.map((c) => (

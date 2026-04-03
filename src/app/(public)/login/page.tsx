@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { loginAction } from "@/app/(protected)/actions";
+import { loginAction } from "@/app/actions/auth";
 import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 interface AdminLoginPageProps {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }
 
 export default async function AdminLoginPage({
@@ -23,7 +23,7 @@ export default async function AdminLoginPage({
     redirect("/dashboard");
   }
 
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -57,6 +57,7 @@ export default async function AdminLoginPage({
           </div>
 
           <form action={loginAction} className="space-y-4">
+            <input type="hidden" name="next" value={next ?? ""} />
             {error ? (
               <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
