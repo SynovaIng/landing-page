@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { Inter,Montserrat } from "next/font/google";
+import Script from "next/script";
 
 import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 import { AuthProvider } from "@/contexts/auth/presentation/AuthContext";
@@ -76,6 +77,10 @@ export default async function RootLayout({
         <style id="synova-theme-override">{defaultThemeCss}</style>
       </head>
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+        />
         <LoadingOverlayProvider>
           <ThemeProvider>
             <AuthProvider initialSession={initialSession}>

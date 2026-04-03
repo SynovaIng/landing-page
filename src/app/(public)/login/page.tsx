@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { loginAction } from "@/app/actions/auth";
 import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
+import TurnstileInvisible from "@/contexts/shared/presentation/TurnstileInvisible";
 
 export const metadata: Metadata = {
   title: "Admin — SYNOVA",
@@ -58,6 +59,7 @@ export default async function AdminLoginPage({
 
           <form action={loginAction} className="space-y-4">
             <input type="hidden" name="next" value={next ?? ""} />
+            <TurnstileInvisible />
             {error ? (
               <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}

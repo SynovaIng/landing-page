@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import ProjectImageCarousel from "@/contexts/projects/presentation/ProjectImageCarousel";
+import TurnstileInvisible from "@/contexts/shared/presentation/TurnstileInvisible";
 
 type ReviewPageStatus = "missing" | "invalid" | "inactive" | "ready" | "success";
 
@@ -142,6 +143,7 @@ export default function ReviewPublicFormClient({
                 <form action={submitAction} className="space-y-5">
                   <input type="hidden" name="token" value={token} />
                   <input type="hidden" name="rating" value={String(rating)} />
+                  <TurnstileInvisible />
 
                   {errorMessage ? (
                     <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
