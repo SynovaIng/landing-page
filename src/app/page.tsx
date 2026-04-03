@@ -18,7 +18,6 @@ export const metadata: Metadata = {
 };
 
 const stats = [
-  { value: "+10", label: "Años de experiencia" },
   { value: "500+", label: "Proyectos Ejecutados" },
   { value: "100%", label: "Certificación SEC" },
   { value: "24/7", label: "Soporte Técnico" },

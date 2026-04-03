@@ -20,7 +20,6 @@ const categories: (ProjectCategory | "Todos")[] = [
 
 const stats = [
   { value: "+150", label: "Proyectos Realizados" },
-  { value: "+10", label: "Años de experiencia" },
   { value: "100%", label: "Certificados SEC" },
   { value: "RM", label: "Cobertura Total" },
 ];

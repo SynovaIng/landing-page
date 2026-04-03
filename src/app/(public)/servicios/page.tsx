@@ -107,13 +107,6 @@ export default async function ServiciosPage() {
           </div>
           <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-border to-transparent" />
           <div className="text-center md:text-left">
-            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">10+</p>
-            <p className="text-navy font-medium uppercase tracking-wide text-sm">
-              Años de Experiencia
-            </p>
-          </div>
-          <div className="h-px w-full md:w-px md:h-20 bg-linear-to-b from-transparent via-border to-transparent" />
-          <div className="text-center md:text-left">
             <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">500+</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
               Proyectos Completados
