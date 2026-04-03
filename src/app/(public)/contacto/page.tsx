@@ -6,6 +6,7 @@ import ContactCard from "@/contexts/contacto/presentation/ContactCard";
 import CopyEmailButton from "@/contexts/contacto/presentation/CopyEmailButton";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import { CONTACT_INFO } from "@/contexts/shared/app/contact-info";
+import TurnstileInvisible from "@/contexts/shared/presentation/TurnstileInvisible";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -184,6 +185,9 @@ export default async function ContactoPage({
                       />
                     </div>
                   </div>
+
+                  <TurnstileInvisible />
+
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4">
                     <button
                       type="submit"

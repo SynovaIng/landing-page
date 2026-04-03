@@ -5,12 +5,24 @@ import { redirect } from "next/navigation";
 import { container } from "@/config/container";
 import { SendContactFormUseCase } from "@/contexts/contacto/use-cases/send-contact-form.use-case";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { verifyTurnstileToken } from "@/lib/turnstile/verify-turnstile-token";
 
 const toContactoError = (message: string): never => {
   redirect(`/contacto?error=${encodeURIComponent(message)}`);
 };
 
 export const sendContactFormAction = async (formData: FormData): Promise<void> => {
+  const turnstileToken = String(formData.get("cf-turnstile-response") ?? "").trim();
+
+  if (!turnstileToken) {
+    toContactoError("Completa la validación anti-spam para continuar");
+  }
+
+  const turnstileValid = await verifyTurnstileToken(turnstileToken);
+  if (!turnstileValid) {
+    toContactoError("No se pudo validar la verificación anti-spam. Intenta nuevamente.");
+  }
+
   const name = String(formData.get("name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
