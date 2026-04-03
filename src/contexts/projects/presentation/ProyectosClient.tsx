@@ -126,7 +126,7 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
 
         <div className="bg-surface border-y border-border py-16">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
               {stats.map((stat) => (
                 <StatCard key={stat.label} value={stat.value} label={stat.label} />
               ))}

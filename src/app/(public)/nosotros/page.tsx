@@ -36,9 +36,9 @@ const credentials = [
     desc: "Licencia vigente para todo tipo de proyecto",
   },
   {
-    icon: "history",
-    title: "+10 Años en el Mercado",
-    desc: "Experiencia comprobada en Santiago",
+    icon: "groups",
+    title: "Equipo Técnico Especializado",
+    desc: "Profesionales calificados para proyectos residenciales, comerciales e industriales",
   },
   {
     icon: "gavel",
