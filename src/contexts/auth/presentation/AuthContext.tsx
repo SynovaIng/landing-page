@@ -21,6 +21,11 @@ interface AuthSessionResponse {
   user: AuthUser | null;
 }
 
+interface AuthProviderProps {
+  children: React.ReactNode;
+  initialSession?: AuthSessionResponse;
+}
+
 interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
@@ -32,11 +37,21 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children, initialSession }: AuthProviderProps) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const initialUser = useMemo(() => {
+    if (!initialSession?.user) {
+      return null;
+    }
+
+    const parsedInitialUser = authUserSchema.safeParse(initialSession.user);
+    return parsedInitialUser.success ? new User(parsedInitialUser.data) : null;
+  }, [initialSession?.user]);
+  const [user, setUser] = useState<User | null>(initialUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    Boolean(initialSession?.authenticated && initialUser),
+  );
+  const [isLoading, setIsLoading] = useState(initialSession === undefined);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const refreshSession = useCallback(async () => {
