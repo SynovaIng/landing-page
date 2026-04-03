@@ -4,6 +4,12 @@ export interface GetAllProjectsOptions {
   includeUnpublished?: boolean;
 }
 
+export interface ProjectStatusCounts {
+  activeCount: number;
+  inactiveCount: number;
+  totalCount: number;
+}
+
 export interface CreateProjectInput {
   title: string;
   location: string;
@@ -33,6 +39,7 @@ export interface UpdateProjectInput {
 
 export abstract class ProjectRepository {
   abstract getAll(options?: GetAllProjectsOptions): Promise<Project[]>;
+  abstract getStatusCounts(): Promise<ProjectStatusCounts>;
   abstract getById(id: string): Promise<Project | null>;
   abstract create(input: CreateProjectInput): Promise<Project>;
   abstract update(input: UpdateProjectInput): Promise<Project>;

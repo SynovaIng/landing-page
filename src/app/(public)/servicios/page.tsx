@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { container } from "@/config/container";
+import { formatProjectCountApprox } from "@/contexts/projects/app/format-project-count";
+import { GetProjectStatusCountsUseCase } from "@/contexts/projects/use-cases/get-project-status-counts.use-case";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import Button from "@/contexts/shared/presentation/Button";
@@ -33,7 +35,12 @@ const sectors = [
 const SERVICES_GRID_COLUMNS_CLASS = "md:grid-cols-3";
 
 export default async function ServiciosPage() {
-  const services = await container.get(GetAllServicesUseCase).execute();
+  const [services, projectCounts] = await Promise.all([
+    container.get(GetAllServicesUseCase).execute(),
+    container.get(GetProjectStatusCountsUseCase).execute(),
+  ]);
+  const projectsCountLabel = formatProjectCountApprox(projectCounts.totalCount);
+
   return (
     <div className="pt-24">
       {/* ── Hero ── */}
@@ -112,7 +119,7 @@ export default async function ServiciosPage() {
             </p>
           </div>
           <div className="text-center md:text-left py-6 md:py-0 md:pl-8 flex flex-col justify-center">
-            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">500+</p>
+            <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">{projectsCountLabel}</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
               Proyectos Completados
             </p>

@@ -18,12 +18,6 @@ const categories: (ProjectCategory | "Todos")[] = [
   "Industrial",
 ];
 
-const stats = [
-  { value: "+150", label: "Proyectos Realizados" },
-  { value: "100%", label: "Certificados SEC" },
-  { value: "Chile", label: "Cobertura Total" },
-];
-
 interface ProjectServiceSummary {
   id: string;
   title: string;
@@ -33,9 +27,10 @@ interface ProjectServiceSummary {
 interface ProyectosClientProps {
   projects: Project[];
   services: ProjectServiceSummary[];
+  projectsStatValue: string;
 }
 
-export default function ProyectosClient({ projects, services }: ProyectosClientProps) {
+export default function ProyectosClient({ projects, services, projectsStatValue }: ProyectosClientProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +48,11 @@ export default function ProyectosClient({ projects, services }: ProyectosClientP
     active === "Todos"
       ? "Actualmente no hay proyectos disponibles."
       : `No existen proyectos de tipo ${active}.`;
+  const stats = [
+    { value: projectsStatValue, label: "Proyectos Realizados" },
+    { value: "100%", label: "Certificados SEC" },
+    { value: "Chile", label: "Cobertura Total" },
+  ];
 
   const selectedProjectDetails = useMemo(() => {
     if (!displayedProject) {
