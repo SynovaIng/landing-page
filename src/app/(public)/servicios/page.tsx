@@ -112,13 +112,13 @@ export default async function ServiciosPage() {
               <p className="text-muted">Instaladores autorizados por la SEC Clase A.</p>
             </div>
           </div>
-          <div className="text-center md:text-left py-6 md:py-0 md:px-8 border-y md:border-y-0 md:border-x border-border flex flex-col justify-center">
+          <div className="text-center py-6 md:py-0 md:px-8 border-y md:border-y-0 md:border-x border-border flex flex-col items-center justify-center">
             <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">24/7</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
               Emergencias Eléctricas
             </p>
           </div>
-          <div className="text-center md:text-left py-6 md:py-0 md:pl-8 flex flex-col justify-center">
+          <div className="text-center py-6 md:py-0 md:pl-8 flex flex-col items-center justify-center">
             <p className="text-4xl lg:text-5xl font-black text-secondary mb-1">{projectsCountLabel}</p>
             <p className="text-navy font-medium uppercase tracking-wide text-sm">
               Proyectos Completados
