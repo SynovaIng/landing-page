@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -39,6 +39,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children, initialSession }: AuthProviderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const initialUser = useMemo(() => {
     if (!initialSession?.user) {
       return null;
@@ -96,12 +97,18 @@ export function AuthProvider({ children, initialSession }: AuthProviderProps) {
 
       setIsAuthenticated(false);
       setUser(null);
-      router.push("/login");
+
+      const isProtectedPath = pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+
+      if (isProtectedPath) {
+        router.push(`/login?next=${encodeURIComponent(pathname)}`);
+      }
+
       router.refresh();
     } finally {
       setIsLoggingOut(false);
     }
-  }, [router]);
+  }, [pathname, router]);
 
   useEffect(() => {
     let mounted = true;
