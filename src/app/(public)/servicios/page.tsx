@@ -62,7 +62,7 @@ export default async function ServiciosPage() {
       </section>
 
       {/* ── Sectores ── */}
-      <section className="bg-surface border-y border-border py-20 px-6 md:px-10">
+      <section id="tipos-de-proyectos" className="bg-surface border-y border-border py-20 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             eyebrow="Sectores que atendemos"

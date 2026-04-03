@@ -11,13 +11,11 @@ const footerLinks = {
   empresa: [
     { label: "Nosotros", href: "/nosotros" },
     { label: "Certificaciones", href: "/nosotros#certificaciones" },
-    { label: "Trabaja con nosotros", href: "/contacto" },
   ],
   servicios: [
-    { label: "Residencial", href: "/servicios#residencial" },
-    { label: "Industrial", href: "/servicios#industrial" },
-    { label: "Certificación SEC", href: "/servicios#certificaciones" },
-    { label: "Mantención", href: "/servicios#mantencion" },
+    { label: "Residencial", href: "/servicios#tipos-de-proyectos" },
+    { label: "Industrial", href: "/servicios#tipos-de-proyectos" },
+    { label: "Comercial", href: "/servicios#tipos-de-proyectos" },
   ],
 };
 
@@ -49,7 +47,11 @@ const socials = [
   },
 ];
 
-export default function Footer() {
+interface FooterProps {
+  currentYear: number;
+}
+
+export default function Footer({ currentYear }: FooterProps) {
   const { activeTheme } = useTheme();
 
   return (
@@ -122,7 +124,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               {footerLinks.servicios.map((l) => (
-                <li key={l.href}>
+                <li key={`${l.label}-${l.href}`}>
                   <Link
                     href={l.href}
                     className="text-sm text-footer-text-muted hover:text-primary transition-colors"
@@ -174,18 +176,10 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-footer-text-muted order-2 md:order-1">
-            © 2025 SYNOVA Servicios Eléctricos. Todos los derechos reservados.
+        <div className="border-t border-gray-700 pt-8 flex items-center justify-center">
+          <p className="text-xs text-footer-text-muted">
+            © {currentYear} SYNOVA Servicios Eléctricos. Todos los derechos reservados.
           </p>
-          <div className="flex gap-6 order-1 md:order-2">
-            <a href="#" className="text-xs text-footer-text-muted hover:text-muted">
-              Privacidad
-            </a>
-            <a href="#" className="text-xs text-footer-text-muted hover:text-muted">
-              Términos
-            </a>
-          </div>
         </div>
       </div>
     </footer>

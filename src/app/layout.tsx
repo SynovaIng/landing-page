@@ -65,7 +65,7 @@ export default function RootLayout({
             <AuthProvider>
               <Navbar />
               <main className="min-h-screen">{children}</main>
-              <Footer />
+              <Footer currentYear={new Date().getFullYear()} />
             </AuthProvider>
           </ThemeProvider>
         </LoadingOverlayProvider>
