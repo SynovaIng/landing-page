@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import TestimonialCard from "@/contexts/testimonials/presentation/TestimonialCard";
+import TestimonialModal from "@/contexts/testimonials/presentation/TestimonialModal";
 
 interface TestimonialCarouselItem {
   id: string;
@@ -23,6 +24,7 @@ export default function TestimonialCarousel({ testimonials }: TestimonialCarouse
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [activeTestimonial, setActiveTestimonial] = useState<TestimonialCarouselItem | null>(null);
 
   const updateScrollState = () => {
     const viewport = viewportRef.current;
@@ -118,11 +120,21 @@ export default function TestimonialCarousel({ testimonials }: TestimonialCarouse
               data-testimonial-card
               className="w-[88%] shrink-0 md:w-[47%] lg:w-[31%]"
             >
-              <TestimonialCard testimonial={testimonial} />
+              <TestimonialCard
+                testimonial={testimonial}
+                onOpenFullText={() => setActiveTestimonial(testimonial)}
+              />
             </div>
           ))}
         </div>
       </div>
+
+      {activeTestimonial ? (
+        <TestimonialModal
+          testimonial={activeTestimonial}
+          onClose={() => setActiveTestimonial(null)}
+        />
+      ) : null}
     </div>
   );
 }
