@@ -21,7 +21,7 @@ const categories: (ProjectCategory | "Todos")[] = [
 const stats = [
   { value: "+150", label: "Proyectos Realizados" },
   { value: "100%", label: "Certificados SEC" },
-  { value: "RM", label: "Cobertura Total" },
+  { value: "Chile", label: "Cobertura Total" },
 ];
 
 interface ProjectServiceSummary {
