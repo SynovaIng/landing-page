@@ -1,10 +1,10 @@
 import { createBrowserClient } from "@supabase/ssr";
 
-import { envs } from "@/config/envs";
+import { publicEnvs } from "@/config/envs.public";
 
 export const createSupabaseBrowserClient = () => {
   return createBrowserClient(
-    envs.NEXT_PUBLIC_SUPABASE_URL,
-    envs.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
+    publicEnvs.NEXT_PUBLIC_SUPABASE_URL,
+    publicEnvs.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
   );
 };
