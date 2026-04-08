@@ -39,7 +39,9 @@ export default function TurnstileInvisible() {
 
       widgetIdRef.current = window.turnstile.render(widgetContainerRef.current, {
         sitekey: siteKey,
-        size: "invisible",
+        size: "normal",
+        appearance: "execute",
+        execution: "execute",
         callback: (token: string) => {
           if (hiddenTokenRef.current) {
             hiddenTokenRef.current.value = token;
