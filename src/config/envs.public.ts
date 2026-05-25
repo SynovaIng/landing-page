@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 const publicEnvSchema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.url(),
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().min(1),
-  NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
+  NEXT_PUBLIC_SUPABASE_URL: z.url().or(z.literal("")).default(""),
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().default(""),
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().default(""),
   NEXT_PUBLIC_SITE_URL: z.url().optional(),
 });
 
