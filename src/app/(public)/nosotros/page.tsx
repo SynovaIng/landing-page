@@ -5,6 +5,8 @@ import Button from "@/contexts/shared/presentation/Button";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 import ValueCard from "@/contexts/shared/presentation/ValueCard";
 
+const SHOW_TEAM_SECTION = false;
+
 export const metadata: Metadata = {
   title: "Nosotros",
   description:
@@ -166,39 +168,41 @@ export default function NosotrosPage() {
       </section>
 
       {/* ── Equipo ── */}
-      <section className="py-24 bg-background-light">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            title="Nuestro Equipo"
-            subtitle="Profesionales apasionados por la excelencia eléctrica."
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            {team.map((member) => (
-              <div key={member.name} className="text-center group">
-                <div className="relative w-48 h-48 mx-auto mb-6">
-                  <div className="absolute inset-0 rounded-full border-2 border-primary/30 scale-105 group-hover:scale-110 transition-transform duration-500" />
-                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-surface relative z-10 ring-2 ring-primary shadow-lg">
-                    <Image
-                      src={member.imgSrc}
-                      alt={member.name}
-                      width={192}
-                      height={192}
-                      className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500"
-                    />
+      {SHOW_TEAM_SECTION && (
+        <section className="py-24 bg-background-light">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              title="Nuestro Equipo"
+              subtitle="Profesionales apasionados por la excelencia eléctrica."
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+              {team.map((member) => (
+                <div key={member.name} className="text-center group">
+                  <div className="relative w-48 h-48 mx-auto mb-6">
+                    <div className="absolute inset-0 rounded-full border-2 border-primary/30 scale-105 group-hover:scale-110 transition-transform duration-500" />
+                    <div className="w-full h-full rounded-full overflow-hidden border-4 border-surface relative z-10 ring-2 ring-primary shadow-lg">
+                      <Image
+                        src={member.imgSrc}
+                        alt={member.name}
+                        width={192}
+                        height={192}
+                        className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500"
+                      />
+                    </div>
                   </div>
+                  <h3 className="text-xl font-bold text-navy mb-1 group-hover:text-secondary transition-colors">
+                    {member.name}
+                  </h3>
+                  <p className="text-secondary text-sm uppercase tracking-widest font-bold mb-2">
+                    {member.role}
+                  </p>
+                  <p className="text-muted text-sm font-light px-4">{member.bio}</p>
                 </div>
-                <h3 className="text-xl font-bold text-navy mb-1 group-hover:text-secondary transition-colors">
-                  {member.name}
-                </h3>
-                <p className="text-secondary text-sm uppercase tracking-widest font-bold mb-2">
-                  {member.role}
-                </p>
-                <p className="text-muted text-sm font-light px-4">{member.bio}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── CTA ── */}
       <section className="py-24 bg-surface border-t border-border relative overflow-hidden">
