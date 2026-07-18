@@ -9,6 +9,9 @@ const envSchema = z.object({
   TURNSTILE_SECRET_KEY: z.string().min(1),
   NEXT_PUBLIC_SITE_URL: z.url().optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
+  CONTACT_SENDER_EMAIL: z.email(),
+  CONTACT_REPLY_TO_EMAIL: z.email(),
+  CONTACT_NOTIFICATION_EMAIL: z.email(),
 });
 
 const envValues = {
@@ -18,6 +21,9 @@ const envValues = {
   TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
+  CONTACT_SENDER_EMAIL: process.env.CONTACT_SENDER_EMAIL,
+  CONTACT_REPLY_TO_EMAIL: process.env.CONTACT_REPLY_TO_EMAIL,
+  CONTACT_NOTIFICATION_EMAIL: process.env.CONTACT_NOTIFICATION_EMAIL,
 };
 
 const parsed = envSchema.safeParse(envValues);
