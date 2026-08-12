@@ -6,6 +6,8 @@ import Script from "next/script";
 
 import { createServerAuthUseCases } from "@/contexts/auth/app/server-auth.factory";
 import { AuthProvider } from "@/contexts/auth/presentation/AuthContext";
+import { CONTACT_INFO } from "@/contexts/shared/app/contact-info";
+import { DEFAULT_DESCRIPTION, DEFAULT_TITLE, SITE_NAME, SITE_URL } from "@/contexts/shared/app/seo";
 import Footer from "@/contexts/shared/presentation/Footer";
 import { LoadingOverlayProvider } from "@/contexts/shared/presentation/LoadingOverlayContext";
 import Navbar from "@/contexts/shared/presentation/Navbar";
@@ -14,6 +16,24 @@ import {
   DEFAULT_THEME_ID,
   themes,
 } from "@/contexts/shared/presentation/themes";
+
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Electrician",
+  name: SITE_NAME,
+  image: `${SITE_URL}/logo.svg`,
+  url: SITE_URL,
+  telephone: CONTACT_INFO.phoneNumbers[0],
+  email: CONTACT_INFO.email,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Santiago",
+    addressCountry: "CL",
+  },
+  areaServed: "Santiago, Chile",
+  sameAs: [CONTACT_INFO.socials.instagram, CONTACT_INFO.socials.tiktok],
+  description: DEFAULT_DESCRIPTION,
+};
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -28,15 +48,33 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",
-    template: "%s | SYNOVA",
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Expertos en instalaciones eléctricas, certificaciones SEC, emergencias 24/7 y mantención preventiva en Santiago de Chile. Certificados SEC Clase A.",
-  icons: {
-    icon: "/logo.svg",
-    shortcut: "/logo.svg",
+  description: DEFAULT_DESCRIPTION,
+  keywords: [
+    "electricista Santiago",
+    "instalaciones eléctricas",
+    "certificación SEC",
+    "electricista certificado SEC Clase A",
+    "emergencias eléctricas 24/7",
+    "mantención eléctrica preventiva",
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  openGraph: {
+    type: "website",
+    locale: "es_CL",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
   },
 };
 
@@ -75,6 +113,10 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         />
         <style id="synova-theme-override">{defaultThemeCss}</style>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        />
       </head>
       <body className={`${montserrat.variable} ${inter.variable} antialiased`}>
         <Script

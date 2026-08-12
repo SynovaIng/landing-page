@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
+import { buildPageMetadata } from "@/contexts/shared/app/seo";
 import Button from "@/contexts/shared/presentation/Button";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 import ValueCard from "@/contexts/shared/presentation/ValueCard";
 
 const SHOW_TEAM_SECTION = false;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Nosotros",
   description:
     "Conoce la historia, valores y equipo de SYNOVA — electricistas certificados SEC comprometidos con la calidad y seguridad.",
-};
+  path: "/nosotros",
+});
 
 const values = [
   {

@@ -8,6 +8,7 @@ import TurnstileInvisible from "@/contexts/shared/presentation/TurnstileInvisibl
 export const metadata: Metadata = {
   title: "Admin — SYNOVA",
   description: "Panel de administración SYNOVA",
+  robots: { index: false, follow: false },
 };
 
 interface AdminLoginPageProps {

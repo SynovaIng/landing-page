@@ -5,14 +5,16 @@ import { formatProjectCountApprox } from "@/contexts/projects/app/format-project
 import { GetProjectStatusCountsUseCase } from "@/contexts/projects/use-cases/get-project-status-counts.use-case";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { buildPageMetadata } from "@/contexts/shared/app/seo";
 import Button from "@/contexts/shared/presentation/Button";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Servicios",
   description:
     "Instalaciones eléctricas, certificaciones SEC, emergencias 24/7 y mantención preventiva en Santiago de Chile.",
-};
+  path: "/servicios",
+});
 
 const sectors = [
   {
