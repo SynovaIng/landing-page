@@ -6,13 +6,15 @@ import ContactCard from "@/contexts/contacto/presentation/ContactCard";
 import CopyEmailButton from "@/contexts/contacto/presentation/CopyEmailButton";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
 import { CONTACT_INFO } from "@/contexts/shared/app/contact-info";
+import { buildPageMetadata } from "@/contexts/shared/app/seo";
 import TurnstileInvisible from "@/contexts/shared/presentation/TurnstileInvisible";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Contacto",
   description:
     "Contáctanos para cotizar tu proyecto eléctrico. Respondemos en menos de 24 horas. Atención de emergencias 24/7.",
-};
+  path: "/contacto",
+});
 
 export default async function ContactoPage({
   searchParams,

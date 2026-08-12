@@ -6,6 +6,7 @@ import { formatProjectCountApprox } from "@/contexts/projects/app/format-project
 import { GetProjectStatusCountsUseCase } from "@/contexts/projects/use-cases/get-project-status-counts.use-case";
 import ServiceCard from "@/contexts/services/presentation/ServiceCard";
 import { GetAllServicesUseCase } from "@/contexts/services/use-cases/get-all-services.use-case";
+import { buildPageMetadata } from "@/contexts/shared/app/seo";
 import Button from "@/contexts/shared/presentation/Button";
 import HeroBackgroundCarousel from "@/contexts/shared/presentation/HeroBackgroundCarousel";
 import SectionHeader from "@/contexts/shared/presentation/SectionHeader";
@@ -13,11 +14,11 @@ import StatsBar from "@/contexts/shared/presentation/StatsBar";
 import TestimonialCarousel from "@/contexts/testimonials/presentation/TestimonialCarousel";
 import { GetAllTestimonialsUseCase } from "@/contexts/testimonials/use-cases/get-all-testimonials.use-case";
 
-export const metadata: Metadata = {
-  title: "SYNOVA — Soluciones Eléctricas Profesionales en Santiago",
+export const metadata: Metadata = buildPageMetadata({
   description:
     "Expertos en instalaciones eléctricas de alto estándar, certificaciones SEC y emergencias 24/7 en Santiago de Chile.",
-};
+  path: "/",
+});
 
 const whyUs = [
   {

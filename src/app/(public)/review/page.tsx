@@ -11,6 +11,7 @@ import { GetReviewByTokenUseCase } from "@/contexts/testimonials/use-cases/get-r
 export const metadata: Metadata = {
   title: "Reseña",
   description: "Formulario de reseña para proyectos de SYNOVA.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ReviewPage({
